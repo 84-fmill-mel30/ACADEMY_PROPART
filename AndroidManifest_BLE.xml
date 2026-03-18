@@ -1,0 +1,191 @@
+<!-- ══════════════════════════════════════════════════════════════
+     PROPART DIAGNOSTIC PROFESIONAL — AndroidManifest.xml
+     Agrega estos permisos ANTES del tag <application>
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ── BLUETOOTH ── -->
+<!-- Android 12+ (API 31+) -->
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+    android:usesPermissionFlags="neverForLocation" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+
+<!-- Android 11 y anteriores (API 30-) -->
+<uses-permission android:name="android.permission.BLUETOOTH"
+    android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+    android:maxSdkVersion="30" />
+
+<!-- Ubicación requerida para BLE scan en Android 9-11 -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+    android:maxSdkVersion="30" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"
+    android:maxSdkVersion="30" />
+
+<!-- ── HARDWARE requerido ── -->
+<uses-feature
+    android:name="android.hardware.bluetooth_le"
+    android:required="true" />
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     EJEMPLO DE USO — En tu Activity principal (MainActivity.java)
+     Pega este código en tu Activity donde quieras usar el BLE
+     ══════════════════════════════════════════════════════════════
+
+import com.propart.diagnostic.profesional.BleManager;
+import android.bluetooth.BluetoothDevice;
+
+public class MainActivity extends AppCompatActivity implements BleManager.BleCallback {
+
+    private BleManager bleManager;
+    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 100;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Inicializar BleManager
+        bleManager = new BleManager(this, this);
+
+        // Botón conectar OBD2
+        btnConectar.setOnClickListener(v -> {
+            if (bleManager.tienePermisos()) {
+                bleManager.escanear();
+            } else {
+                pedirPermisos();
+            }
+        });
+
+        // Botón leer RPM
+        btnLeerRPM.setOnClickListener(v -> {
+            if (bleManager.estaConectado()) {
+                bleManager.enviarComando(BleManager.CMD_RPM);
+            }
+        });
+
+        // Botón leer temperatura
+        btnLeerTemp.setOnClickListener(v -> {
+            if (bleManager.estaConectado()) {
+                bleManager.enviarComando(BleManager.CMD_COOLANT);
+            }
+        });
+
+        // Botón leer voltaje
+        btnVoltaje.setOnClickListener(v -> {
+            if (bleManager.estaConectado()) {
+                bleManager.enviarComando(BleManager.CMD_VOLTAGE);
+            }
+        });
+
+        // Botón leer DTCs
+        btnDTC.setOnClickListener(v -> {
+            if (bleManager.estaConectado()) {
+                bleManager.enviarComando(BleManager.CMD_DTC);
+            }
+        });
+    }
+
+    // ── Callbacks BLE ──────────────────────────────────────────────
+    @Override
+    public void onEstadoCambiado(BleManager.Estado estado, String mensaje) {
+        runOnUiThread(() -> {
+            txtEstado.setText(mensaje);
+            switch (estado) {
+                case CONECTADO:
+                    txtEstado.setTextColor(Color.GREEN);
+                    btnConectar.setText("Desconectar");
+                    break;
+                case ESCANEANDO:
+                case CONECTANDO:
+                    txtEstado.setTextColor(Color.YELLOW);
+                    break;
+                case DESCONECTADO:
+                case ERROR:
+                    txtEstado.setTextColor(Color.RED);
+                    btnConectar.setText("Conectar OBD2");
+                    break;
+            }
+        });
+    }
+
+    @Override
+    public void onDispositivoEncontrado(BluetoothDevice device, String nombre, int rssi) {
+        runOnUiThread(() -> {
+            // Aquí puedes mostrar un diálogo para seleccionar el dispositivo
+            // o conectar automático si es el V-Link
+            Log.d("BLE", "Dispositivo: " + nombre + " (" + rssi + " dBm)");
+        });
+    }
+
+    @Override
+    public void onDatosRecibidos(String datos) {
+        runOnUiThread(() -> {
+            // Parsear según el último comando enviado
+            // Ejemplo: si pediste RPM
+            int rpm = BleManager.parsearRPM(datos);
+            if (rpm >= 0) {
+                txtRPM.setText(String.valueOf(rpm));
+            }
+
+            int velocidad = BleManager.parsearVelocidad(datos);
+            if (velocidad >= 0) {
+                txtVelocidad.setText(velocidad + " km/h");
+            }
+
+            int temp = BleManager.parsearTemperatura(datos);
+            if (temp > -900) {
+                txtTemp.setText(temp + "°C");
+            }
+
+            float voltaje = BleManager.parsearVoltaje(datos);
+            if (voltaje > 0) {
+                txtVoltaje.setText(voltaje + "V");
+            }
+
+            Log.d("OBD2", "Respuesta raw: " + datos);
+        });
+    }
+
+    @Override
+    public void onError(String error) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Error BLE: " + error, Toast.LENGTH_LONG).show();
+        });
+    }
+
+    // ── Pedir permisos en runtime ───────────────────────────────────
+    private void pedirPermisos() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissions(new String[]{
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+            }, REQUEST_BLUETOOTH_PERMISSIONS);
+        } else {
+            requestPermissions(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION
+            }, REQUEST_BLUETOOTH_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                bleManager.escanear();
+            } else {
+                Toast.makeText(this, "Permisos requeridos para BLE", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bleManager != null) bleManager.desconectar();
+    }
+}
+
+-->
