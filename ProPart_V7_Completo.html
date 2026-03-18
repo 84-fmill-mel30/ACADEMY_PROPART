@@ -1280,14 +1280,14 @@ Mano de obra reparación vacío: $250</textarea>
 </div><!-- /main -->
 </div><!-- /app -->
 
-<!-- ═══ CHALÁN ASISTENTE FLOTANTE ═══ -->
-<div id="chalanFloat">
-  <div class="chalan-panel" id="chalanPanel">
-    <div class="chalan-head">
-      <div class="chalan-avatar">🤖<div class="chalan-online"></div></div>
+<!-- ═══ CHARDS ASISTENTE FLOTANTE ═══ -->
+<div id="chardsFloat">
+  <div class="chards-panel" id="chardsPanel">
+    <div class="chards-head">
+      <div class="chards-avatar">🤖<div class="chards-online"></div></div>
       <div>
-        <div class="chalan-name">CHALÁN</div>
-        <div class="chalan-status" id="chalanStatus">Asistente ProPart • En línea</div>
+        <div class="chards-name">CHARDS</div>
+        <div class="chards-status" id="chardsStatus">Asistente ProPart • En línea</div>
       </div>
       <button style="margin-left:auto;background:none;border:none;color:var(--txtD);font-size:18px;cursor:pointer" onclick="tgChalan()">✕</button>
     </div>
@@ -1306,29 +1306,29 @@ Mano de obra reparación vacío: $250</textarea>
       <div id="chalanSensorGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px"></div>
     </div>
 
-    <div class="chalan-cams" id="chalanCams">
-      <video id="chalanVideo" autoplay playsinline muted></video>
-      <div class="chalan-cam-label">📷 MODO VISUALIZER</div>
-      <button class="chalan-cam-btn" onclick="stopCamera()">Cerrar cámara</button>
+    <div class="chards-cams" id="chardsCams">
+      <video id="chardsVideo" autoplay playsinline muted></video>
+      <div class="chards-cam-label">📷 MODO VISUALIZER</div>
+      <button class="chards-cam-btn" onclick="stopCamera()">Cerrar cámara</button>
     </div>
-    <div class="chalan-msgs" id="chalanMsgs">
-      <div class="msg-chalan">¡Buenos días ingeniero! 👋 Soy Chalán, su asistente ProPart. Conéctese al escáner y veré los datos del motor en tiempo real. ¿En qué le ayudo?</div>
+    <div class="chards-msgs" id="chardsMsgs">
+      <div class="msg-chards">¡Buenos días Millan! 👋 Soy Chards, su asistente ProPart. Conéctese al escáner y veré los datos del motor en tiempo real. ¿En qué le ayudo?</div>
     </div>
     <div class="chalan-input-row">
-      <button class="chalan-voice-btn mic" id="micBtn" onclick="tgMic()" title="Hablar">🎤</button>
-      <input class="chalan-inp" id="chalanInp" placeholder="Pregúntele al Chalán…" onkeydown="if(event.key==='Enter')sendChalan()">
-      <button class="chalan-voice-btn send" onclick="sendChalan()" title="Enviar">➤</button>
+      <button class="chards-voice-btn mic" id="micBtn" onclick="tgMic()" title="Hablar">🎤</button>
+      <input class="chards-inp" id="chardsInp" placeholder="Pregúntele al Chards…" onkeydown="if(event.key==='Enter')sendChards()">
+      <button class="chards-voice-btn send" onclick="sendChards()" title="Enviar">➤</button>
     </div>
     <div style="padding:6px 10px;border-top:1px solid var(--bdr);display:flex;gap:6px;flex-wrap:wrap">
-      <button class="lang-btn" onclick="chalanCmd('chalán activa la cámara')">📷 Cámara</button>
-      <button class="lang-btn" onclick="chalanCmd('muéstrame los cables del MAF')">🔌 Cables MAF</button>
-      <button class="lang-btn" onclick="chalanCmd('no hay chispa ayúdame')">⚡ Sin chispa</button>
-      <button class="lang-btn" onclick="chalanCmd('lee los DTCs del vehículo')">⚠️ Leer DTCs</button>
-      <button class="lang-btn" style="background:linear-gradient(135deg,rgba(255,61,90,.15),rgba(245,166,35,.1));border-color:rgba(245,166,35,.4);color:var(--gold);font-weight:700" onclick="chalanCmd('analiza el estado completo del motor con todos los sensores')">🔬 Diagnóstico</button>
-      <button class="lang-btn" onclick="chalanCmd('qué tiene el carro con estos valores de sensores')">📊 Estado Motor</button>
+      <button class="lang-btn" onclick="chardsCmd('chards activa la cámara')">📷 Cámara</button>
+      <button class="lang-btn" onclick="chardsCmd('muéstrame los cables del MAF')">🔌 Cables MAF</button>
+      <button class="lang-btn" onclick="chardsCmd('no hay chispa ayúdame')">⚡ Sin chispa</button>
+      <button class="lang-btn" onclick="chardsCmd('lee los DTCs del vehículo')">⚠️ Leer DTCs</button>
+      <button class="lang-btn" style="background:linear-gradient(135deg,rgba(255,61,90,.15),rgba(245,166,35,.1));border-color:rgba(245,166,35,.4);color:var(--gold);font-weight:700" onclick="chardsCmd('analiza el estado completo del motor con todos los sensores')">🔬 Diagnóstico</button>
+      <button class="lang-btn" onclick="chardsCmd('qué tiene el carro con estos valores de sensores')">📊 Estado Motor</button>
     </div>
   </div>
-  <button class="chalan-fab" id="chalanFab" onclick="tgChalan()" title="Chalán — Asistente IA">🤖</button>
+  <button class="chards-fab" id="chardsFab" onclick="tgChards()" title="Chards — Asistente IA">🤖</button>
 </div>
 
 <!-- ═══ SEARCH OVERLAY ═══ -->
