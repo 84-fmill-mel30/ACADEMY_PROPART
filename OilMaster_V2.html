@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>OilMaster V2 — Seguridad Vial DATESEG</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--r:#FF3D5A;--o:#FF8C00;--g:#00E676;--y:#F5A623;--c:#00D4FF;--pu:#9C59F7;
+--bg0:#020609;--bg1:#050A13;--bg2:#0A1422;--bg3:#0F1C32;--bdr:rgba(30,48,88,.8);
+--tx:#D0E4F5;--txd:#7090B0;--txm:#4A6480;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Exo 2',sans-serif;background:var(--bg0);color:var(--tx);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0A1422,#0F1C32);border-bottom:1px solid var(--bdr);
+  padding:14px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;}
+.hdr-logo{font-size:28px;}
+.hdr-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--r);letter-spacing:2px;}
+.hdr-sub{font-size:10px;color:var(--txm);letter-spacing:1px;}
+.status-pill{margin-left:auto;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:700;
+  letter-spacing:1px;border:1px solid;}
+
+/* NAV */
+.nav{display:flex;border-bottom:1px solid var(--bdr);padding:0 20px;overflow-x:auto;background:var(--bg1);}
+.nav-btn{padding:12px 18px;border:none;background:none;color:var(--txd);font-size:12px;
+  font-weight:600;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:all .2s;}
+.nav-btn.act{color:var(--r);border-bottom-color:var(--r);}
+
+/* MAIN */
+.main{max-width:680px;margin:0 auto;padding:24px 16px;}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:14px;}
+.card-t{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--y);letter-spacing:1px;margin-bottom:14px;}
+
+/* SOS PANTALLA */
+.sos-screen{border-radius:16px;overflow:hidden;margin-bottom:16px;position:relative;}
+.sos-phase{padding:32px 24px;text-align:center;transition:all .5s;}
+.sos-phase.verde{background:linear-gradient(135deg,#00391a,#004d22);border:2px solid var(--g);}
+.sos-phase.amarillo{background:linear-gradient(135deg,#3d2800,#4d3300);border:2px solid var(--o);}
+.sos-phase.rojo{background:linear-gradient(135deg,#3d0010,#4d0014);border:2px solid var(--r);}
+.sos-ico{font-size:54px;margin-bottom:12px;display:block;}
+.sos-title{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;letter-spacing:2px;margin-bottom:8px;}
+.sos-desc{font-size:13px;color:var(--txd);line-height:1.6;margin-bottom:16px;}
+.folio-box{background:rgba(0,0,0,.4);border-radius:10px;padding:12px 20px;display:inline-block;
+  font-family:monospace;font-size:22px;font-weight:700;letter-spacing:4px;}
+
+/* SEMAFORO */
+.semaforo{display:flex;gap:12px;justify-content:center;margin-bottom:20px;}
+.sem-btn{flex:1;padding:16px 8px;border-radius:10px;border:2px solid;cursor:pointer;
+  text-align:center;transition:all .2s;background:transparent;}
+.sem-btn:hover{transform:scale(1.04);}
+.sem-btn.verde{border-color:var(--g);color:var(--g);}
+.sem-btn.verde.act{background:rgba(0,230,118,.15);}
+.sem-btn.amarillo{border-color:var(--o);color:var(--o);}
+.sem-btn.amarillo.act{background:rgba(255,140,0,.15);}
+.sem-btn.rojo{border-color:var(--r);color:var(--r);}
+.sem-btn.rojo.act{background:rgba(255,61,90,.15);}
+.sem-ico{font-size:28px;display:block;margin-bottom:6px;}
+.sem-lbl{font-size:10px;font-weight:700;letter-spacing:1px;}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:8px;}
+.tl-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;
+  background:var(--bg3);border-radius:8px;border-left:3px solid;}
+.tl-item.done{border-left-color:var(--g);}
+.tl-item.active{border-left-color:var(--y);background:rgba(245,166,35,.06);}
+.tl-item.pending{border-left-color:var(--bdr);opacity:.5;}
+.tl-ico{font-size:20px;flex-shrink:0;margin-top:2px;}
+.tl-t{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.tl-d{font-size:11px;color:var(--txd);}
+.tl-time{font-size:10px;color:var(--g);font-family:monospace;margin-top:3px;}
+
+/* BEACON */
+.beacon-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 16px;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:40px;}
+.beacon-ring::before,.beacon-ring::after{content:'';position:absolute;border-radius:50%;
+  border:2px solid;animation:beacon 1.5s ease-out infinite;}
+.beacon-ring::before{width:100%;height:100%;animation-delay:0s;}
+.beacon-ring::after{width:140%;height:140%;left:-20%;top:-20%;animation-delay:.5s;}
+@keyframes beacon{0%{opacity:.8;transform:scale(.9)}100%{opacity:0;transform:scale(1.3)}}
+.beacon-ring.verde{border:2px solid var(--g);background:rgba(0,230,118,.1);}
+.beacon-ring.verde::before,.beacon-ring.verde::after{border-color:var(--g);}
+.beacon-ring.rojo{border:2px solid var(--r);background:rgba(255,61,90,.1);}
+.beacon-ring.rojo::before,.beacon-ring.rojo::after{border-color:var(--r);}
+
+/* GRUA NETWORK */
+.grua-card{display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--bg3);
+  border-radius:10px;border:1px solid var(--bdr);margin-bottom:10px;}
+.grua-ico{font-size:28px;flex-shrink:0;}
+.grua-name{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:3px;}
+.grua-info{font-size:11px;color:var(--txd);line-height:1.6;}
+.grua-dist{font-size:11px;color:var(--g);margin-top:4px;font-family:monospace;}
+.grua-call{padding:7px 14px;background:linear-gradient(135deg,var(--g),#00b856);
+  border:none;border-radius:7px;color:#000;font-size:11px;font-weight:700;cursor:pointer;margin-top:6px;}
+
+/* BUTTONS */
+.btn-sos{width:100%;padding:18px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;border:none;border-radius:10px;cursor:pointer;transition:all .2s;}
+.btn-sos.rojo{background:linear-gradient(135deg,#c0001a,var(--r));color:#fff;
+  box-shadow:0 4px 24px rgba(255,61,90,.4);}
+.btn-sos.verde{background:linear-gradient(135deg,#00691a,var(--g));color:#000;}
+.btn-s{background:var(--bg3);color:var(--tx);border:1px solid var(--bdr);border-radius:8px;
+  padding:10px 18px;font-size:13px;cursor:pointer;}
+
+/* STATS */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.stat-box{background:var(--bg3);border-radius:9px;padding:14px 10px;text-align:center;
+  border:1px solid var(--bdr);}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--y);}
+.stat-lbl{font-size:10px;color:var(--txm);margin-top:3px;letter-spacing:.5px;}
+
+/* DATESEG INFO */
+.info-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(30,48,88,.4);}
+.info-ico{font-size:18px;flex-shrink:0;}
+.info-lbl{font-size:10px;color:var(--txm);font-weight:700;letter-spacing:1px;margin-bottom:2px;}
+.info-val{font-size:13px;color:var(--tx);}
+.info-val a{color:var(--c);text-decoration:none;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .3s ease;}
+@media(max-width:600px){.stat-grid{grid-template-columns:1fr 1fr;}.semaforo{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">🛡️</div>
+  <div>
+    <div class="hdr-title">OILMASTER V2</div>
+    <div class="hdr-sub">DATESEG MX · SEGURIDAD VIAL FAMILIAR</div>
+  </div>
+  <div class="status-pill" id="status-pill" style="color:var(--g);border-color:var(--g);background:rgba(0,230,118,.08)">
+    ● ACTIVO
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn act" id="n0" onclick="pg(0)">🆘 SOS</button>
+  <button class="nav-btn" id="n1" onclick="pg(1)">📡 Beacon</button>
+  <button class="nav-btn" id="n2" onclick="pg(2)">🚛 Grúas</button>
+  <button class="nav-btn" id="n3" onclick="pg(3)">📋 Historial</button>
+  <button class="nav-btn" id="n4" onclick="pg(4)">ℹ️ DATESEG</button>
+</div>
+
+<div class="main">
+
+<!-- ═══ SOS ═══ -->
+<div id="pg0" class="fade">
+  <div class="card">
+    <div class="card-t">🚨 MÓDULO DE EMERGENCIA VIAL</div>
+    <!-- SEMÁFORO DE DECISIÓN -->
+    <div style="font-size:11px;color:var(--txm);text-align:center;margin-bottom:12px;letter-spacing:1px;">SELECCIONA TU SITUACIÓN</div>
+    <div class="semaforo">
+      <div class="sem-btn verde" id="sem-v" onclick="setFase('verde')">
+        <span class="sem-ico">🟢</span>
+        <span class="sem-lbl">CIRCULA<br>Sin peligro</span>
+      </div>
+      <div class="sem-btn amarillo" id="sem-a" onclick="setFase('amarillo')">
+        <span class="sem-ico">🟡</span>
+        <span class="sem-lbl">DESPACIO<br>Al taller</span>
+      </div>
+      <div class="sem-btn rojo" id="sem-r" onclick="setFase('rojo')">
+        <span class="sem-ico">🔴</span>
+        <span class="sem-lbl">NO MOVER<br>Pedir grúa</span>
+      </div>
+    </div>
+
+    <!-- PANTALLA SOS -->
+    <div class="sos-screen">
+      <div class="sos-phase verde" id="sos-content">
+        <span class="sos-ico">✅</span>
+        <div class="sos-title" style="color:var(--g)">VEHÍCULO OK</div>
+        <div class="sos-desc">El vehículo puede circular normalmente.<br>Monitorea los indicadores del tablero.</div>
+      </div>
+    </div>
+
+    <!-- BOTÓN SOS -->
+    <button class="btn-sos rojo" id="btn-sos" onclick="activarSOS()" style="display:none">
+      🆘 ACTIVAR SOS — LLAMAR GRÚA
+    </button>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="card" id="card-timeline" style="display:none">
+    <div class="card-t">⏱️ LÍNEA DE TIEMPO</div>
+    <div class="timeline" id="timeline-body"></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="card">
+    <div class="card-t">📊 ESTADÍSTICAS</div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-val" id="s-sos">0</div><div class="stat-lbl">SOS ACTIVADOS</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-grua">0</div><div class="stat-lbl">GRÚAS LLAMADAS</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-ok">12</div><div class="stat-lbl">VIAJES SEGUROS</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BEACON ═══ -->
+<div id="pg1" style="display:none" class="fade">
+  <div class="card" style="text-align:center">
+    <div class="card-t" style="justify-content:center">📡 MODO BEACON / ESTROBO</div>
+    <div class="beacon-ring verde" id="beacon-ring">🛡️</div>
+    <div id="beacon-status" style="font-size:13px;color:var(--g);margin-bottom:16px;font-weight:700;">● BEACON ACTIVO — VISIBLE A 500m</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-s" onclick="beaconMode('verde')">🟢 Normal</button>
+      <button class="btn-s" onclick="beaconMode('rojo')">🔴 Emergencia</button>
+      <button class="btn-s" onclick="beaconMode('off')">⬛ Apagar</button>
+    </div>
+    <div style="margin-top:16px;font-size:11px;color:var(--txm);line-height:1.6">
+      El modo beacon mantiene la pantalla encendida con pulsos de luz<br>
+      para alertar a otros conductores de tu posición en carretera.
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-t">💡 ¿Cuándo usar el beacon?</div>
+    <div style="font-size:12px;color:var(--txd);line-height:1.9">
+      🔴 <strong>Emergencia:</strong> Vehículo detenido en carretera — pone el cel de frente en el tablero<br>
+      🟡 <strong>Precaución:</strong> Llanta ponchada, motor recalentado, zona de peligro<br>
+      🟢 <strong>Normal:</strong> Señalización general, convoy familiar<br>
+      <br>
+      <strong>Tip:</strong> Combina el beacon con los triángulos de seguridad. Coloca el celular visible desde atrás.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ GRÚAS ═══ -->
+<div id="pg2" style="display:none" class="fade">
+  <div class="card">
+    <div class="card-t">🚛 RED DE GRÚAS — CORREDOR ALPUYECA-CUERNAVACA-ACAPULCO</div>
+    <div class="grua-card">
+      <div class="grua-ico">🚛</div>
+      <div>
+        <div class="grua-name">Grúas Morelos Express</div>
+        <div class="grua-info">📍 Alpuyeca, Xochitepec · Cobertura: Autopista del Sol KM 0-80<br>⏱️ Tiempo respuesta: 15-25 min · Membresía activa</div>
+        <div class="grua-dist">● A 3.2 km de tu ubicación</div>
+        <button class="grua-call" onclick="llamarGrua('Grúas Morelos Express')">📞 LLAMAR AHORA</button>
+      </div>
+    </div>
+    <div class="grua-card">
+      <div class="grua-ico">🚛</div>
+      <div>
+        <div class="grua-name">Asistencia Vial Cuernavaca</div>
+        <div class="grua-info">📍 Cuernavaca centro · Cobertura: KM 80-140<br>⏱️ Tiempo respuesta: 20-35 min · 24/7</div>
+        <div class="grua-dist">● A 8.7 km de tu ubicación</div>
+        <button class="grua-call" onclick="llamarGrua('Asistencia Vial Cuernavaca')">📞 LLAMAR AHORA</button>
+      </div>
+    </div>
+    <div class="grua-card">
+      <div class="grua-ico">🚛</div>
+      <div>
+        <div class="grua-name">Grúas Autopista del Sol</div>
+        <div class="grua-info">📍 Caseta Alpuyeca · Cobertura: KM 140-262 (Acapulco)<br>⏱️ Tiempo respuesta: 25-40 min · Especializada carretera</div>
+        <div class="grua-dist">● A 12.1 km de tu ubicación</div>
+        <button class="grua-call" onclick="llamarGrua('Grúas Autopista del Sol')">📞 LLAMAR AHORA</button>
+      </div>
+    </div>
+    <div style="margin-top:8px;padding:12px;background:var(--bg3);border-radius:8px;
+      border:1px solid rgba(245,166,35,.2);font-size:11px;color:var(--txd)">
+      💡 <strong style="color:var(--y)">Membresía de grúa:</strong> Las grúas de la red DATESEG pagan $500-1,500 MXN/mes
+      por aparecer en OilMaster y recibir alertas GPS de usuarios en su zona.
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HISTORIAL ═══ -->
+<div id="pg3" style="display:none" class="fade">
+  <div class="card">
+    <div class="card-t">📋 HISTORIAL DE EMERGENCIAS</div>
+    <div id="hist-body">
+      <div style="text-align:center;padding:40px;color:var(--txm)">
+        <div style="font-size:36px;margin-bottom:10px">📭</div>
+        <div>Sin emergencias registradas. ¡Buen viaje!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DATESEG INFO ═══ -->
+<div id="pg4" style="display:none" class="fade">
+  <div class="card">
+    <div class="card-t">⬡ DATESEG MX</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--txd);
+      letter-spacing:1px;margin-bottom:16px">SISTEMA DE TECNOLOGÍAS AUTOMOTRICES</div>
+    <div class="info-row"><div class="info-ico">🏢</div><div>
+      <div class="info-lbl">EMPRESA</div>
+      <div class="info-val">DATESEG MX — Sistema de Tecnologías Automotrices</div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">🎯</div><div>
+      <div class="info-lbl">MISIÓN</div>
+      <div class="info-val">Tecnología automotriz accesible para el taller mexicano independiente y seguridad vial familiar.</div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">📦</div><div>
+      <div class="info-lbl">PRODUCTOS</div>
+      <div class="info-val">ProPart System V7 (diagnóstico profesional) · OilMaster (seguridad vial)</div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">🌐</div><div>
+      <div class="info-lbl">DOMINIO OBJETIVO</div>
+      <div class="info-val"><a href="https://dateseg.mx">dateseg.mx</a></div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">📍</div><div>
+      <div class="info-lbl">UBICACIÓN</div>
+      <div class="info-val">Alpuyeca, Xochitepec, Morelos · C.P. 62790</div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">👤</div><div>
+      <div class="info-lbl">DIRECTOR / FUNDADOR</div>
+      <div class="info-val">Fernando Millán Melchor</div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">📱</div><div>
+      <div class="info-lbl">TELÉFONOS</div>
+      <div class="info-val"><a href="tel:7776838196">777-683-8196</a> · <a href="tel:2219567392">221-956-7392</a></div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">📧</div><div>
+      <div class="info-lbl">CORREO</div>
+      <div class="info-val"><a href="mailto:FM095329@gmail.com">FM095329@gmail.com</a></div>
+    </div></div>
+    <div class="info-row"><div class="info-ico">🔧</div><div>
+      <div class="info-lbl">NEGOCIO</div>
+      <div class="info-val">Refaccionaria de Partes Eléctricas Millán</div>
+    </div></div>
+    <div class="info-row" style="border:none"><div class="info-ico">🌐</div><div>
+      <div class="info-lbl">GITHUB PAGES</div>
+      <div class="info-val"><a href="https://84-fmill-mel30.github.io/Academy-propart/">84-fmill-mel30.github.io/Academy-propart</a></div>
+    </div></div>
+  </div>
+
+  <!-- MODELO DE NEGOCIO -->
+  <div class="card">
+    <div class="card-t">💰 MODELO DE NEGOCIO OILMASTER</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid rgba(0,230,118,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--g);margin-bottom:6px">🚛 Membresías Grúas</div>
+        <div style="font-size:11px;color:var(--txd)">$500–$1,500 MXN/mes por aparecer en red OilMaster y recibir alertas GPS</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid rgba(0,212,255,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--c);margin-bottom:6px">💸 Comisiones</div>
+        <div style="font-size:11px;color:var(--txd)">5–10% por cada servicio coordinado a través de la plataforma</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid rgba(245,166,35,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--y);margin-bottom:6px">🔧 Directorio Talleres</div>
+        <div style="font-size:11px;color:var(--txd)">$300–$800 MXN/mes para talleres afiliados con referidos de la app</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid rgba(156,89,247,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--pu);margin-bottom:6px">🏪 Refaccionaria</div>
+        <div style="font-size:11px;color:var(--txd)">Integración con Refaccionaria Millán: IA identifica pieza → pedido directo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+var fase = 'verde';
+var sosActivo = false;
+var sosCount = 0, gruaCount = 0;
+var historial = [];
+var beaconInterval = null;
+var tiempoSOS = 0;
+var sosInterval = null;
+
+function pg(n) {
+  for(var i=0;i<5;i++){
+    document.getElementById('pg'+i).style.display = i===n?'block':'none';
+    document.getElementById('n'+i).classList.toggle('act', i===n);
+  }
+}
+
+function setFase(f) {
+  fase = f;
+  ['verde','amarillo','rojo'].forEach(function(c){
+    document.getElementById('sem-'+c[0]).classList.toggle('act', c===f);
+  });
+  var content = document.getElementById('sos-content');
+  var btnSOS = document.getElementById('btn-sos');
+  content.className = 'sos-phase ' + f;
+  if(f==='verde'){
+    content.innerHTML = '<span class="sos-ico">✅</span><div class="sos-title" style="color:var(--g)">VEHÍCULO OK</div><div class="sos-desc">El vehículo puede circular normalmente.<br>Monitorea los indicadores del tablero.</div>';
+    btnSOS.style.display='none';
+  } else if(f==='amarillo'){
+    content.innerHTML = '<span class="sos-ico">⚠️</span><div class="sos-title" style="color:var(--o)">PRECAUCIÓN</div><div class="sos-desc">Conduce despacio al taller más cercano.<br>Evita autopistas. Monitorea temperatura.</div>';
+    btnSOS.style.display='none';
+  } else {
+    content.innerHTML = '<span class="sos-ico">🆘</span><div class="sos-title" style="color:var(--r)">EMERGENCIA</div><div class="sos-desc">No muevas el vehículo. Activa SOS para llamar grúa automáticamente.</div>';
+    btnSOS.style.display='block';
+  }
+}
+
+function activarSOS() {
+  if(sosActivo) return;
+  sosActivo = true; sosCount++;
+  document.getElementById('s-sos').textContent = sosCount;
+  var folio = 'SOS-' + new Date().getFullYear() + '-' + String(sosCount).padStart(4,'0');
+  var content = document.getElementById('sos-content');
+  content.className = 'sos-phase rojo';
+  content.innerHTML = '<span class="sos-ico">🆘</span><div class="sos-title" style="color:var(--r)">SOS ACTIVADO</div>' +
+    '<div class="sos-desc">Folio de emergencia generado.<br>Grúa más cercana notificada por GPS.</div>' +
+    '<div class="folio-box" style="color:var(--r)">' + folio + '</div>';
+  document.getElementById('btn-sos').style.display='none';
+  document.getElementById('card-timeline').style.display='block';
+
+  // Timeline
+  var items = [
+    {ico:'🆘',t:'SOS Activado',d:'Folio '+folio+' generado',time:'00:00',state:'done'},
+    {ico:'📡',t:'Señal GPS enviada',d:'Ubicación transmitida a red de grúas',time:'00:03',state:'done'},
+    {ico:'🚛',t:'Grúa notificada',d:'Grúas Morelos Express — 3.2 km',time:'00:08',state:'active'},
+    {ico:'📞',t:'Confirmación de grúa',d:'Tiempo estimado: 20 minutos',time:'—',state:'pending'},
+    {ico:'✅',t:'Grúa en camino',d:'Seguimiento en tiempo real',time:'—',state:'pending'}
+  ];
+  var html = '';
+  items.forEach(function(it){
+    html += '<div class="tl-item '+it.state+'"><div class="tl-ico">'+it.ico+'</div><div>' +
+      '<div class="tl-t">'+it.t+'</div><div class="tl-d">'+it.d+'</div>' +
+      '<div class="tl-time">'+it.time+'</div></div></div>';
+  });
+  document.getElementById('timeline-body').innerHTML = html;
+
+  // Historial
+  historial.unshift({folio:folio,fecha:new Date().toLocaleString(),fase:'ROJO',grua:'Grúas Morelos Express'});
+  renderHist();
+
+  // Vibración si disponible
+  if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+}
+
+function renderHist() {
+  if(historial.length===0) return;
+  var html = '';
+  historial.forEach(function(h){
+    html += '<div style="background:var(--bg3);border-radius:9px;padding:12px;margin-bottom:8px;border:1px solid rgba(255,61,90,.2)">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px">' +
+      '<span style="font-family:monospace;font-size:13px;color:var(--r);font-weight:700">'+h.folio+'</span>' +
+      '<span style="font-size:10px;color:var(--txm)">'+h.fecha+'</span></div>' +
+      '<div style="font-size:11px;color:var(--txd)">🚛 '+h.grua+'</div></div>';
+  });
+  document.getElementById('hist-body').innerHTML = html;
+}
+
+function llamarGrua(nombre) {
+  gruaCount++;
+  document.getElementById('s-grua').textContent = gruaCount;
+  alert('📞 Conectando con ' + nombre + '...\nEn una app real aquí se abriría el marcador de teléfono.');
+}
+
+function beaconMode(mode) {
+  var ring = document.getElementById('beacon-ring');
+  var st = document.getElementById('beacon-status');
+  if(beaconInterval) clearInterval(beaconInterval);
+  if(mode==='off'){
+    ring.className = 'beacon-ring';
+    ring.innerHTML = '⬛';
+    st.textContent = '● BEACON APAGADO';
+    st.style.color = 'var(--txm)';
+    return;
+  }
+  ring.className = 'beacon-ring ' + mode;
+  if(mode==='verde'){
+    ring.innerHTML = '🛡️';
+    st.textContent = '● BEACON ACTIVO — VISIBLE A 500m';
+    st.style.color = 'var(--g)';
+  } else {
+    ring.innerHTML = '🆘';
+    st.textContent = '🔴 EMERGENCIA — BEACON SOS ACTIVO';
+    st.style.color = 'var(--r)';
+    if(navigator.vibrate) beaconInterval = setInterval(function(){navigator.vibrate(100);},1500);
+  }
+}
+</script>
+</body>
+</html>

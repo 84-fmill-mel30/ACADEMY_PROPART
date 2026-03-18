@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0A0005"/>
+      <stop offset="100%" stop-color="#1A0010"/>
+    </linearGradient>
+    <radialGradient id="sos-glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#FF3D5A" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FF3D5A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="red-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B80"/>
+      <stop offset="100%" stop-color="#CC0020"/>
+    </linearGradient>
+    <linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A0510"/>
+      <stop offset="100%" stop-color="#300015"/>
+    </linearGradient>
+    <filter id="red-glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="soft-glow">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- FONDO -->
+  <rect width="512" height="512" rx="96" fill="url(#bg2)"/>
+
+  <!-- GLOW RADIAL SOS -->
+  <rect width="512" height="512" rx="96" fill="url(#sos-glow)"/>
+
+  <!-- CÍRCULOS BEACON (ondas de emergencia) -->
+  <circle cx="256" cy="230" r="195" fill="none" stroke="#FF3D5A" stroke-width="1.5" opacity="0.15"/>
+  <circle cx="256" cy="230" r="165" fill="none" stroke="#FF3D5A" stroke-width="2" opacity="0.2"/>
+  <circle cx="256" cy="230" r="135" fill="none" stroke="#FF3D5A" stroke-width="2.5" opacity="0.3"/>
+
+  <!-- ESCUDO -->
+  <path d="M 256 80 L 360 125 L 360 245 Q 360 320 256 370 Q 152 320 152 245 L 152 125 Z"
+    fill="url(#shield-grad)" stroke="url(#red-grad)" stroke-width="4"/>
+
+  <!-- BRILLO INTERIOR ESCUDO -->
+  <path d="M 256 105 L 335 140 L 335 245 Q 335 305 256 348 Q 177 305 177 245 L 177 140 Z"
+    fill="none" stroke="#FF3D5A" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- SOS TEXTO EN ESCUDO -->
+  <text x="256" y="235" text-anchor="middle"
+    font-family="'Arial Black',sans-serif"
+    font-size="72" font-weight="900" letter-spacing="4"
+    fill="url(#red-grad)" filter="url(#soft-glow)">SOS</text>
+
+  <!-- ESTRELLA / SÍMBOLO EMERGENCIA BAJO SOS -->
+  <text x="256" y="290" text-anchor="middle" font-size="36">🆘</text>
+
+  <!-- TEXTO OILMASTER -->
+  <text x="256" y="400" text-anchor="middle"
+    font-family="'Arial Black',sans-serif"
+    font-size="42" font-weight="900" letter-spacing="4"
+    fill="#FF3D5A" filter="url(#soft-glow)">OILMASTER</text>
+  <text x="256" y="430" text-anchor="middle"
+    font-family="'Courier New',monospace"
+    font-size="14" letter-spacing="5"
+    fill="#FF8C9A" opacity="0.85">SEGURIDAD VIAL · V2</text>
+
+  <!-- DATESEG PEQUEÑO -->
+  <text x="256" y="460" text-anchor="middle"
+    font-family="'Courier New',monospace"
+    font-size="11" letter-spacing="3"
+    fill="#FF3D5A" opacity="0.5">DATESEG MX</text>
+
+  <!-- PUNTOS ESQUINA -->
+  <circle cx="96" cy="96" r="3" fill="#FF3D5A" opacity="0.4"/>
+  <circle cx="416" cy="96" r="3" fill="#FF3D5A" opacity="0.4"/>
+  <circle cx="96" cy="416" r="3" fill="#FF3D5A" opacity="0.4"/>
+  <circle cx="416" cy="416" r="3" fill="#FF3D5A" opacity="0.4"/>
+</svg>

@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050A13"/>
+      <stop offset="100%" stop-color="#0F1C32"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A623"/>
+      <stop offset="100%" stop-color="#C47008"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D4FF"/>
+      <stop offset="100%" stop-color="#0088BB"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#00994D"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="round"><rect width="512" height="512" rx="96"/></clipPath>
+  </defs>
+
+  <!-- FONDO -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <!-- GRID SUTIL -->
+  <g opacity="0.06" stroke="#F5A623" stroke-width="1">
+    <line x1="0" y1="128" x2="512" y2="128"/>
+    <line x1="0" y1="256" x2="512" y2="256"/>
+    <line x1="0" y1="384" x2="512" y2="384"/>
+    <line x1="128" y1="0" x2="128" y2="512"/>
+    <line x1="256" y1="0" x2="256" y2="512"/>
+    <line x1="384" y1="0" x2="384" y2="512"/>
+  </g>
+
+  <!-- CÍRCULO EXTERIOR (scanner) -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#F5A623" stroke-width="3" opacity="0.25"/>
+  <circle cx="256" cy="256" r="185" fill="none" stroke="#F5A623" stroke-width="1.5" opacity="0.15"/>
+
+  <!-- ARCO SUPERIOR (scanner animación visual) -->
+  <path d="M 90 256 A 166 166 0 0 1 422 256" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- CONECTOR OBD2 (forma central) -->
+  <rect x="160" y="215" width="192" height="82" rx="12" fill="#0A1422" stroke="url(#gold)" stroke-width="3"/>
+  <!-- Pines del conector -->
+  <g fill="#F5A623" opacity="0.9">
+    <rect x="175" y="228" width="8" height="14" rx="2"/>
+    <rect x="195" y="228" width="8" height="14" rx="2"/>
+    <rect x="215" y="228" width="8" height="14" rx="2"/>
+    <rect x="235" y="228" width="8" height="14" rx="2"/>
+    <rect x="255" y="228" width="8" height="14" rx="2"/>
+    <rect x="275" y="228" width="8" height="14" rx="2"/>
+    <rect x="295" y="228" width="8" height="14" rx="2"/>
+    <rect x="315" y="228" width="8" height="14" rx="2"/>
+  </g>
+  <g fill="#00D4FF" opacity="0.8">
+    <rect x="185" y="254" width="8" height="14" rx="2"/>
+    <rect x="205" y="254" width="8" height="14" rx="2"/>
+    <rect x="225" y="254" width="8" height="14" rx="2"/>
+    <rect x="245" y="254" width="8" height="14" rx="2"/>
+    <rect x="265" y="254" width="8" height="14" rx="2"/>
+    <rect x="285" y="254" width="8" height="14" rx="2"/>
+    <rect x="305" y="254" width="8" height="14" rx="2"/>
+  </g>
+  <!-- OBD2 label -->
+  <text x="256" y="315" text-anchor="middle" font-family="'Courier New',monospace" font-size="13" fill="#F5A623" font-weight="bold" opacity="0.9">OBD-II</text>
+
+  <!-- SEÑAL BLE (ondas izquierda) -->
+  <g fill="none" stroke="url(#cyan)" stroke-linecap="round" opacity="0.85">
+    <path d="M 118 220 Q 90 256 118 292" stroke-width="4"/>
+    <path d="M 95 200 Q 55 256 95 312" stroke-width="3" opacity="0.6"/>
+  </g>
+
+  <!-- SEÑAL BLE (ondas derecha) -->
+  <g fill="none" stroke="url(#cyan)" stroke-linecap="round" opacity="0.85">
+    <path d="M 394 220 Q 422 256 394 292" stroke-width="4"/>
+    <path d="M 417 200 Q 457 256 417 312" stroke-width="3" opacity="0.6"/>
+  </g>
+
+  <!-- PUNTO BLE central (indicador activo) -->
+  <circle cx="256" cy="180" r="10" fill="url(#cyan)" filter="url(#glow2)"/>
+  <circle cx="256" cy="180" r="5" fill="#fff"/>
+
+  <!-- TEXTO PROPART -->
+  <text x="256" y="370" text-anchor="middle"
+    font-family="'Arial Black','Rajdhani',sans-serif"
+    font-size="48" font-weight="900" letter-spacing="6"
+    fill="url(#gold)">PROPART</text>
+  <text x="256" y="400" text-anchor="middle"
+    font-family="'Courier New',monospace"
+    font-size="16" letter-spacing="8"
+    fill="#00D4FF" opacity="0.9">SYSTEM V7</text>
+
+  <!-- PUNTOS DECORATIVOS (esquinas) -->
+  <circle cx="96" cy="96" r="4" fill="#F5A623" opacity="0.4"/>
+  <circle cx="416" cy="96" r="4" fill="#F5A623" opacity="0.4"/>
+  <circle cx="96" cy="416" r="4" fill="#F5A623" opacity="0.4"/>
+  <circle cx="416" cy="416" r="4" fill="#F5A623" opacity="0.4"/>
+
+  <!-- LÍNEA INFERIOR (acento) -->
+  <line x1="156" y1="418" x2="356" y2="418" stroke="url(#gold)" stroke-width="2" opacity="0.5"/>
+</svg>

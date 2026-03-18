@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DATESEG MX — Análisis de Mercado y Carta de Presentación</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--g:#F5A623;--gd:#C47008;--cy:#00D4FF;--gr:#00E676;--re:#FF3D5A;--pu:#9C59F7;
+--bg0:#020609;--bg1:#050A13;--bg2:#0A1422;--bg3:#0F1C32;
+--bdr:rgba(30,48,88,.8);--tx:#D0E4F5;--txd:#7090B0;--txm:#4A6480;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Exo 2',sans-serif;background:var(--bg1);color:var(--tx);}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--bdr)}
+
+/* SIDEBAR */
+.wrap{display:flex;min-height:100vh;}
+.sb{width:240px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--bdr);position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{padding:16px;border-bottom:1px solid var(--bdr);}
+.sb-brand{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--g);letter-spacing:2px;}
+.sb-sub{font-size:9px;color:var(--txm);letter-spacing:1px;margin-top:2px;}
+.sb-sec{font-size:8px;font-weight:700;color:var(--txm);letter-spacing:2px;padding:10px 14px 4px;text-transform:uppercase;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--txd);transition:all .14s;border-left:3px solid transparent;}
+.sb-item:hover,.sb-item.act{color:var(--g);background:rgba(245,166,35,.06);border-left-color:var(--g);}
+.sb-item .ico{font-size:14px;width:18px;text-align:center;}
+.btn-print{margin:12px;width:calc(100% - 24px);padding:9px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-print:hover{filter:brightness(1.1);}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;}
+
+/* PAGES */
+.page{display:none;padding:28px 32px;}
+.page.act{display:block;}
+.pg-hdr{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--bdr);border-radius:12px;padding:24px 28px;margin-bottom:24px;}
+.pg-title{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--g);letter-spacing:2px;}
+.pg-sub{font-size:12px;color:var(--txd);margin-top:4px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:18px;margin-bottom:14px;}
+.card-t{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--g);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.sb{display:none}.page{padding:16px}}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px;}
+th{background:var(--bg3);padding:8px 10px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--g);text-transform:uppercase;border-bottom:1px solid var(--bdr);}
+td{padding:8px 10px;border-bottom:1px solid rgba(30,48,88,.4);vertical-align:top;font-size:11px;}
+tr:hover td{background:rgba(245,166,35,.03);}
+.mono{font-family:'Share Tech Mono',monospace;color:var(--cy);font-size:10px;}
+.tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:.5px;}
+.tg{background:rgba(0,230,118,.1);color:var(--gr);border:1px solid rgba(0,230,118,.25);}
+.tr{background:rgba(255,61,90,.1);color:var(--re);border:1px solid rgba(255,61,90,.25);}
+.to{background:rgba(255,140,0,.1);color:#FF8C00;border:1px solid rgba(255,140,0,.25);}
+.tc{background:rgba(0,212,255,.1);color:var(--cy);border:1px solid rgba(0,212,255,.25);}
+
+/* COMPETITOR CARD */
+.comp-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
+.comp-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.comp-price{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--g);margin-bottom:8px;}
+.comp-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.1);margin:4px 0 8px;}
+.comp-fill{height:100%;border-radius:2px;}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.pros,.cons{padding:8px;border-radius:6px;}
+.pros{background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.15);}
+.cons{background:rgba(255,61,90,.05);border:1px solid rgba(255,61,90,.15);}
+.pros-title{font-size:9px;font-weight:700;color:var(--gr);letter-spacing:1px;margin-bottom:4px;}
+.cons-title{font-size:9px;font-weight:700;color:var(--re);letter-spacing:1px;margin-bottom:4px;}
+.pros li,.cons li{font-size:10px;color:var(--txd);padding:1px 0;}
+
+/* OPORTUNIDAD */
+.opp-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--g);margin-bottom:8px;}
+.opp-ico{font-size:22px;flex-shrink:0;}
+.opp-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;}
+.opp-desc{font-size:11px;color:var(--txd);line-height:1.55;}
+.opp-tag{font-size:9px;padding:2px 8px;border-radius:10px;background:rgba(245,166,35,.1);color:var(--g);border:1px solid rgba(245,166,35,.25);margin-top:5px;display:inline-block;font-weight:700;}
+
+/* STAT */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center;}
+.stat-num{font-family:'Share Tech Mono',monospace;font-size:22px;font-weight:700;color:var(--g);line-height:1;}
+.stat-lbl{font-size:9px;color:var(--txm);letter-spacing:1px;margin-top:4px;}
+
+/* CALLOUT */
+.callout{display:flex;gap:10px;padding:12px 14px;border-radius:8px;margin-bottom:12px;}
+.callout.warn{background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.25);}
+.callout.info{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);}
+.callout.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);}
+.callout.gold{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);}
+.callout-ico{font-size:18px;flex-shrink:0;}
+.callout-body{font-size:11px;line-height:1.65;color:var(--txd);}
+.callout-body strong{color:var(--tx);}
+
+/* CARTA */
+.carta{background:#fff;color:#111;border-radius:10px;padding:40px;max-width:720px;margin:0 auto;font-family:'Exo 2',Georgia,serif;line-height:1.7;}
+.carta-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #F5A623;}
+.carta-logo{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#C47008;letter-spacing:2px;}
+.carta-tagline{font-size:9px;color:#888;letter-spacing:1px;margin-top:2px;}
+.carta-fecha{font-size:11px;color:#666;text-align:right;}
+.carta-dest{margin-bottom:20px;}
+.carta-dest p{font-size:12px;color:#444;margin:1px 0;}
+.carta h2{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#C47008;letter-spacing:1px;margin:20px 0 10px;}
+.carta p{font-size:12px;color:#333;margin-bottom:10px;text-align:justify;}
+.carta .firma{margin-top:30px;padding-top:20px;border-top:1px solid #ddd;}
+.carta .firma-nombre{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#C47008;letter-spacing:1px;}
+.carta .firma-cargo{font-size:11px;color:#666;margin-top:2px;}
+.carta .firma-contacto{font-size:10px;color:#888;margin-top:6px;line-height:1.6;}
+.carta table{margin:12px 0;}
+.carta table th{background:#F5A623;color:#000;font-size:10px;}
+.carta table td{font-size:11px;color:#333;border-bottom:1px solid #eee;}
+.carta table tr:hover td{background:#fffbf0;}
+
+p{color:var(--txd);font-size:12px;line-height:1.65;margin-bottom:10px;}
+strong{color:var(--tx);}
+ul,ol{padding-left:18px;margin-bottom:10px;}
+li{font-size:11px;color:var(--txd);padding:2px 0;line-height:1.6;}
+h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--tx);margin-bottom:8px;margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-logo">
+    <div class="sb-brand">DATESEG MX</div>
+    <div class="sb-sub">ANÁLISIS DE MERCADO 2025</div>
+  </div>
+  <div class="sb-sec">DOCUMENTO</div>
+  <div class="sb-item act" onclick="go(0)" id="nav0"><span class="ico">📊</span>Mercado Global</div>
+  <div class="sb-item" onclick="go(1)" id="nav1"><span class="ico">🏆</span>Competidores</div>
+  <div class="sb-item" onclick="go(2)" id="nav2"><span class="ico">🎯</span>Oportunidades</div>
+  <div class="sb-item" onclick="go(3)" id="nav3"><span class="ico">🗺️</span>Estrategia Cambaceo</div>
+  <div class="sb-item" onclick="go(4)" id="nav4"><span class="ico">✉️</span>Carta Presentación ES</div>
+  <div class="sb-item" onclick="go(5)" id="nav5"><span class="ico">✉️</span>Presentation Letter EN</div>
+  <button class="btn-print" onclick="window.print()">🖨 Imprimir / PDF</button>
+</nav>
+
+<main class="main">
+
+<!-- ══ PAGE 0: MERCADO GLOBAL ══ -->
+<div class="page act" id="pg0">
+  <div class="pg-hdr">
+    <div class="pg-title">MERCADO GLOBAL DE DIAGNÓSTICO AUTOMOTRIZ</div>
+    <div class="pg-sub">Análisis de tamaño, crecimiento y oportunidades · DATESEG MX · 2025</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-num">$52B</div>
+      <div class="stat-lbl">USD mercado global 2024</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">8.2%</div>
+      <div class="stat-lbl">Crecimiento anual (CAGR)</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">$89B</div>
+      <div class="stat-lbl">USD proyectado 2030</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">$2.1B</div>
+      <div class="stat-lbl">USD mercado México 2024</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🌍 Panorama global del mercado</div>
+    <p>El mercado mundial de herramientas de diagnóstico automotriz creció de <strong>$38.4 USD billones en 2020</strong> a <strong>$52 USD billones en 2024</strong>, impulsado principalmente por tres factores: el incremento de vehículos con sistemas electrónicos complejos, la escasez global de técnicos certificados y la adopción masiva de diagnóstico por OBD2 en vehículos post-2000.</p>
+    <p>Las regiones con mayor crecimiento son <strong>América Latina y Asia-Pacífico</strong>, donde la penetración de herramientas profesionales sigue siendo baja comparada con Europa y EE.UU. — lo que representa la mayor oportunidad para nuevos entrantes.</p>
+    <table>
+      <tr><th>Región</th><th>Mercado 2024</th><th>Crecimiento</th><th>Penetración digital</th><th>Oportunidad</th></tr>
+      <tr><td>América del Norte</td><td class="mono">$18.2B USD</td><td><span class="tag tc">6.1%</span></td><td>Alta (85%)</td><td>Mercado maduro</td></tr>
+      <tr><td>Europa</td><td class="mono">$14.8B USD</td><td><span class="tag tc">5.8%</span></td><td>Alta (80%)</td><td>Mercado maduro</td></tr>
+      <tr><td>Asia-Pacífico</td><td class="mono">$11.4B USD</td><td><span class="tag tg">11.2%</span></td><td>Media (55%)</td><td>Alta</td></tr>
+      <tr><td><strong>América Latina</strong></td><td class="mono"><strong>$4.8B USD</strong></td><td><span class="tag tg"><strong>9.8%</strong></span></td><td><strong>Baja (35%)</strong></td><td><strong>MUY ALTA ✅</strong></td></tr>
+      <tr><td><strong>México específico</strong></td><td class="mono"><strong>$2.1B USD</strong></td><td><span class="tag tg"><strong>10.4%</strong></span></td><td><strong>Baja (30%)</strong></td><td><strong>MÁXIMA 🎯</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🇲🇽 México — El mercado que más importa para DATESEG</div>
+    <div class="grid2">
+      <div>
+        <h3>El parque vehicular</h3>
+        <ul>
+          <li><strong>+50 millones</strong> de vehículos registrados en México (2024)</li>
+          <li><strong>70% tienen más de 10 años</strong> — necesitan diagnóstico frecuente</li>
+          <li><strong>85% son marcas asiáticas y americanas</strong> — Nissan, Chevrolet, Ford, VW</li>
+          <li>Crecimiento del parque: <strong>+2.3 millones de autos por año</strong></li>
+        </ul>
+        <h3 style="margin-top:14px">Los talleres</h3>
+        <ul>
+          <li><strong>+180,000 talleres mecánicos</strong> en México (AMDA 2024)</li>
+          <li><strong>92% son talleres independientes</strong> — pequeños y medianos</li>
+          <li>Solo el <strong>18%</strong> tiene escáner profesional propio</li>
+          <li>El <strong>82% restante</strong> = mercado sin atender = tu cliente</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Tendencias que impulsan el mercado</h3>
+        <ul>
+          <li>📱 Adopción masiva de smartphones en talleres</li>
+          <li>🔵 BLE/OBD2: estándar en todos los autos post-2005</li>
+          <li>🤖 IA aplicada al diagnóstico — tendencia 2024-2030</li>
+          <li>📊 Demanda de reportes digitales por parte de los clientes</li>
+          <li>🛢️ Crecimiento de motores diésel en México (+40% en flota comercial)</li>
+          <li>🔑 IMMO y programación de llaves: mercado creciendo 15% anual</li>
+        </ul>
+        <h3 style="margin-top:14px">Morelos específico</h3>
+        <ul>
+          <li><strong>+3,200 talleres</strong> en el estado</li>
+          <li>Corredor industrial Cuautla-Cuernavaca con flota comercial importante</li>
+          <li>Turismo carretero por autopista del sol = mercado OilMaster</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout gold">
+    <div class="callout-ico">💡</div>
+    <div class="callout-body"><strong>La oportunidad concreta:</strong> De los 180,000 talleres en México, solo ~32,000 tienen herramienta de diagnóstico profesional. Los 148,000 restantes usan escáneres de $800 MXN del mercado chino sin base de datos técnica, sin soporte, sin IA. <strong>Ese es exactamente el mercado de ProPart.</strong></div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;margin-top:16px">
+    <button onclick="go(1)" style="padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">Siguiente: Competidores →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 1: COMPETIDORES ══ -->
+<div class="page" id="pg1">
+  <div class="pg-hdr">
+    <div class="pg-title">ANÁLISIS DE COMPETIDORES</div>
+    <div class="pg-sub">Quiénes son, qué ofrecen, cuánto cobran y dónde flaquean</div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-ico">ℹ️</div>
+    <div class="callout-body"><strong>Postura de DATESEG:</strong> No se trata de hablar mal de nadie — se trata de entender dónde están las brechas que los líderes no están llenando, especialmente en el mercado mexicano de taller pequeño. Ahí está la oportunidad.</div>
+  </div>
+
+  <h3>Competidores directos — herramientas de diagnóstico</h3>
+  <div class="grid2">
+
+    <div class="comp-card">
+      <div class="comp-name" style="color:#FF6B00">LAUNCH Tech</div>
+      <div class="comp-price">$3,500 – $45,000 MXN por equipo</div>
+      <div style="font-size:10px;color:var(--txd);margin-bottom:8px">Marca china líder mundial · Equipo físico dedicado</div>
+      <div style="font-size:10px;color:var(--txm);margin-bottom:3px">Penetración México</div>
+      <div class="comp-bar"><div class="comp-fill" style="width:70%;background:#FF6B00"></div></div>
+      <div class="pros-cons">
+        <div class="pros"><div class="pros-title">✅ FORTALEZAS</div><ul><li>Marca reconocida</li><li>Cobertura amplia de marcas</li><li>Soporte técnico</li></ul></div>
+        <div class="cons"><div class="cons-title">❌ DEBILIDADES</div><ul><li>Costo alto para talleres pequeños</li><li>No tiene IA ni base datos técnica</li><li>Sin módulo de programación llaves</li><li>No habla español mexicano</li></ul></div>
+      </div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name" style="color:#0066CC">SNAP-ON</div>
+      <div class="comp-price">$25,000 – $120,000 MXN por equipo</div>
+      <div style="font-size:10px;color:var(--txd);margin-bottom:8px">Marca americana premium · Líder en talleres grandes</div>
+      <div style="font-size:10px;color:var(--txm);margin-bottom:3px">Penetración México</div>
+      <div class="comp-bar"><div class="comp-fill" style="width:25%;background:#0066CC"></div></div>
+      <div class="pros-cons">
+        <div class="pros"><div class="pros-title">✅ FORTALEZAS</div><ul><li>Calidad premium</li><li>Base de datos enorme</li><li>Soporte excelente</li></ul></div>
+        <div class="cons"><div class="cons-title">❌ DEBILIDADES</div><ul><li>Precio inaccesible para 90% de talleres MX</li><li>No diseñado para el taller mexicano</li><li>Sin OilMaster / seguridad vial</li><li>Requiere suscripción anual cara</li></ul></div>
+      </div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name" style="color:#CC0000">AUTEL</div>
+      <div class="comp-price">$4,000 – $35,000 MXN por equipo</div>
+      <div style="font-size:10px;color:var(--txd);margin-bottom:8px">Marca china · Fuerte en programación de llaves</div>
+      <div style="font-size:10px;color:var(--txm);margin-bottom:3px">Penetración México</div>
+      <div class="comp-bar"><div class="comp-fill" style="width:50%;background:#CC0000"></div></div>
+      <div class="pros-cons">
+        <div class="pros"><div class="pros-title">✅ FORTALEZAS</div><ul><li>Programación de llaves muy completa</li><li>Buena relación precio/calidad</li><li>Actualizaciones frecuentes</li></ul></div>
+        <div class="cons"><div class="cons-title">❌ DEBILIDADES</div><ul><li>Soporte en inglés/chino principalmente</li><li>Sin asistente IA en español</li><li>Sin colores OEM verificados</li><li>Sin módulo de seguridad vial</li></ul></div>
+      </div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-name" style="color:#555">ELM327 Genérico</div>
+      <div class="comp-price">$150 – $800 MXN por adaptador</div>
+      <div style="font-size:10px;color:var(--txd);margin-bottom:8px">Sin marca definida · Mercado masivo informal</div>
+      <div style="font-size:10px;color:var(--txm);margin-bottom:3px">Penetración México</div>
+      <div class="comp-bar"><div class="comp-fill" style="width:85%;background:#555"></div></div>
+      <div class="pros-cons">
+        <div class="pros"><div class="pros-title">✅ FORTALEZAS</div><ul><li>Precio muy bajo</li><li>Disponible en todo el país</li><li>Fácil de conseguir</li></ul></div>
+        <div class="cons"><div class="cons-title">❌ DEBILIDADES</div><ul><li>Sin base de datos técnica</li><li>Sin soporte ni garantía</li><li>Solo lee códigos básicos</li><li>Sin diagnóstico guiado</li><li>Sin colores OEM ni pinouts</li></ul></div>
+      </div>
+    </div>
+
+  </div>
+
+  <h3 style="margin-top:20px">Apps de diagnóstico — competencia digital</h3>
+  <table>
+    <tr><th>App</th><th>Precio</th><th>Mercado</th><th>IA en español</th><th>Colores OEM MX</th><th>OilMaster</th><th>Offline</th></tr>
+    <tr><td><strong>Torque Pro</strong></td><td class="mono">$50 MXN pago único</td><td>Global</td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tg">SÍ</span></td></tr>
+    <tr><td><strong>OBD Fusion</strong></td><td class="mono">$120 MXN</td><td>EE.UU./Europa</td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tg">SÍ</span></td></tr>
+    <tr><td><strong>Carista</strong></td><td class="mono">$350 MXN/mes</td><td>Global</td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td></tr>
+    <tr><td><strong>EOBD Facile</strong></td><td class="mono">$200 MXN</td><td>Europa</td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tr">NO</span></td><td><span class="tag tc">PARCIAL</span></td></tr>
+    <tr><td><strong style="color:var(--g)">ProPart System V7</strong></td><td class="mono" style="color:var(--g)">GRATIS / $599-1,199/mes</td><td style="color:var(--g)">México</td><td><span class="tag tg">SÍ ✓</span></td><td><span class="tag tg">SÍ ✓</span></td><td><span class="tag tg">SÍ ✓</span></td><td><span class="tag tg">SÍ ✓</span></td></tr>
+  </table>
+
+  <div class="callout ok">
+    <div class="callout-ico">🎯</div>
+    <div class="callout-body"><strong>Conclusión del análisis competitivo:</strong> ProPart System V7 es la única herramienta en el mercado mexicano que combina diagnóstico BLE + asistente IA en español mexicano de taller + colores OEM verificados + módulo diesel + seguridad vial (OilMaster). Ningún competidor tiene este paquete completo dirigido específicamente al taller mexicano pequeño e independiente.</div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button onclick="go(0)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">← Anterior</button>
+    <button onclick="go(2)" style="padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">Siguiente: Oportunidades →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 2: OPORTUNIDADES ══ -->
+<div class="page" id="pg2">
+  <div class="pg-hdr">
+    <div class="pg-title">OPORTUNIDADES DE MERCADO</div>
+    <div class="pg-sub">Dónde están las puertas abiertas para DATESEG MX</div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🎯 Las 6 oportunidades más grandes</div>
+
+    <div class="opp-item">
+      <div class="opp-ico">🔧</div>
+      <div>
+        <div class="opp-title">1. Los 148,000 talleres sin escáner profesional</div>
+        <div class="opp-desc">El 82% de los talleres mexicanos no tiene herramienta de diagnóstico profesional — usan el ELM327 del mercado chino con apps sin soporte. ProPart les da una solución completa en su celular que ya tienen. <strong>Costo de entrada para el taller: CERO.</strong> Solo el adaptador BLE ($300-500 MXN) y su celular.</div>
+        <div class="opp-tag">PRIORIDAD MÁXIMA — arrancar aquí</div>
+      </div>
+    </div>
+
+    <div class="opp-item" style="border-left-color:var(--cy)">
+      <div class="opp-ico">🚛</div>
+      <div>
+        <div class="opp-title">2. Flotas de transporte y reparto</div>
+        <div class="opp-desc">Empresas con 10+ vehículos necesitan diagnóstico preventivo. Un solo paro de unidad puede costarles $5,000-15,000 MXN en pérdidas. ProPart les ofrece PULSAR Predictivo que detecta fallas antes de que ocurran. <strong>Mercado que paga bien y rápido.</strong> Empresas de agua, gas, paquetería, transporte escolar, taxis.</div>
+        <div class="opp-tag">MEDIANO PLAZO — después de consolidar talleres</div>
+      </div>
+    </div>
+
+    <div class="opp-item" style="border-left-color:var(--gr)">
+      <div class="opp-ico">🚨</div>
+      <div>
+        <div class="opp-title">3. OilMaster — Corredor carretero Alpuyeca-Acapulco</div>
+        <div class="opp-desc">La autopista del sol es una de las más transitadas de México. Miles de familias y conductores pasan diariamente. Una sola alianza con 5 grúas del corredor y tienes el producto piloto de OilMaster funcionando. <strong>El negocio de las grúas es perfecto: ellos pagan por recibir alertas en su zona.</strong></div>
+        <div class="opp-tag">CORTO-MEDIANO PLAZO — 6 a 12 meses</div>
+      </div>
+    </div>
+
+    <div class="opp-item" style="border-left-color:var(--pu)">
+      <div class="opp-ico">🔑</div>
+      <div>
+        <div class="opp-title">4. Programación de llaves y IMMO</div>
+        <div class="opp-desc">El mercado de programación de llaves en México crece 15% anual. La mayoría de los talleres tienen que mandar al cliente a un "especialista" — que cobra $500-2,000 MXN por llave. Con DATESEG puedes ofrecer ese servicio <strong>tú mismo o capacitar a otros talleres para que lo hagan con tu equipo.</strong></div>
+        <div class="opp-tag">CORTO PLAZO — servicio de alto margen</div>
+      </div>
+    </div>
+
+    <div class="opp-item" style="border-left-color:#FF8C00">
+      <div class="opp-ico">🤝</div>
+      <div>
+        <div class="opp-title">5. Convenios con fabricantes de autopartes</div>
+        <div class="opp-desc">Cuando ProPart diagnostica una falla y recomienda un repuesto, ese es el momento exacto en que el cliente está listo para comprar. <strong>Las marcas como NGK, Delphi, Castrol pagarían por aparecer en esa recomendación.</strong> Tú tienes la atención del mecánico en el momento de decisión — eso tiene un valor enorme para los fabricantes.</div>
+        <div class="opp-tag">MEDIANO PLAZO — negociación con fabricantes</div>
+      </div>
+    </div>
+
+    <div class="opp-item" style="border-left-color:var(--re)">
+      <div class="opp-ico">🏫</div>
+      <div>
+        <div class="opp-title">6. Escuelas técnicas y CECATI / CONALEP</div>
+        <div class="opp-desc">Los CECATI y CONALEP con carrera de mecánica automotriz necesitan herramientas de diagnóstico para sus talleres. <strong>Una sola escuela son 200-500 estudiantes que aprenden con ProPart.</strong> Cuando egresen, ya conocen la herramienta y la van a buscar en su taller. Marketing gratuito de largo plazo.</div>
+        <div class="opp-tag">LARGO PLAZO — posicionamiento generacional</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button onclick="go(1)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">← Anterior</button>
+    <button onclick="go(3)" style="padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">Siguiente: Estrategia →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 3: ESTRATEGIA CAMBACEO ══ -->
+<div class="page" id="pg3">
+  <div class="pg-hdr">
+    <div class="pg-title">ESTRATEGIA DE VENTA DIRECTA</div>
+    <div class="pg-sub">Cambaceo puerta a puerta en talleres — el plan de arranque</div>
+  </div>
+
+  <div class="callout gold">
+    <div class="callout-ico">💡</div>
+    <div class="callout-body"><strong>La estrategia correcta para arrancar:</strong> Venta directa en talleres pequeños, de adentro hacia afuera — Alpuyeca → Xochitepec → Cuernavaca → zona metropolitana. Tú conoces el lenguaje del mecánico, conoces los carros, conoces las fallas. Esa confianza no se compra — se tiene o no se tiene. Y tú la tienes.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🗓️ Plan semana a semana — Primeros 3 meses</div>
+    <table>
+      <tr><th>Semana</th><th>Acción</th><th>Meta</th><th>Herramienta</th></tr>
+      <tr><td><strong>1-2</strong></td><td>Mapear talleres en radio de 20km de Alpuyeca</td><td>Lista de 50 talleres</td><td>Google Maps + recorrido físico</td></tr>
+      <tr><td><strong>3-4</strong></td><td>Visitar 10 talleres/semana con demo en vivo</td><td>5 registros gratis</td><td>ProPart en tu cel + adaptador BLE</td></tr>
+      <tr><td><strong>5-6</strong></td><td>Seguimiento a los que se registraron</td><td>2-3 conversiones a Plan Pro</td><td>WhatsApp + soporte remoto</td></tr>
+      <tr><td><strong>7-8</strong></td><td>Expandir a Cuernavaca Norte</td><td>10 talleres nuevos</td><td>Carta de presentación impresa</td></tr>
+      <tr><td><strong>9-10</strong></td><td>Acercarse a 2-3 empresas con flota pequeña</td><td>1 convenio piloto</td><td>Presentación DATESEG MX</td></tr>
+      <tr><td><strong>11-12</strong></td><td>Evaluar resultados y ajustar precio/discurso</td><td>20+ talleres activos</td><td>Análisis de conversión</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🗣️ El discurso de venta — lo que le dices al mecánico</div>
+    <div style="background:var(--bg3);border-radius:8px;padding:14px;border:1px solid rgba(245,166,35,.2)">
+      <div style="font-size:10px;color:var(--txm);letter-spacing:1px;margin-bottom:8px">GUIÓN SUGERIDO — adaptar a tu estilo natural</div>
+      <p style="font-style:italic;color:var(--tx);font-size:12px;line-height:1.7;">"Buenos días, soy Fernando Millán de DATESEG — somos de aquí de Morelos. Fíjese que vengo a mostrarle una herramienta de diagnóstico que se usa en el celular que usted ya tiene. No necesita comprar nada caro. ¿Tiene 5 minutos? Le conecto su carro ahorita y le muestro todo lo que le dice — sensores en vivo, códigos de falla con explicación en español, colores de cable para no buscarle, y hasta un asistente que le habla y le ayuda a diagnosticar. ¿Le interesa ver cómo funciona?"</p>
+    </div>
+    <div style="margin-top:12px">
+      <h3>Respuestas a las objeciones más comunes</h3>
+      <table>
+        <tr><th>Objeción</th><th>Respuesta</th></tr>
+        <tr><td>"Ya tengo escáner"</td><td>"¿El suyo le dice el color del cable del MAF o le explica la falla en español? El mío sí. Déjeme mostrarle la diferencia."</td></tr>
+        <tr><td>"¿Y si no me convence?"</td><td>"Es gratis el plan básico — no pierde nada. Si en un mes no le sirve, no paga nada."</td></tr>
+        <tr><td>"No sé usar el celular bien"</td><td>"Está hecho para que cualquiera lo use. Le enseño en 10 minutos y lo dejo funcionando hoy mismo."</td></tr>
+        <tr><td>"¿Cuánto cuesta?"</td><td>"El adaptador BLE vale $300 pesos — el mismo que tiene cualquier escáner barato. La app es gratis para empezar."</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📦 Kit de venta para llevar a cada visita</div>
+    <div class="grid2">
+      <div>
+        <ul>
+          <li>✅ Tu celular con ProPart V7 instalado y funcionando</li>
+          <li>✅ Adaptador V-Link BLE para demo en vivo</li>
+          <li>✅ Tarjetas de presentación DATESEG MX</li>
+          <li>✅ Hoja impresa con los 3 planes y precios</li>
+        </ul>
+      </div>
+      <div>
+        <ul>
+          <li>✅ Carta de presentación impresa (2 hojas)</li>
+          <li>✅ QR code que apunte a dateseg.mx</li>
+          <li>✅ WhatsApp Business configurado con catálogo</li>
+          <li>✅ Video promo listo para mostrar en el cel</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button onclick="go(2)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">← Anterior</button>
+    <button onclick="go(4)" style="padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">Siguiente: Carta de Presentación →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 4: CARTA ES ══ -->
+<div class="page" id="pg4">
+  <div class="pg-hdr">
+    <div class="pg-title">CARTA DE PRESENTACIÓN</div>
+    <div class="pg-sub">Versión en español — para talleres, empresas y fabricantes de autopartes</div>
+  </div>
+
+  <div class="carta">
+    <div class="carta-hdr">
+      <div>
+        <div class="carta-logo">⬡ DATESEG MX</div>
+        <div class="carta-tagline">SISTEMA DE TECNOLOGÍAS AUTOMOTRICES</div>
+        <div style="font-size:10px;color:#999;margin-top:4px">Alpuyeca, Xochitepec, Morelos, México</div>
+      </div>
+      <div class="carta-fecha">
+        <div>Morelos, México</div>
+        <div>2025</div>
+        <div style="margin-top:6px;font-size:10px;color:#888">Folio: DX-2025-001</div>
+      </div>
+    </div>
+
+    <div class="carta-dest">
+      <p><strong>Estimado/a Director(a) General</strong></p>
+      <p>[Nombre de la empresa]<br>[Cargo del destinatario]<br>[Ciudad, Estado]</p>
+    </div>
+
+    <h2>PRESENTACIÓN INSTITUCIONAL — DATESEG MX</h2>
+
+    <p>Por medio de la presente, me permito presentar a usted a <strong>DATESEG MX — Sistema de Tecnologías Automotrices</strong>, empresa mexicana con sede en Alpuyeca, Morelos, dedicada al desarrollo de soluciones tecnológicas para el diagnóstico automotriz profesional y la seguridad vial familiar.</p>
+
+    <h2>QUIÉNES SOMOS</h2>
+
+    <p>DATESEG MX nació con una convicción clara: <strong>la tecnología automotriz de calidad debe ser accesible para el taller mexicano independiente y para las familias que transitan nuestras carreteras.</strong> Somos una empresa familiar, íntegra, que cumple lo que promete.</p>
+
+    <p>Nuestro equipo combina experiencia técnica en electrónica automotriz, programación de sistemas y ventas directas al canal de talleres — lo que nos permite desarrollar productos que realmente resuelven los problemas del día a día en el taller y en la carretera.</p>
+
+    <h2>NUESTROS PRODUCTOS</h2>
+
+    <table>
+      <tr><th>Producto</th><th>Descripción</th><th>Mercado objetivo</th></tr>
+      <tr>
+        <td><strong>ProPart System V7</strong></td>
+        <td>Plataforma de diagnóstico automotriz profesional con BLE nativo, base de datos técnica de 26 módulos, asistente IA en español mexicano, colores OEM verificados y reporte PDF para el cliente.</td>
+        <td>Talleres mecánicos independientes, técnicos automotrices</td>
+      </tr>
+      <tr>
+        <td><strong>OilMaster</strong></td>
+        <td>Sistema de asistencia en carretera con diagnóstico por audio/cámara, semáforo de seguridad (verde/amarillo/rojo), red de grúas afiliadas y localización GPS para emergencias viales.</td>
+        <td>Conductores, familias, flotas de transporte</td>
+      </tr>
+    </table>
+
+    <h2>EL MERCADO Y LA OPORTUNIDAD</h2>
+
+    <p>México cuenta con más de <strong>180,000 talleres mecánicos independientes</strong>, de los cuales el <strong>82% no dispone de herramienta de diagnóstico profesional</strong>. El parque vehicular nacional supera los 50 millones de unidades, con un crecimiento de 2.3 millones de vehículos por año. El mercado de diagnóstico automotriz en México creció un <strong>10.4% en 2024</strong> y se proyecta seguirá creciendo a tasa de dos dígitos hasta 2030.</p>
+
+    <p>ProPart System V7 es actualmente <strong>la única plataforma de diagnóstico en el mercado mexicano</strong> que integra en un solo producto: diagnóstico BLE, base técnica offline con colores OEM verificados, asistente de voz en español mexicano y módulo de seguridad vial — a un precio accesible para el taller pequeño.</p>
+
+    <h2>PROPUESTA DE COLABORACIÓN</h2>
+
+    <p>Buscamos establecer <strong>alianzas estratégicas con fabricantes y distribuidores de autopartes</strong> que compartan nuestra visión de fortalecer el taller mexicano independiente. La colaboración que proponemos puede incluir:</p>
+
+    <ul style="margin:10px 0 14px;color:#333">
+      <li>Integración de su catálogo de productos en la plataforma ProPart como recomendación técnica</li>
+      <li>Co-distribución en la red de talleres suscritos a DATESEG MX</li>
+      <li>Programa de beneficios para talleres afiliados que usen sus productos</li>
+      <li>Presencia de marca en OilMaster para flotas y transporte</li>
+    </ul>
+
+    <h2>MISIÓN Y VALORES</h2>
+
+    <p><em>"Desarrollar tecnología automotriz íntegra y accesible que proteja a las familias mexicanas en carretera y fortalezca al técnico en el taller — porque lo que prometemos, lo cumplimos."</em></p>
+
+    <p>Nuestros valores fundamentales son: <strong>Integridad · Seguridad familiar · Precisión técnica · Orgullo mexicano · Innovación accesible.</strong></p>
+
+    <p>Agradezco de antemano su atención y quedo a sus órdenes para cualquier información adicional, demostración del producto o reunión que considere pertinente.</p>
+
+    <div class="firma">
+      <div style="height:40px;border-bottom:1px solid #ddd;margin-bottom:10px;"></div>
+      <div class="firma-nombre">Fernando Millán Melchor</div>
+      <div class="firma-cargo">Director General · DATESEG MX</div>
+      <div class="firma-contacto">
+        📱 777-683-8196 &nbsp;·&nbsp; 📱 221-956-7392<br>
+        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2741425549464943486743465342544240094a5f">[email&#160;protected]</a> &nbsp;·&nbsp; 📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1066757e64716350747164756375773e7d68">[email&#160;protected]</a><br>
+        🌐 dateseg.mx &nbsp;·&nbsp; Alpuyeca, Xochitepec, Morelos, México
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button onclick="go(3)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">← Anterior</button>
+    <button onclick="go(5)" style="padding:10px 22px;background:linear-gradient(135deg,var(--g),var(--gd));border:none;border-radius:8px;color:#000;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">Siguiente: English Version →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 5: CARTA EN ══ -->
+<div class="page" id="pg5">
+  <div class="pg-hdr">
+    <div class="pg-title">PRESENTATION LETTER</div>
+    <div class="pg-sub">English version — for international partners, manufacturers and investors</div>
+  </div>
+
+  <div class="carta">
+    <div class="carta-hdr">
+      <div>
+        <div class="carta-logo">⬡ DATESEG MX</div>
+        <div class="carta-tagline">AUTOMOTIVE TECHNOLOGY SYSTEMS</div>
+        <div style="font-size:10px;color:#999;margin-top:4px">Alpuyeca, Xochitepec, Morelos, Mexico</div>
+      </div>
+      <div class="carta-fecha">
+        <div>Morelos, Mexico</div>
+        <div>2025</div>
+        <div style="margin-top:6px;font-size:10px;color:#888">Ref: DX-2025-001-EN</div>
+      </div>
+    </div>
+
+    <div class="carta-dest">
+      <p><strong>Dear General Manager / Business Development Director,</strong></p>
+      <p>[Company Name]<br>[Position]<br>[City, Country]</p>
+    </div>
+
+    <h2>COMPANY INTRODUCTION — DATESEG MX</h2>
+
+    <p>We are pleased to introduce <strong>DATESEG MX — Automotive Technology Systems</strong>, a Mexican family-owned company headquartered in Alpuyeca, Morelos, dedicated to developing professional automotive diagnostic solutions and road safety technology for the Mexican market and Latin America.</p>
+
+    <h2>WHO WE ARE</h2>
+
+    <p>DATESEG MX was founded on a clear conviction: <strong>quality automotive technology must be accessible to independent Mexican workshops and to families traveling our highways.</strong> We are an honest, family-driven company — we stand behind every promise we make.</p>
+
+    <p>Our team combines hands-on expertise in automotive electronics, software development and direct sales to the workshop channel — enabling us to build products that genuinely solve real problems for mechanics and drivers every day.</p>
+
+    <h2>OUR PRODUCTS</h2>
+
+    <table>
+      <tr><th>Product</th><th>Description</th><th>Target Market</th></tr>
+      <tr>
+        <td><strong>ProPart System V7</strong></td>
+        <td>Professional automotive diagnostic platform with native BLE connectivity, 26-module offline technical database, AI voice assistant in Mexican Spanish, OEM-verified wire colors and client PDF reports.</td>
+        <td>Independent workshops, automotive technicians</td>
+      </tr>
+      <tr>
+        <td><strong>OilMaster</strong></td>
+        <td>Road assistance system featuring audio/camera diagnosis, 3-level safety indicator (green/yellow/red), affiliated tow truck network and GPS emergency location — built to protect families on Mexican highways.</td>
+        <td>Drivers, families, commercial fleets</td>
+      </tr>
+    </table>
+
+    <h2>MARKET OPPORTUNITY</h2>
+
+    <p>Mexico has over <strong>180,000 independent auto workshops</strong>, of which <strong>82% lack professional diagnostic tools</strong>. The national vehicle fleet exceeds 50 million units, growing at 2.3 million vehicles per year. The automotive diagnostics market in Mexico grew <strong>10.4% in 2024</strong> and is projected to continue double-digit growth through 2030.</p>
+
+    <p>ProPart System V7 is currently <strong>the only diagnostic platform in the Mexican market</strong> combining BLE diagnostics, offline OEM-verified technical data, a Mexican Spanish AI voice assistant and a road safety module — at a price accessible to the small independent workshop.</p>
+
+    <h2>PARTNERSHIP PROPOSAL</h2>
+
+    <p>We seek <strong>strategic alliances with auto parts manufacturers and distributors</strong> who share our vision of strengthening the independent Mexican workshop. Proposed collaboration models include:</p>
+
+    <ul style="margin:10px 0 14px;color:#333">
+      <li>Integration of your product catalog into ProPart as verified technical recommendations</li>
+      <li>Co-distribution across the DATESEG MX workshop subscriber network</li>
+      <li>Branded loyalty programs for affiliated workshops using your products</li>
+      <li>OilMaster fleet integration for commercial transport operators</li>
+    </ul>
+
+    <h2>MISSION & VALUES</h2>
+
+    <p><em>"To develop honest and accessible automotive technology that protects Mexican families on the road and empowers technicians in the workshop — because what we promise, we deliver."</em></p>
+
+    <p>Our core values: <strong>Integrity · Family Safety · Technical Precision · Mexican Pride · Accessible Innovation.</strong></p>
+
+    <p>Thank you for your time and consideration. We welcome the opportunity to schedule a product demonstration or introductory call at your convenience.</p>
+
+    <div class="firma">
+      <div style="height:40px;border-bottom:1px solid #ddd;margin-bottom:10px;"></div>
+      <div class="firma-nombre">Fernando Millán Melchor</div>
+      <div class="firma-cargo">General Director · DATESEG MX</div>
+      <div class="firma-contacto">
+        📱 +52 777-683-8196 &nbsp;·&nbsp; 📱 +52 221-956-7392<br>
+        📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ef8fbecf0fff0faf1defaffeafbedfbf9b0f3e6">[email&#160;protected]</a> &nbsp;·&nbsp; 📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5a6b4b9b0a695b1b4a1b0a6b0b2fbb8ad">[email&#160;protected]</a><br>
+        🌐 dateseg.mx &nbsp;·&nbsp; Alpuyeca, Xochitepec, Morelos, Mexico
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-top:16px">
+    <button onclick="go(4)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">← Anterior</button>
+    <button onclick="go(0)" style="padding:10px 20px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;color:var(--tx);font-family:'Rajdhani',sans-serif;font-si

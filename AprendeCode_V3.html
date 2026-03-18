@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AprendeCode V3 — Tu mentor de programación</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#010409;color:#e6edf3;font-family:'Segoe UI',system-ui,sans-serif;}
+  #root{min-height:100vh;}
+  @keyframes float{to{transform:translateY(-8px);}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 20px #f8514966}50%{box-shadow:0 0 40px #f85149aa}}
+  textarea:focus{border-color:#58a6ff!important;}
+  button:hover{opacity:.88;}
+  .cursor{display:inline-block;animation:blink 1s infinite;}
+</style>
+</head>
+<body>
+<div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#8b949e;font-size:14px;">Cargando AprendeCode...</div></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+const PLANTILLAS = [
+  { nombre:"Página Web Personal",    emoji:"🌐", desc:"Tu portafolio o blog",            tags:["HTML","CSS"] },
+  { nombre:"App de Lista de Tareas", emoji:"✅", desc:"Organiza tu día",                 tags:["React","JS"] },
+  { nombre:"Calculadora",            emoji:"🔢", desc:"Operaciones básicas",             tags:["JS","CSS"] },
+  { nombre:"Galería de Fotos",       emoji:"🖼️", desc:"Muestra tus imágenes",           tags:["HTML","CSS","JS"] },
+  { nombre:"Formulario de Contacto", emoji:"📬", desc:"Recibe mensajes",                tags:["HTML","CSS"] },
+  { nombre:"Juego de Memoria",       emoji:"🧠", desc:"Juego de cartas",                tags:["JS","CSS"] },
+  { nombre:"App Diagnóstico Auto",   emoji:"🔧", desc:"Lecturas OBD2 en tiempo real",   tags:["React","BLE"] },
+  { nombre:"Tienda en línea",        emoji:"🛒", desc:"Productos, carrito y checkout",  tags:["React","Firebase"] },
+];
+
+function TypingText({ text, speed=18, onDone }) {
+  const [displayed, setDisplayed] = useState("");
+  const [idx, setIdx] = useState(0);
+  useEffect(()=>{ setDisplayed(""); setIdx(0); },[text]);
+  useEffect(()=>{
+    if(idx < text.length){
+      const t = setTimeout(()=>{ setDisplayed(p=>p+text[idx]); setIdx(i=>i+1); }, speed);
+      return ()=>clearTimeout(t);
+    } else if(idx===text.length && onDone) onDone();
+  },[idx,text]);
+  return <span>{displayed}<span className="cursor">|</span></span>;
+}
+
+function CodeBlock({ lines }) {
+  const [activeTooltip, setActiveTooltip] = useState(null);
+  const [visibleLines, setVisibleLines] = useState([]);
+  useEffect(()=>{
+    setVisibleLines([]);
+    lines.forEach((_,i)=>setTimeout(()=>setVisibleLines(p=>[...p,i]), i*300));
+  },[lines]);
+  return (
+    <div style={{background:"#0d1117",borderRadius:14,padding:"20px 16px",fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:13,lineHeight:1.8,overflowX:"auto",border:"1.5px solid #30363d"}}>
+      <div style={{display:"flex",gap:6,marginBottom:14}}>
+        {["#ff5f57","#febc2e","#28c840"].map(c=><div key={c} style={{width:12,height:12,borderRadius:"50%",background:c}}/>)}
+        <span style={{color:"#484f58",fontSize:11,marginLeft:8}}>tu-proyecto.js</span>
+      </div>
+      {lines.map((line,i)=>(
+        <div key={i} style={{opacity:visibleLines.includes(i)?1:0,transform:visibleLines.includes(i)?"translateX(0)":"translateX(-12px)",transition:"all 0.4s ease",display:"flex",alignItems:"center",gap:10,padding:"1px 0"}}>
+          <span style={{color:"#484f58",minWidth:24,textAlign:"right",userSelect:"none",fontSize:11}}>{i+1}</span>
+          {line.isKey ? (
+            <span style={{background:"linear-gradient(90deg,#f7b73344,#f7b73311)",border:"1px solid #f7b73355",borderRadius:5,padding:"1px 7px",color:"#f7b733",cursor:"pointer",position:"relative",display:"inline-block"}}
+              onClick={()=>setActiveTooltip(activeTooltip===i?null:i)}>
+              {line.text}
+              {activeTooltip===i && (
+                <div style={{position:"absolute",left:0,top:"110%",zIndex:99,background:"#161b22",border:"1.5px solid #f7b73388",borderRadius:10,padding:"12px 16px",minWidth:240,color:"#e6edf3",fontFamily:"sans-serif",fontSize:13,boxShadow:"0 8px 24px #000c",lineHeight:1.5,whiteSpace:"normal"}}>
+                  <div style={{color:"#f7b733",fontWeight:700,marginBottom:6}}>🔑 Línea clave</div>
+                  <div>{line.tooltip}</div>
+                  <div style={{marginTop:8,color:"#8b949e",fontSize:11}}>👆 Toca para cerrar</div>
+                </div>
+              )}
+            </span>
+          ) : (
+            <span style={{color:line.color||"#e6edf3"}}>{line.text}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ProjectVisual({ idea }) {
+  const lower = idea.toLowerCase();
+  const emojis = lower.includes("tienda")?["🛒","💳","📦","⭐"]:
+    lower.includes("juego")?["🎮","🏆","🕹️","✨"]:
+    lower.includes("auto")||lower.includes("carro")||lower.includes("obd")?["🚗","🔧","⚡","📱"]:
+    lower.includes("receta")||lower.includes("comida")?["🍳","📖","🥗","⭐"]:
+    lower.includes("música")||lower.includes("musica")?["🎵","🎸","🎧","🎤"]:
+    ["💡","🖥️","⚡","🚀"];
+  return (
+    <div style={{background:"linear-gradient(135deg,#1a1f2e,#0f1318)",borderRadius:16,padding:20,border:"1px solid #30363d",display:"flex",flexDirection:"column",gap:14}}>
+      <div style={{display:"flex",justifyContent:"center",gap:16,fontSize:38}}>
+        {emojis.map((e,i)=><span key={i} style={{animation:`float ${1.5+i*0.3}s ease-in-out infinite alternate`,display:"inline-block"}}>{e}</span>)}
+      </div>
+      <div style={{background:"#161b22",borderRadius:10,padding:14,border:"1px solid #21262d"}}>
+        <div style={{color:"#58a6ff",fontSize:11,marginBottom:6,letterSpacing:1}}>VISTA PREVIA</div>
+        <div style={{color:"#e6edf3",fontSize:14,lineHeight:1.6}}>Tu proyecto tendrá interfaz interactiva, datos guardados y funciones personalizadas.</div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [paso, setPaso] = useState("idea");
+  const [idea, setIdea] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resumen, setResumen] = useState("");
+  const [codeLines, setCodeLines] = useState([]);
+  const [escuchando, setEscuchando] = useState(false);
+  const recognitionRef = useRef(null);
+
+  const startVoice = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ alert("Usa Chrome para el micrófono"); return; }
+    const r = new SR();
+    r.lang="es-MX"; r.interimResults=false; r.maxAlternatives=1;
+    r.onresult = e => setIdea(p=>p+" "+e.results[0][0].transcript);
+    r.onend = ()=>setEscuchando(false);
+    r.start(); recognitionRef.current=r; setEscuchando(true);
+  };
+  const stopVoice = ()=>{ recognitionRef.current?.stop(); setEscuchando(false); };
+  const speak = text => { window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang="es-MX"; u.rate=0.95; window.speechSynthesis.speak(u); };
+
+  const analizarIdea = async () => {
+    if(!idea.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514", max_tokens:1000,
+          system:`Eres un tutor de programación amigable para principiantes en México.
+Responde SOLO en JSON válido, sin texto extra ni markdown.
+Formato exacto:
+{"resumen":"Descripción breve y emocionante en 2-3 oraciones con emojis.","voz":"Texto corto motivador máximo 2 oraciones.","codigo":[{"text":"// comentario","color":"#8b949e","isKey":false},{"text":"línea clave","color":"#f7b733","isKey":true,"tooltip":"explicación simple"}]}
+El array codigo debe tener 10-14 líneas. Las isKey son las más importantes.`,
+          messages:[{role:"user",content:`Mi idea de proyecto: ${idea}`}]
+        })
+      });
+      const data = await res.json();
+      const txt = data.content.map(c=>c.text||"").join("");
+      const clean = txt.replace(/```json|```/g,"").trim();
+      const parsed = JSON.parse(clean);
+      setResumen(parsed.resumen); setCodeLines(parsed.codigo||[]);
+      speak(parsed.voz); setPaso("entender");
+    } catch(e) {
+      setResumen("¡Tu idea es genial! Vamos a construirla juntos paso a paso.");
+      setCodeLines([
+        {text:"// Tu proyecto comienza aquí",color:"#8b949e",isKey:false},
+        {text:`const proyecto = "${idea.slice(0,30)}";`,color:"#79c0ff",isKey:true,tooltip:"Las variables guardan información. Aquí guardamos el nombre de tu proyecto."},
+        {text:"",color:"#e6edf3",isKey:false},
+        {text:"function iniciar() {",color:"#d2a8ff",isKey:true,tooltip:"Una función agrupa instrucciones que se ejecutan juntas — como una receta."},
+        {text:'  console.log("¡Hola mundo!");',color:"#e6edf3",isKey:false},
+        {text:"}",color:"#d2a8ff",isKey:false},
+        {text:"",color:"#e6edf3",isKey:false},
+        {text:"iniciar();",color:"#ffa657",isKey:true,tooltip:"Aquí llamamos la función. Sin esto el código no hace nada."},
+      ]);
+      setPaso("entender");
+    } finally { setLoading(false); }
+  };
+
+  const s = {
+    app:{minHeight:"100vh",background:"linear-gradient(135deg,#010409,#0d1117,#0a0e1a)",color:"#e6edf3",paddingBottom:60},
+    hdr:{background:"rgba(22,27,34,.95)",backdropFilter:"blur(12px)",borderBottom:"1px solid #30363d",padding:"16px 22px",display:"flex",alignItems:"center",gap:12,position:"sticky",top:0,zIndex:50},
+    nav:{display:"flex",padding:"0 22px",borderBottom:"1px solid #21262d",overflowX:"auto"},
+    nb:a=>({padding:"12px 16px",border:"none",background:"none",cursor:"pointer",fontSize:13,fontWeight:a?600:400,color:a?"#58a6ff":"#8b949e",borderBottom:a?"2px solid #58a6ff":"2px solid transparent",whiteSpace:"nowrap"}),
+    box:{maxWidth:680,margin:"0 auto",padding:"28px 18px"},
+    card:{background:"#161b22",borderRadius:16,padding:24,border:"1px solid #30363d",marginBottom:18},
+    h2:{fontSize:21,fontWeight:700,margin:"0 0 8px",color:"#e6edf3"},
+    p:{color:"#8b949e",fontSize:14,lineHeight:1.6,margin:"0 0 16px"},
+    ta:{width:"100%",background:"#0d1117",border:"1.5px solid #30363d",borderRadius:10,padding:"13px 15px",color:"#e6edf3",fontSize:14,resize:"vertical",minHeight:96,outline:"none",fontFamily:"inherit",boxSizing:"border-box",lineHeight:1.6},
+    btn:{background:"linear-gradient(135deg,#238636,#2ea043)",color:"#fff",border:"none",borderRadius:10,padding:"12px 26px",fontSize:14,fontWeight:600,cursor:"pointer"},
+    btn2:{background:"#21262d",color:"#e6edf3",border:"1px solid #30363d",borderRadius:10,padding:"12px 18px",fontSize:13,cursor:"pointer"},
+    mic:a=>({background:a?"linear-gradient(135deg,#da3633,#f85149)":"#21262d",color:"#fff",border:a?"none":"1px solid #30363d",borderRadius:10,padding:"12px 18px",fontSize:20,cursor:"pointer"}),
+    badge:{display:"inline-flex",alignItems:"center",gap:6,background:"#1f2937",border:"1px solid #374151",borderRadius:20,padding:"4px 12px",fontSize:12,color:"#9ca3af"},
+    pCard:{background:"#0d1117",border:"1.5px solid #30363d",borderRadius:14,padding:16,cursor:"pointer",display:"flex",gap:12,alignItems:"flex-start"},
+  };
+
+  const NAVS=[{id:"idea",label:"1. Tu Idea 💡"},{id:"entender",label:"2. Entender 🤖"},{id:"diseño",label:"3. Diseño 🎨"},{id:"codigo",label:"4. Código ⌨️"},{id:"plantillas",label:"5. Plantillas 📋"}];
+
+  return (
+    <div style={s.app}>
+      <div style={s.hdr}>
+        <div style={{fontSize:26}}>🎓</div>
+        <div>
+          <div style={{fontSize:17,fontWeight:700}}>AprendeCode V3</div>
+          <div style={{fontSize:11,color:"#8b949e"}}>Tu mentor de programación con IA · 🇲🇽</div>
+        </div>
+      </div>
+      <div style={s.nav}>
+        {NAVS.map(n=><button key={n.id} style={s.nb(paso===n.id)} onClick={()=>setPaso(n.id)}>{n.label}</button>)}
+      </div>
+      <div style={s.box}>
+
+        {paso==="idea" && (
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={s.card}>
+              <h2 style={s.h2}>¡Cuéntame tu idea! 💡</h2>
+              <p style={s.p}>Habla o escribe el proyecto que quieres crear. No necesitas saber programar.</p>
+              <div style={{display:"flex",gap:8,marginBottom:14}}>
+                <button style={s.mic(escuchando)} onClick={escuchando?stopVoice:startVoice}>{escuchando?"⏹":"🎙️"}</button>
+                <div style={{...s.badge,flex:1,justifyContent:"center"}}>{escuchando?"🔴 Escuchando...":"Toca el micrófono para hablar"}</div>
+              </div>
+              <textarea style={s.ta} placeholder='Ejemplo: "Quiero una app para diagnóstico de carros con lecturas OBD en tiempo real..."' value={idea} onChange={e=>setIdea(e.target.value)}/>
+              <div style={{display:"flex",gap:8,marginTop:14}}>
+                <button style={{...s.btn,opacity:idea.trim()?1:.5}} onClick={analizarIdea} disabled={!idea.trim()||loading}>
+                  {loading?"Analizando... 🤔":"Analizar mi idea →"}
+                </button>
+                {idea&&<button style={s.btn2} onClick={()=>setIdea("")}>Limpiar</button>}
+              </div>
+            </div>
+            <div style={{...s.card,background:"linear-gradient(135deg,#0d2137,#0a1628)"}}>
+              <div style={{fontSize:13,color:"#58a6ff",marginBottom:10,fontWeight:600}}>💬 IDEAS DE EJEMPLO</div>
+              {["Una app de diagnóstico automotriz con BLE","Un juego de trivia de preguntas sobre mecánica","Una tienda de refacciones con carrito de compras"].map(ej=>(
+                <div key={ej} style={{padding:"9px 13px",borderRadius:8,cursor:"pointer",color:"#8b949e",fontSize:14}} onClick={()=>setIdea(ej)}
+                  onMouseEnter={e=>e.target.style.color="#e6edf3"} onMouseLeave={e=>e.target.style.color="#8b949e"}>▸ {ej}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {paso==="entender" && (
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={s.card}>
+              <h2 style={s.h2}>¡Entendí tu idea! 🤖</h2>
+              <div style={{background:"#0d1117",borderRadius:12,padding:16,marginBottom:18,border:"1px solid #21262d"}}>
+                <div style={{color:"#58a6ff",fontSize:12,marginBottom:7,letterSpacing:1}}>CLAUDE DICE:</div>
+                <div style={{color:"#e6edf3",fontSize:14,lineHeight:1.7}}>
+                  {resumen?<TypingText text={resumen}/>:"Escribe tu idea en el paso 1 primero."}
+                </div>
+              </div>
+              {idea&&<ProjectVisual idea={idea}/>}
+              <div style={{display:"flex",gap:8,marginTop:18,flexWrap:"wrap"}}>
+                <button style={s.btn} onClick={()=>setPaso("diseño")}>Ver el diseño →</button>
+                <button style={s.btn2} onClick={()=>speak(resumen)}>🔊 Repetir</button>
+                <button style={s.btn2} onClick={()=>setPaso("idea")}>← Cambiar idea</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {paso==="diseño" && (
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={s.card}>
+              <h2 style={s.h2}>Así se vería tu app 🎨</h2>
+              <p style={s.p}>Simulación de cómo quedaría tu proyecto.</p>
+              <div style={{background:"#0d1117",borderRadius:14,overflow:"hidden",border:"1px solid #30363d"}}>
+                <div style={{background:"#161b22",padding:"9px 14px",display:"flex",gap:6,alignItems:"center",borderBottom:"1px solid #30363d"}}>
+                  {["#ff5f57","#febc2e","#28c840"].map(c=><div key={c} style={{width:10,height:10,borderRadius:"50%",background:c}}/>)}
+                  <div style={{background:"#21262d",borderRadius:6,padding:"3px 14px",fontSize:11,color:"#8b949e",marginLeft:8}}>mi-proyecto.app</div>
+                </div>
+                <div style={{padding:22}}>
+                  <div style={{textAlign:"center",marginBottom:18}}>
+                    <div style={{fontSize:26,fontWeight:800,color:"#58a6ff",marginBottom:3}}>Mi App ✨</div>
+                    <div style={{color:"#8b949e",fontSize:13}}>{idea.slice(0,60)||"Tu proyecto aquí"}...</div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+                    {["🏠 Inicio","🔍 Buscar","⭐ Favoritos","👤 Perfil"].map(item=>(
+                      <div key={item} style={{background:"#161b22",borderRadius:9,padding:12,textAlign:"center",border:"1px solid #30363d",color:"#e6edf3",fontSize:13}}>{item}</div>
+                    ))}
+                  </div>
+                  <div style={{background:"linear-gradient(135deg,#238636,#2ea043)",borderRadius:9,padding:12,textAlign:"center",color:"#fff",fontWeight:600}}>🚀 ¡Empezar!</div>
+                </div>
+              </div>
+              <button style={{...s.btn,marginTop:18,width:"100%"}} onClick={()=>setPaso("codigo")}>Ver el código →</button>
+            </div>
+          </div>
+        )}
+
+        {paso==="codigo" && (
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={s.card}>
+              <h2 style={s.h2}>¡Aprende el código! ⌨️</h2>
+              <p style={s.p}>Las <span style={{color:"#f7b733",fontWeight:600}}>líneas amarillas</span> son las más importantes. ¡Tócalas!</p>
+              {codeLines.length>0?<CodeBlock lines={codeLines}/>:(
+                <div style={{textAlign:"center",padding:36,color:"#8b949e"}}>Primero escribe tu idea en el paso 1.</div>
+              )}
+              <button style={{...s.btn,marginTop:14}} onClick={()=>setPaso("plantillas")}>Ver plantillas →</button>
+            </div>
+          </div>
+        )}
+
+        {paso==="plantillas" && (
+          <div style={{animation:"fadeIn 0.4s ease"}}>
+            <div style={s.card}>
+              <h2 style={s.h2}>Plantillas listas 📋</h2>
+              <p style={s.p}>Elige una base y personalízala.</p>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+              {PLANTILLAS.map((pl,i)=>(
+                <div key={i} style={s.pCard}
+                  onMouseEnter={e=>e.currentTarget.style.borderColor="#58a6ff"}
+                  onMouseLeave={e=>e.currentTarget.style.borderColor="#30363d"}
+                  onClick={()=>{setIdea(pl.nombre);setPaso("idea");}}>
+                  <div style={{fontSize:28}}>{pl.emoji}</div>
+                  <div>
+                    <div style={{fontWeight:600,marginBottom:3,color:"#e6edf3",fontSize:13}}>{pl.nombre}</div>
+                    <div style={{color:"#8b949e",fontSize:11,marginBottom:5}}>{pl.desc}</div>
+                    <div style={{display:"flex",gap:3,flexWrap:"wrap"}}>
+                      {pl.tags.map(t=><span key={t} style={{background:"#21262d",color:"#58a6ff",padding:"2px 7px",borderRadius:12,fontSize:9,border:"1px solid #30363d"}}>{t}</span>)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{...s.card,marginTop:14,background:"linear-gradient(135deg,#0d2137,#0a1628)"}}>
+              <div style={{color:"#58a6ff",fontWeight:600,marginBottom:6}}>🎯 ¿Tienes otra idea?</div>
+              <button style={s.btn} onClick={()=>setPaso("idea")}>Empezar con mi propia idea →</button>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

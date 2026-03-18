@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VW Golf A4 — ECU ME7.5 — PRO PART V12</title>
+<style>
+:root{
+  --bg:#060a0f;--bg2:#0d1117;--bg3:#161b22;--bg4:#21262d;
+  --border:#30363d;--text:#e6edf3;--muted:#8b949e;
+  --blue:#58a6ff;--green:#3fb950;--yellow:#f0b429;
+  --red:#f85149;--orange:#ffa657;--purple:#b794f4;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+
+.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 18px;
+  display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;flex-wrap:wrap;}
+.ht{font-size:15px;font-weight:800;}
+.hs{font-size:11px;color:var(--muted);}
+.hb{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+.btn{border:none;border-radius:7px;padding:7px 13px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;}
+.btn:hover{opacity:.82;transform:translateY(-1px);}
+.btn-p{background:linear-gradient(135deg,#1a7f37,#3fb950);color:#fff;}
+.btn-g{background:var(--bg4);color:var(--text);border:1px solid var(--border);}
+.btn-b{background:#0d2137;color:var(--blue);border:1px solid #1e3a5f;}
+.btn-y{background:#3d2e10;color:var(--yellow);border:1px solid #7d5a14;}
+.btn-active{border-bottom:2px solid var(--blue)!important;}
+
+.main{max-width:1260px;margin:0 auto;padding:16px 12px 60px;}
+.card{background:var(--bg3);border-radius:12px;padding:16px;border:1px solid var(--border);margin-bottom:12px;}
+.ct{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1px;margin-bottom:10px;}
+
+/* CANVAS */
+.cvwrap{background:#f0f4f8;border-radius:10px;overflow:hidden;border:2px solid var(--border);cursor:crosshair;}
+canvas{display:block;width:100%;}
+
+/* TOOLTIP */
+#tooltip{position:fixed;background:#0d1117;border:1.5px solid var(--blue);border-radius:10px;
+  padding:12px 15px;pointer-events:none;z-index:999;max-width:310px;display:none;
+  box-shadow:0 8px 30px rgba(0,0,0,.7);}
+.tt-pin{color:var(--yellow);font-weight:800;font-size:16px;font-family:monospace;margin-bottom:5px;}
+.tt-fn{color:var(--text);font-size:13px;font-weight:600;margin-bottom:5px;}
+.tt-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;}
+.tt-chip{width:22px;height:13px;border-radius:3px;border:1px solid #ffffff22;flex-shrink:0;}
+.tt-volt{color:var(--green);font-family:monospace;font-size:12px;margin-bottom:5px;}
+.tt-tip{color:var(--yellow);font-size:11px;border-top:1px solid var(--border);padding-top:6px;line-height:1.5;}
+
+/* TABLA */
+.twrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead tr{background:var(--bg2);}
+th{padding:8px 11px;text-align:left;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:7px 11px;border-bottom:1px solid #21262d55;vertical-align:middle;}
+tbody tr:hover{background:var(--bg4);}
+.pnum{font-family:monospace;font-weight:800;color:var(--yellow);font-size:14px;}
+.chip{display:inline-block;width:16px;height:11px;border-radius:3px;border:1px solid #ffffff22;vertical-align:middle;margin-right:5px;}
+.badge{border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;}
+
+/* COMPONENTE */
+.comp-card{background:var(--bg2);border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:12px;}
+.comp-header{background:var(--bg4);padding:10px 14px;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.comp-table{width:100%;border-collapse:collapse;font-size:12px;}
+.comp-table td{padding:8px 12px;border-bottom:1px solid #21262d33;}
+.comp-table tr:last-child td{border:none;}
+.comp-table tr:hover{background:var(--bg4);}
+
+/* FALLA */
+.falla{background:var(--bg2);border-radius:9px;padding:14px;margin-bottom:9px;
+  border-left:3px solid var(--red);border:1px solid var(--border);}
+.falla-t{color:var(--red);font-weight:700;font-size:13px;margin-bottom:6px;}
+.falla-c{color:var(--text);font-size:12px;line-height:1.6;}
+.fpin{color:var(--yellow);font-family:monospace;font-weight:800;}
+
+/* DETALLE PIN */
+.pin-det{background:var(--bg2);border-radius:10px;padding:16px;margin-top:12px;
+  border:1px solid var(--blue);display:none;}
+.det-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.det-item{background:var(--bg3);border-radius:8px;padding:12px;border:1px solid var(--border);}
+.det-lbl{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:6px;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .25s ease;}
+@media print{.header,.hb{display:none!important}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="font-size:22px">⚡</div>
+  <div>
+    <div class="ht">VW Golf A4 2.0L APK/BEV — Bosch ME7.5.10</div>
+    <div class="hs">PRO PART SYSTEM V12 · Fernando Millán · 777-683-8196 · Alpuyeca, Morelos</div>
+  </div>
+  <div class="hb">
+    <button class="btn btn-b" id="btnDiag"   onclick="setVista('diag')">📐 Diagrama ECU</button>
+    <button class="btn btn-g" id="btnTabla"  onclick="setVista('tabla')">📋 Pinout</button>
+    <button class="btn btn-g" id="btnComp"   onclick="setVista('comp')">🔩 Componentes</button>
+    <button class="btn btn-g" id="btnFallas" onclick="setVista('fallas')">⚠️ Fallas</button>
+    <button class="btn btn-y" onclick="descargarPNG()">💾 PNG</button>
+    <button class="btn btn-g" onclick="window.print()">🖨️</button>
+  </div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-pin" id="ttPin"></div>
+  <div class="tt-fn"  id="ttFn"></div>
+  <div class="tt-row"><div class="tt-chip" id="ttChip"></div><span id="ttColor"></span></div>
+  <div class="tt-volt" id="ttVolt"></div>
+  <div class="tt-tip"  id="ttTip"></div>
+</div>
+
+<div class="main">
+
+  <!-- INFO VEHICLE -->
+  <div class="card fade" style="background:linear-gradient(135deg,#0a1628,#0d2137);border-color:#1e3a5f88;margin-bottom:14px">
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <div style="font-size:42px">🚗</div>
+      <div style="flex:1">
+        <div style="font-size:19px;font-weight:800;color:var(--blue)">Volkswagen Golf A4 · 2.0L APK/BEV</div>
+        <div style="color:var(--muted);font-size:12px;margin-top:2px">ECU Bosch Motronic ME7.5.10 · 121 pines · 2 bloques de conectores</div>
+        <div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap">
+          <span class="badge" style="background:#14301e;color:#3fb950;border:1px solid #276749">✅ 38 PINES DOCUMENTADOS</span>
+          <span class="badge" style="background:#3d2e10;color:var(--yellow);border:1px solid #7d5a14">💡 TIPS REPARACIÓN</span>
+          <span class="badge" style="background:#2d1f5e;color:var(--purple);border:1px solid #553c9a">🔩 3 COMPONENTES</span>
+          <span class="badge" style="background:#3d1414;color:var(--red);border:1px solid #7d2020">⚠️ 7 FALLAS COMUNES</span>
+          <span class="badge" style="background:#0d2137;color:var(--blue);border:1px solid #1e3a5f">👆 TOCA PINES PARA DETALLES</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAMA -->
+  <div id="vDiag">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="background:var(--bg2);padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;color:var(--blue);font-weight:700">📐 DIAGRAMA ECU — BOSCH ME7.5.10 · 👆 Toca cualquier pin para detalles</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap" id="leyenda"></div>
+      </div>
+      <div class="cvwrap"><canvas id="cnv" width="1200" height="620"></canvas></div>
+    </div>
+    <div class="pin-det fade" id="pinDet">
+      <div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:1px;margin-bottom:12px" id="pinDetTitle"></div>
+      <div class="det-grid" id="pinDetGrid"></div>
+      <div style="background:#3d2e1022;border:1px solid #f0b42944;border-radius:8px;padding:12px">
+        <div style="font-size:9px;color:var(--yellow);font-weight:700;margin-bottom:4px">💡 TIP DE REPARACIÓN / PRUEBA</div>
+        <div style="color:#fbd38d;font-size:13px;line-height:1.6" id="pinDetTip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div id="vTabla" style="display:none">
+    <div class="card">
+      <div class="ct">PINOUT COMPLETO — 38 PINES DOCUMENTADOS CON COLORES EXACTOS</div>
+      <div class="twrap"><table>
+        <thead><tr><th>PIN</th><th>FUNCIÓN</th><th>COLOR DE CABLE</th><th>VOLTAJE / SEÑAL</th><th>TIPO</th><th>REPARACIÓN / PRUEBA</th></tr></thead>
+        <tbody id="tbBody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- COMPONENTES -->
+  <div id="vComp" style="display:none" class="fade">
+    <div class="card"><div class="ct">🔩 COMPONENTES Y SUS CONECTORES — COLORES EXACTOS</div></div>
+    <div id="compBody"></div>
+  </div>
+
+  <!-- FALLAS -->
+  <div id="vFallas" style="display:none" class="fade">
+    <div class="card">
+      <div class="ct">⚠️ GUÍA DE FALLAS COMUNES — VW GOLF A4 ME7.5</div>
+      <div id="fallasBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+// DATOS FUSIONADOS v1 + v2 — VW GOLF A4 2.0L BOSCH ME7.5.10
+// Colores EXACTOS del documento técnico de Fer
+// ════════════════════════════════════════════════════════════════════
+const PINES = [
+  // ── BLOQUE A (pines bajos) ──────────────────────────────────────
+  {n:1,   fn:"Tierra de Potencia",           color:"Café",            hex:"#c05621", v:"0.02V",          tipo:"GND", tip:"Limpiar terminal si marca más de 0.1V. Masa principal inyectores."},
+  {n:2,   fn:"Tierra de Potencia",           color:"Café",            hex:"#c05621", v:"0.02V",          tipo:"GND", tip:"Si falla, los inyectores no abren con fuerza completa."},
+  {n:3,   fn:"Batería Permanente (+30)",      color:"Rojo/Blanco",     hex:"#fc8181", v:"12.6V",          tipo:"PWR", tip:"Si no hay corriente, checa fusible 37 en caja lateral del motor."},
+  {n:4,   fn:"Control Relevador Bomba Gas.", color:"Azul/Amarillo",   hex:"#63b3ed", v:"0V / 12V",       tipo:"ACT", tip:"ECU manda tierra para activar. Si no hay gasolina, puntea a tierra."},
+  {n:5,   fn:"Calefacción Sensor O2 1",      color:"Rojo/Blanco",     hex:"#fc8181", v:"12V",            tipo:"PWR", tip:"Viene del relevador de bomba. Sin calefacción el O2 tarda en reportar."},
+  {n:10,  fn:"Tierra de Sensores",           color:"Café/Azul",       hex:"#c05621", v:"0.01V",          tipo:"GND", tip:"Si marca voltaje en este pin, el sensor ECT va a mentir en temperatura."},
+  {n:15,  fn:"Pedal G79 — Señal 1",          color:"Blanco/Azul",     hex:"#90cdf4", v:"0.5 – 4.5V",     tipo:"SEN", tip:"Si falla, el carro entra en modo limp (emergencia). Verificar ambas señales."},
+  {n:16,  fn:"Pedal G79 — Señal 2",          color:"Blanco/Verde",    hex:"#9ae6b4", v:"0.5 – 4.5V",     tipo:"SEN", tip:"Debe ser siempre exactamente la mitad de la señal 1. Si no, hay falla."},
+  {n:21,  fn:"Sensor Detonación 1",          color:"Verde",           hex:"#38a169", v:"Frecuencia AC",  tipo:"SEN", tip:"Aprieta a 20 Nm. Si está flojo, el motor cascabelea (código P0325)."},
+  {n:22,  fn:"Sensor Detonación 2",          color:"Gris",            hex:"#a0aec0", v:"Frecuencia AC",  tipo:"SEN", tip:"Revisa que el cable no esté tostado por calor del múltiple."},
+  {n:27,  fn:"Sensor IAT (Temperatura Aire)",color:"Azul/Gris",       hex:"#76e4f7", v:"0.5 – 4.8V",     tipo:"SEN", tip:"Integrado en el MAF. Si falla el MAF, falla el IAT también."},
+  {n:28,  fn:"Sensor MAF (Flujo de Aire)",   color:"Verde/Blanco",    hex:"#68d391", v:"1.2 – 4.2V",     tipo:"SEN", tip:"Ralentí: ~1.4V. Si se queda fijo en 0V o 5V, motor se tironea o se apaga."},
+  {n:30,  fn:"Sensor ECT (Temperatura)",     color:"Azul/Café",       hex:"#63b3ed", v:"0.5 – 4.5V",     tipo:"SEN", tip:"Motor frío = ~4V. Motor caliente = ~0.8V. Si marca -40°C, sensor abierto."},
+  {n:33,  fn:"Switch de Freno",              color:"Rojo/Negro",      hex:"#fc8181", v:"12V al pisar",   tipo:"SEN", tip:"Si falla, no libera la palanca de automático. Verificar el switch físico."},
+  {n:34,  fn:"Switch de Clutch",             color:"Blanco/Rojo",     hex:"#fed7d7", v:"12V al pisar",   tipo:"SEN", tip:"Evita tirones al hacer cambios. Sin señal, ECU no adapta bien."},
+  // ── BLOQUE B (pines altos) ──────────────────────────────────────
+  {n:43,  fn:"Línea K — Diagnóstico OBD2",   color:"Gris/Blanco",     hex:"#e2e8f0", v:"10.5V",          tipo:"CAN", tip:"Pin 7 del conector OBD2. Si no hay comunicación, checa que el radio original no esté puenteado."},
+  {n:53,  fn:"Sensor Cigüeñal CKP",          color:"Gris",            hex:"#a0aec0", v:"Frecuencia AC",  tipo:"SEN", tip:"CRÍTICO: Sin esta señal NO hay chispa ni pulso de inyección en ningún cilindro."},
+  {n:54,  fn:"Sensor Árbol de Levas CMP",    color:"Verde/Gris",      hex:"#68d391", v:"Pulso Hall 5V",  tipo:"SEN", tip:"Necesario para inyección secuencial. Falla da código P0340."},
+  {n:58,  fn:"CAN High (Red de datos)",      color:"Naranja/Negro",   hex:"#ed8936", v:"2.6V",           tipo:"CAN", tip:"Medir resistencia entre pin 58 y 60: debe dar 60 u 120 ohms con ignición apagada."},
+  {n:60,  fn:"CAN Low (Red de datos)",       color:"Naranja/Café",    hex:"#dd6b20", v:"2.4V",           tipo:"CAN", tip:"Si va a corto, el tablero se vuelve loco. Medir entre 58-60 antes de cambiar módulos."},
+  {n:62,  fn:"Switch de Ignición (+15)",     color:"Negro/Azul",      hex:"#4a5568", v:"12.0V",          tipo:"PWR", tip:"Viene del switch de encendido. Si no hay 12V aquí, no hay comunicación ni arranque."},
+  {n:63,  fn:"+5V Referencia Sensores",      color:"Rojo/Amarillo",   hex:"#f6ad55", v:"5.0V",           tipo:"REF", tip:"Alimenta TODOS los sensores. Si falla, aparecen múltiples códigos al mismo tiempo."},
+  {n:70,  fn:"Válvula Purga EVAP",           color:"Marrón/Amarillo", hex:"#dd6b20", v:"Pulso (-)",      tipo:"ACT", tip:"Si queda abierta, arranca mal en caliente. Código P0441."},
+  {n:87,  fn:"Inyector Cilindro 1 (Pulso)",  color:"Café/Blanco",     hex:"#c05621", v:"Pulsante (-)",   tipo:"ACT", tip:"Si queda abierto fijo, se inunda el cilindro. Checar driver en ECU. Res: 12-16Ω."},
+  {n:88,  fn:"Inyector Cilindro 2 (Pulso)",  color:"Café/Amarillo",   hex:"#b7791f", v:"Pulsante (-)",   tipo:"ACT", tip:"Usar lámpara de NOID para verificar pulso. Resistencia: 12-16 Ohms."},
+  {n:89,  fn:"Inyector Cilindro 3 (Pulso)",  color:"Café/Rojo",       hex:"#9c4221", v:"Pulsante (-)",   tipo:"ACT", tip:"Si queda abierto causa hidrolock. Daña biela y pistón. Verificar driver ECU."},
+  {n:90,  fn:"Inyector Cilindro 4 (Pulso)",  color:"Café/Azul",       hex:"#c05621", v:"Pulsante (-)",   tipo:"ACT", tip:"Si no hay pulso, checar driver de salida en la ECU antes de cambiarla."},
+  {n:91,  fn:"TPS G187 — Señal Mariposa 1",  color:"Blanco/Amarillo", hex:"#faf089", v:"0.5 – 4.5V",    tipo:"SEN", tip:"Señal de posición de mariposa principal. Sin 5V en pin 63, esta señal no existe."},
+  {n:92,  fn:"Motor Cuerpo Aceleración (+)", color:"Rojo/Verde",      hex:"#68d391", v:"PWM Pulsante",   tipo:"ACT", tip:"Si el cuerpo no se mueve, checar resistencia del motor: debe medir 2-4 ohms."},
+  {n:93,  fn:"Motor Cuerpo Aceleración (-)", color:"Café/Verde",      hex:"#276749", v:"PWM Pulsante",   tipo:"ACT", tip:"Si marca falla de rango EPC, limpiar el carbón de la mariposa y adaptar Canal 060."},
+  {n:95,  fn:"Sensor O2 1 — Upstream",       color:"Negro",           hex:"#4a5568", v:"0.1 – 0.9V",    tipo:"SEN", tip:"Ciclando rápido = mezcla perfecta. Señal plana = O2 muerto o catalizador saturado."},
+  {n:97,  fn:"Sensor O2 2 — Downstream",     color:"Negro",           hex:"#4a5568", v:"0.4 – 0.6V",    tipo:"SEN", tip:"Señal fija y estable = catalizador funcionando bien."},
+  {n:102, fn:"Bobina Cil. 1 y 4 (Disparo)",  color:"Verde/Café",      hex:"#276749", v:"5V / 12V Pulso", tipo:"ACT", tip:"Si no hay chispa en 1 y 4, checar continuidad del cable hasta la bobina."},
+  {n:103, fn:"Bobina Cil. 2 y 3 (Disparo)",  color:"Verde/Gris",      hex:"#38a169", v:"5V / 12V Pulso", tipo:"ACT", tip:"Si no hay chispa en 2 y 3, transistor de salida en la bobina dañado."},
+  {n:115, fn:"Tierra de Bobinas",             color:"Café",            hex:"#c05621", v:"0.0V",           tipo:"GND", tip:"Tierra física atornillada a la cabeza del motor. Limpiar si hay fallas de encendido."},
+  {n:117, fn:"TPS G188 — Señal Mariposa 2",  color:"Blanco/Gris",     hex:"#e2e8f0", v:"4.5 – 0.5V",    tipo:"SEN", tip:"INVERSA al TPS1 (seguridad). La suma de TPS1+TPS2 debe ser siempre ~5V."},
+  {n:121, fn:"ALIMENTACIÓN MAESTRA ECU",     color:"Lila/Blanco",     hex:"#9f7aea", v:"12.0V",          tipo:"PWR", tip:"Viene del Relé 429. EL MÁS IMPORTANTE. Si no hay 12V aquí, la ECU está completamente muerta."},
+];
+
+const TIPOS = {
+  PWR:{bg:"#3d1414",fg:"#f85149",lb:"PWR — Alimentación"},
+  GND:{bg:"#21262d",fg:"#718096",lb:"GND — Masa/Tierra"},
+  SEN:{bg:"#14301e",fg:"#3fb950",lb:"SEN — Sensores"},
+  ACT:{bg:"#3d2810",fg:"#ffa657",lb:"ACT — Actuadores"},
+  CAN:{bg:"#0d2137",fg:"#58a6ff",lb:"CAN — Bus datos"},
+  REF:{bg:"#2d1f5e",fg:"#b794f4",lb:"REF — Referencia"},
+};
+
+const COMPONENTES = [
+  {
+    nombre:"Cuerpo de Aceleración TAC — 6 Pines",
+    desc:"Control electrónico de la mariposa. ECU controla apertura via motor PWM.",
+    pines:[
+      {n:1, fn:"Motor Mariposa (+)",       color:"Rojo/Verde",     hex:"#68d391", v:"PWM 12V",    tipo:"ACT"},
+      {n:2, fn:"Motor Mariposa (-)",        color:"Café/Verde",     hex:"#276749", v:"PWM 12V",    tipo:"ACT"},
+      {n:3, fn:"Tierra de Potencia",        color:"Café/Azul",      hex:"#c05621", v:"0V",         tipo:"GND"},
+      {n:4, fn:"Señal TPS 1",               color:"Blanco/Amarillo",hex:"#faf089", v:"0.5–4.5V",   tipo:"SEN"},
+      {n:5, fn:"+5V Alimentación Sensores", color:"Rojo/Amarillo",  hex:"#f6ad55", v:"5.0V",       tipo:"REF"},
+      {n:6, fn:"Señal TPS 2 (inverso)",     color:"Blanco/Gris",    hex:"#e2e8f0", v:"4.5–0.5V",   tipo:"SEN"},
+    ],
+    tip:"TPS1 + TPS2 deben sumar siempre ~5V. Si no suman 5V, hay falla de seguridad (EPC)."
+  },
+  {
+    nombre:"Sensor Cigüeñal CKP — 3 Pines",
+    desc:"Sensor inductivo / Hall. Sin señal: no hay chispa ni inyección.",
+    pines:[
+      {n:1, fn:"Señal (va a Pin 53 ECU)",   color:"Gris",           hex:"#a0aec0", v:"AC Frecuencia",tipo:"SEN"},
+      {n:2, fn:"Tierra",                    color:"Negro",          hex:"#4a5568", v:"0V",          tipo:"GND"},
+      {n:3, fn:"Blindaje / Shield",         color:"Transparente",   hex:"#e2e8f0", v:"0V",          tipo:"GND"},
+    ],
+    tip:"Usar osciloscopio o multímetro en AC para verificar señal. Ralentí: ~2-4V AC pulsante."
+  },
+  {
+    nombre:"Bobina de Encendido — 4 Pines",
+    desc:"Bobina doble canal. Controla cilindros 1-4 y 2-3 desde la ECU.",
+    pines:[
+      {n:1, fn:"+12V Switch Ignición",        color:"Negro/Azul",    hex:"#4a5568", v:"12V IGN",     tipo:"PWR"},
+      {n:2, fn:"Tierra (Masa física)",         color:"Café",          hex:"#c05621", v:"0V",          tipo:"GND"},
+      {n:3, fn:"Disparo Cil 1 y 4 (Pin 102)", color:"Verde/Café",    hex:"#276749", v:"Pulso (-)",   tipo:"ACT"},
+      {n:4, fn:"Disparo Cil 2 y 3 (Pin 103)", color:"Verde/Gris",    hex:"#38a169", v:"Pulso (-)",   tipo:"ACT"},
+    ],
+    tip:"NO puntear con lámpara de prueba común. El transistor de potencia se quema. Usar lámpara de ignición."
+  },
+  {
+    nombre:"Módulo de Confort — Conector de 23 Pines",
+    desc:"Controla seguros, ventanas y cajuela. Conector gris bajo tablero.",
+    pines:[
+      {n:6,  fn:"Interruptor Puerta Chofer",  color:"Café/Amarillo",  hex:"#b7791f", v:"Tierra al abrir",tipo:"SEN"},
+      {n:11, fn:"Botón Apertura Cajuela",     color:"Azul/Amarillo",  hex:"#63b3ed", v:"Tierra al presionar",tipo:"SEN"},
+      {n:18, fn:"Actuador de Cajuela (+)",    color:"Verde/Blanco",   hex:"#68d391", v:"12V al activar",tipo:"ACT"},
+    ],
+    tip:"Pin 6 debe marcar tierra al abrir la puerta. Si no, los seguros automáticos no funcionan."
+  },
+];
+
+const FALLAS = [
+  {t:"El carro arranca y se apaga (Inmovilizador)",
+   c:`Checa el Pin <span class="fpin">121</span> (Lila/Blanco — Relé 429). Si el relé 429 falla, la ECU corta la inyección completamente después de 1–2 segundos de arranque.`},
+  {t:"No entra el escáner / Sin comunicación OBD2",
+   c:`Revisa el Pin <span class="fpin">43</span> (Gris/Blanco — Línea K). Si el estéreo no es el original, a veces ese cable está puenteado a 12V y bloquea toda comunicación de diagnóstico.`},
+  {t:"EPC prendido y sin aceleración",
+   c:`Revisa Pines <span class="fpin">92</span> y <span class="fpin">93</span> (Rojo/Verde y Café/Verde — Motor mariposa). Resistencia del motor: 2–4 ohms. Si está sucio consume mucho amperaje y la ECU se protege. Solución: Limpiar cuerpo, luego Canal 060 VAG-COM.`},
+  {t:"Exceso de combustible / Humo negro",
+   c:`Verifica Pin <span class="fpin">30</span> (Azul/Café — Sensor ECT). Si marca -40°C constante, la ECU cree que está en temperatura polar e inyecta gasolina a lo loco. Checar conector y medir resistencia del sensor.`},
+  {t:"Sin chispa y sin inyección en todos los cilindros",
+   c:`Verifica Pin <span class="fpin">53</span> (Gris — Sensor CKP Cigüeñal). Sin esta frecuencia, la ECU no da chispa ni abre inyectores en ningún cilindro. Medir con multímetro en CA girandola a mano.`},
+  {t:"Falla múltiples sensores al mismo tiempo",
+   c:`Verifica Pin <span class="fpin">63</span> (Rojo/Amarillo — +5V Referencia). Si este pin falla, aparecen simultáneamente códigos de MAF, TPS, ECT, pedal y más. Un solo punto de falla, muchos síntomas.`},
+  {t:"ECU completamente muerta / Sin respuesta",
+   c:`Verifica Pin <span class="fpin">121</span> (Lila/Blanco) y Pin <span class="fpin">62</span> (Negro/Azul). El 121 viene del Relé 429 (12V) y el 62 del switch de ignición. Sin ambos, la ECU no despierta.`},
+];
+
+// ════════════════════════════════════════════════════════════════════
+// CANVAS
+// ════════════════════════════════════════════════════════════════════
+const CW=1200, CH=620;
+let pinBoxes=[];
+
+function drawECU(){
+  const cv=document.getElementById('cnv');
+  cv.width=CW; cv.height=CH;
+  const c=cv.getContext('2d');
+  pinBoxes=[];
+
+  // Fondo
+  c.fillStyle='#eef2f7'; c.fillRect(0,0,CW,CH);
+  c.strokeStyle='#dde4ed'; c.lineWidth=0.6;
+  for(let x=0;x<CW;x+=28){c.beginPath();c.moveTo(x,0);c.lineTo(x,CH);c.stroke();}
+  for(let y=0;y<CH;y+=28){c.beginPath();c.moveTo(0,y);c.lineTo(CW,y);c.stroke();}
+
+  // Bordes
+  c.strokeStyle='#2d3748'; c.lineWidth=3; c.strokeRect(2,2,CW-4,CH-4);
+
+  // Header
+  c.fillStyle='#1a202c'; c.fillRect(0,0,CW,40);
+  c.fillStyle='#fff'; c.font='bold 13px monospace';
+  c.fillText('VW GOLF A4 2.0L APK/BEV  —  ECU BOSCH MOTRONIC ME7.5.10  —  121 PINES',14,26);
+  c.font='10px monospace'; c.fillStyle='#a0aec0';
+  c.fillText('PRO PART SYSTEM V12  ·  Fernando Millán  ·  777-683-8196  ·  Alpuyeca, Mor.',CW-490,26);
+
+  // ── BLOQUE A (pines ≤40) ─────────────────────────────────────────
+  const blkA = PINES.filter(p=>p.n<=40);
+  const blkB = PINES.filter(p=>p.n>40);
+  drawBloque(c, 18,  50, blkA, 'BLOQUE A — MASAS · ALIMENTACIÓN · SENSORES\n(Pines 1–40)', 8);
+  drawBloque(c, 550, 50, blkB, 'BLOQUE B — DIAGNÓSTICO · ACTUADORES · BOBINAS\n(Pines 41–121)', 12);
+
+  // ── CAJA ECU CENTRAL ─────────────────────────────────────────────
+  drawECUBox(c, 370, 130);
+
+  // ── LEYENDA ───────────────────────────────────────────────────────
+  drawLeyenda(c);
+
+  // ── WATERMARK ────────────────────────────────────────────────────
+  c.save(); c.globalAlpha=0.04;
+  c.font='bold 110px monospace'; c.fillStyle='#2d3748';
+  c.translate(CW/2,CH/2+20); c.rotate(-0.2); c.textAlign='center';
+  c.fillText('PROPART',0,0); c.restore();
+}
+
+function drawBloque(c,sx,sy,pines,titulo,cols){
+  const PW=44,PH=46,gap=3;
+  const rows=Math.ceil(pines.length/cols);
+  const bW=cols*(PW+gap)+12, bH=rows*(PH+gap)+44;
+
+  // Sombra
+  c.fillStyle='rgba(0,0,0,.15)'; rr(c,sx+4,sy+4,bW,bH,10); c.fill();
+
+  // Cuerpo
+  const cg=c.createLinearGradient(sx,sy,sx,sy+bH);
+  cg.addColorStop(0,'#2d3748'); cg.addColorStop(1,'#1a202c');
+  c.fillStyle=cg; rr(c,sx,sy,bW,bH,10); c.fill();
+  c.strokeStyle='#4a5568'; c.lineWidth=2; rr(c,sx,sy,bW,bH,10); c.stroke();
+
+  // Borde top azul
+  c.fillStyle='#2b6cb0'; rr(c,sx,sy,bW,10,10); c.fill();
+
+  // Título
+  c.fillStyle='#90cdf4'; c.font='bold 9px monospace'; c.textAlign='center';
+  titulo.split('\n').forEach((t,i)=>c.fillText(t,sx+bW/2,sy+20+i*12));
+  c.textAlign='left';
+
+  pines.forEach((pin,i)=>{
+    const col=i%cols, row=Math.floor(i/cols);
+    const px=sx+6+col*(PW+gap);
+    const py=sy+40+row*(PH+gap);
+    drawPinBox(c,px,py,PW,PH,pin);
+  });
+}
+
+function drawPinBox(c,x,y,w,h,pin){
+  const esPot=[1,2,3,5,121].includes(pin.n);
+  const tcol=TIPOS[pin.tipo]?.fg||'#718096';
+
+  // Marco exterior
+  c.fillStyle='#718096'; rr(c,x,y,w,h,4); c.fill();
+
+  // Fondo con color del cable de la base
+  const g=c.createLinearGradient(x,y,x+w,y);
+  g.addColorStop(0,pin.hex); g.addColorStop(.65,pin.hex); g.addColorStop(1,lighten(pin.hex,50));
+  c.fillStyle=g; rr(c,x+1.5,y+1.5,w-3,h-3,3); c.fill();
+
+  // Borde según tipo
+  c.strokeStyle=esPot?'#f0b429':tcol; c.lineWidth=esPot?2.5:1.5;
+  rr(c,x+1.5,y+1.5,w-3,h-3,3); c.stroke();
+
+  // Barra tipo arriba
+  c.fillStyle=tcol; c.fillRect(x+2,y+2,w-4,4);
+
+  // Número pin
+  c.save();
+  c.shadowColor='rgba(0,0,0,.6)'; c.shadowBlur=3;
+  const lt=isLt(pin.hex);
+  c.fillStyle=lt?'#1a202c':'#fff';
+  c.font=`bold ${w>40?9:8}px monospace`;
+  c.textAlign='center';
+  c.fillText(String(pin.n),x+w/2,y+h/2+2);
+  c.restore();
+
+  // Color nombre (primeras 7 letras)
+  c.fillStyle=lt?'#2d3748':'#e2e8f0';
+  c.font='6.5px sans-serif'; c.textAlign='center';
+  c.fillText(pin.color.split('/')[0].slice(0,7),x+w/2,y+h-5);
+  c.textAlign='left';
+
+  pinBoxes.push({pin,x,y,w,h});
+}
+
+function drawECUBox(c,x,y){
+  const w=160,h=260;
+  c.fillStyle='rgba(0,0,0,.2)'; rr(c,x+5,y+5,w,h,12); c.fill();
+  const cg=c.createLinearGradient(x,y,x,y+h);
+  cg.addColorStop(0,'#1a202c'); cg.addColorStop(1,'#0d1117');
+  c.fillStyle=cg; rr(c,x,y,w,h,12); c.fill();
+  c.strokeStyle='#58a6ff'; c.lineWidth=2.5; rr(c,x,y,w,h,12); c.stroke();
+
+  // Top bar
+  c.fillStyle='#2b6cb0'; rr(c,x,y,w,10,12); c.fill();
+
+  c.textAlign='center';
+  c.fillStyle='#90cdf4'; c.font='bold 13px monospace';
+  c.fillText('BOSCH',x+w/2,y+30);
+  c.fillText('ME7.5.10',x+w/2,y+48);
+  c.fillStyle='#718096'; c.font='9px monospace';
+  c.fillText('121 PINES',x+w/2,y+65);
+  c.fillText('VW GOLF A4 2.0L',x+w/2,y+82);
+  c.fillText('APK / BEV',x+w/2,y+96);
+
+  // Divisor
+  c.strokeStyle='#30363d'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(x+10,y+110); c.lineTo(x+w-10,y+110); c.stroke();
+
+  // Pines clave
+  c.font='bold 8px sans-serif'; c.fillStyle='#f0b429';
+  const claves=[
+    {lbl:'PIN 121 = Relé 429 (PWR)',y:130},{lbl:'PIN 63 = +5V Referencia',y:147},
+    {lbl:'PIN 53 = CKP Cigüeñal',y:164},{lbl:'PIN 43 = Línea K OBD2',y:181},
+    {lbl:'PIN 58/60 = CAN H/L',y:198},{lbl:'PINES 1,2,115 = GND',y:215},
+  ];
+  claves.forEach(k=>{c.fillText(k.lbl,x+w/2,y+k.y);});
+
+  // Badge Bosch
+  c.fillStyle='#0d2137'; rr(c,x+20,y+235,w-40,20,6); c.fill();
+  c.strokeStyle='#1e3a5f'; c.lineWidth=1; rr(c,x+20,y+235,w-40,20,6); c.stroke();
+  c.fillStyle='#58a6ff'; c.font='bold 9px monospace';
+  c.fillText('PROPART V12',x+w/2,y+249);
+  c.textAlign='left';
+}
+
+function drawLeyenda(c){
+  const ly=CH-48, items=Object.entries(TIPOS);
+  c.fillStyle='rgba(255,255,255,.9)';
+  c.fillRect(8,ly-4,items.length*120+10,42);
+  c.strokeStyle='#cbd5e0'; c.lineWidth=1;
+  c.strokeRect(8,ly-4,items.length*120+10,42);
+
+  items.forEach(([k,v],i)=>{
+    const lx=14+i*120;
+    c.fillStyle=v.bg; c.fillRect(lx,ly+4,16,14);
+    c.strokeStyle=v.fg; c.lineWidth=1.5; c.strokeRect(lx,ly+4,16,14);
+    c.fillStyle=v.fg; c.font='bold 9px monospace'; c.fillText(k,lx+20,ly+15);
+    c.fillStyle='#4a5568'; c.font='8px sans-serif'; c.fillText(v.lb.split('—')[1]?.trim()||'',lx+20,ly+27);
+  });
+
+  c.fillStyle='#718096'; c.font='9px sans-serif';
+  c.fillText('👆 Toca cualquier pin para ver función, color de cable y tip de reparación',CW-520,ly+20);
+}
+
+// ── INTERACCIÓN CANVAS ──────────────────────────────────────────────
+function scale(){
+  const cv=document.getElementById('cnv');
+  return cv.getBoundingClientRect().width/CW;
+}
+
+document.getElementById('cnv').addEventListener('mousemove',e=>{
+  const r=e.target.getBoundingClientRect();
+  const sc=scale();
+  const mx=(e.clientX-r.left)/sc, my=(e.clientY-r.top)/sc;
+  const hit=pinBoxes.find(b=>mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h);
+  const tt=document.getElementById('tooltip');
+  if(hit){
+    const p=hit.pin;
+    tt.style.display='block';
+    tt.style.left=(e.clientX+14)+'px';
+    tt.style.top=(e.clientY-10)+'px';
+    document.getElementById('ttPin').textContent=`PIN ${p.n}`;
+    document.getElementById('ttFn').textContent=p.fn;
+    document.getElementById('ttChip').style.background=p.hex;
+    document.getElementById('ttColor').textContent=p.color;
+    document.getElementById('ttVolt').textContent='⚡ '+p.v;
+    document.getElementById('ttTip').textContent='💡 '+p.tip;
+    e.target.style.cursor='pointer';
+  }else{tt.style.display='none'; e.target.style.cursor='crosshair';}
+});
+
+document.getElementById('cnv').addEventListener('click',e=>{
+  const r=e.target.getBoundingClientRect();
+  const sc=scale();
+  const mx=(e.clientX-r.left)/sc, my=(e.clientY-r.top)/sc;
+  const hit=pinBoxes.find(b=>mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h);
+  if(!hit)return;
+  const p=hit.pin;
+  const t=TIPOS[p.tipo]||{fg:'#fff',bg:'#1a202c'};
+  const det=document.getElementById('pinDet');
+  det.style.display='block';
+  document.getElementById('pinDetTitle').textContent=`PIN ${p.n} — ${p.fn}`;
+  document.getElementById('pinDetGrid').innerHTML=`
+    <div class="det-item">
+      <div class="det-lbl">COLOR DE CABLE</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <div style="width:40px;height:26px;background:${p.hex};border-radius:6px;border:1px solid #ffffff22;box-shadow:0 0 12px ${p.hex}77;flex-shrink:0"></div>
+        <span style="font-weight:800;font-size:16px">${p.color}</span>
+      </div>
+    </div>
+    <div class="det-item">
+      <div class="det-lbl">VOLTAJE / SEÑAL</div>
+      <div style="font-family:monospace;font-weight:800;font-size:16px;color:var(--green);margin-top:4px">${p.v}</div>
+    </div>
+    <div class="det-item">
+      <div class="det-lbl">TIPO DE SEÑAL</div>
+      <div style="margin-top:4px">
+        <span class="badge" style="background:${t.bg};color:${t.fg};border:1px solid ${t.fg}55;font-size:12px;padding:4px 12px">${p.tipo}</span>
+      </div>
+    </div>`;
+  document.getElementById('pinDetTip').textContent=p.tip;
+  det.scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+document.getElementById('cnv').addEventListener('mouseleave',()=>{
+  document.getElementById('tooltip').style.display='none';
+});
+
+// ── TABLA ────────────────────────────────────────────────────────────
+function renderTabla(){
+  document.getElementById('tbBody').innerHTML=PINES.map(p=>{
+    const t=TIPOS[p.tipo]||{fg:'#fff',bg:'#1a202c'};
+    return `<tr>
+      <td><span class="pnum">${p.n}</span></td>
+      <td style="font-weight:600;font-size:12px">${p.fn}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div style="width:18px;height:12px;background:${p.hex};border-radius:3px;border:1px solid #ffffff22;box-shadow:0 0 6px ${p.hex}55;flex-shrink:0"></div>
+          <span style="font-size:12px">${p.color}</span>
+        </div>
+      </td>
+      <td style="font-family:monospace;color:var(--green);font-size:12px">${p.v}</td>
+      <td><span class="badge" style="background:${t.bg};color:${t.fg};border:1px solid ${t.fg}44">${p.tipo}</span></td>
+      <td style="color:var(--muted);font-size:11px;max-width:300px;line-height:1.5">${p.tip}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── COMPONENTES ──────────────────────────────────────────────────────
+function renderComp(){
+  document.getElementById('compBody').innerHTML=COMPONENTES.map(comp=>`
+    <div class="comp-card fade">
+      <div class="comp-header">🔩 ${comp.nombre} <span style="color:var(--muted);font-weight:400">— ${comp.desc}</span></div>
+      <table class="comp-table">
+        <thead style="background:var(--bg4)"><tr>
+          <th style="padding:8px 12px;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border)">PIN</th>
+          <th style="padding:8px 12px;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border)">FUNCIÓN</th>
+          <th style="padding:8px 12px;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border)">COLOR CABLE</th>
+          <th style="padding:8px 12px;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border)">VOLTAJE</th>
+          <th style="padding:8px 12px;color:var(--muted);font-size:9px;letter-spacing:1px;border-bottom:1px solid var(--border)">TIPO</th>
+        </tr></thead>
+        <tbody>
+          ${comp.pines.map(p=>{const t=TIPOS[p.tipo]||{fg:'#fff',bg:'#1a202c'};return`
+          <tr><td style="padding:8px 12px;font-family:monospace;font-weight:800;color:var(--yellow);font-size:14px">${p.n}</td>
+          <td style="padding:8px 12px;font-weight:600">${p.fn}</td>
+          <td style="padding:8px 12px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="width:22px;height:14px;background:${p.hex};border-radius:4px;border:1px solid #ffffff22;box-shadow:0 0 8px ${p.hex}66;flex-shrink:0"></div>
+              <span>${p.color}</span>
+            </div>
+          </td>
+          <td style="padding:8px 12px;font-family:monospace;color:var(--green);font-size:12px">${p.v}</td>
+          <td style="padding:8px 12px"><span class="badge" style="background:${t.bg};color:${t.fg};border:1px solid ${t.fg}44">${p.tipo}</span></td>
+          </tr>`}).join('')}
+        </tbody>
+      </table>
+      <div style="padding:12px 14px;background:#3d2e1022;border-top:1px solid var(--border)">
+        <span style="font-size:10px;color:var(--yellow);font-weight:700">💡 TIP: </span>
+        <span style="font-size:12px;color:#fbd38d">${comp.tip}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ── FALLAS ────────────────────────────────────────────────────────────
+function renderFallas(){
+  document.getElementById('fallasBody').innerHTML=FALLAS.map(f=>`
+    <div class="falla">
+      <div class="falla-t">⚠️ ${f.t}</div>
+      <div class="falla-c">🔧 ${f.c}</div>
+    </div>`).join('');
+}
+
+// ── VISTAS ────────────────────────────────────────────────────────────
+function setVista(v){
+  ['Diag','Tabla','Comp','Fallas'].forEach(n=>{
+    document.getElementById('v'+n).style.display='none';
+    const b=document.getElementById('btn'+n.charAt(0).toUpperCase()+n.slice(1));
+    if(b){b.className='btn btn-g';}
+  });
+  document.getElementById('v'+v.charAt(0).toUpperCase()+v.slice(1)).style.display='block';
+  const active=document.getElementById('btn'+v.charAt(0).toUpperCase()+v.slice(1));
+  if(active) active.className='btn btn-b';
+  if(v==='tabla') renderTabla();
+  if(v==='comp')  renderComp();
+  if(v==='fallas') renderFallas();
+}
+
+function descargarPNG(){
+  const a=document.createElement('a');
+  a.download='ProPart_GolfA4_ME7.5_DEFINITIVO.png';
+  a.href=document.getElementById('cnv').toDataURL('image/png');
+  a.click();
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function rr(c,x,y,w,h,r){
+  c.beginPath();
+  c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.arcTo(x+w,y,x+w,y+r,r);
+  c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);
+  c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);
+  c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath();
+}
+function lighten(hex,amt){
+  const n=parseInt(hex.replace(/[^0-9a-f]/gi,'').slice(-6)||'718096',16);
+  return`rgb(${Math.min(255,(n>>16)+amt)},${Math.min(255,((n>>8)&0xff)+amt)},${Math.min(255,(n&0xff)+amt)})`;
+}
+function isLt(hex){
+  const n=parseInt(hex.replace(/[^0-9a-f]/gi,'').slice(-6)||'718096',16);
+  return((n>>16)*299+((n>>8)&0xff)*587+(n&0xff)*114)/1000>150;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+drawECU();
+document.getElementById('btnDiag').className='btn btn-b';
+</script>
+</body>
+</html>

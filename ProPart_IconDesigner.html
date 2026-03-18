@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PROPART · ICON DESIGNER</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#030810;--bg2:#060F1A;--card:#091626;--card2:#0C1E36;
+  --blue:#1A7FD4;--blue2:#0A4A80;--green:#00C48C;--red:#FF3D4E;
+  --gold:#F5A623;--purple:#9B59F7;--cyan:#00D4E8;--orange:#FF6B2F;
+  --white:#E8F4FF;--lgray:#5A7A98;--gray:#1A3352;--border:#0D2238;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Exo 2',sans-serif;
+  display:flex;flex-direction:column;min-height:100vh;max-width:900px;margin:0 auto;padding:10px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,212,232,.004) 3px,rgba(0,212,232,.004) 4px)}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;gap:12px;padding:12px 14px;position:relative;z-index:1;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:10px}
+.hdr-logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#1A7FD4,#052A50);
+  display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;
+  font-weight:700;font-size:12px;color:#fff;box-shadow:0 0 18px rgba(26,127,212,.5);flex-shrink:0}
+.hdr-t{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px}
+.hdr-s{font-size:7.5px;color:var(--lgray);letter-spacing:2px;font-family:'Rajdhani',sans-serif;margin-top:2px}
+
+/* ── LAYOUT ── */
+.main{display:grid;grid-template-columns:1fr 260px;gap:10px;position:relative;z-index:1}
+@media(max-width:600px){.main{grid-template-columns:1fr}}
+
+/* ── CANVAS AREA ── */
+.canvas-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;
+  display:flex;flex-direction:column;align-items:center;gap:10px}
+.canvas-title{font-family:'Rajdhani',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;color:var(--lgray);align-self:flex-start}
+#main-canvas{border-radius:16px;border:2px solid var(--border);cursor:crosshair;display:block;max-width:100%;box-shadow:0 0 30px rgba(0,0,0,.5)}
+.export-row{display:flex;gap:7px;flex-wrap:wrap;width:100%}
+.exp-btn{flex:1;min-width:80px;border:none;border-radius:8px;padding:9px 8px;
+  font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.8px;cursor:pointer;transition:all .15s}
+.exp-btn:active{transform:scale(.96)}
+
+/* ── PANEL ── */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;
+  display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:calc(100vh - 120px)}
+.sec{border:1px solid var(--border);border-radius:9px;padding:10px;background:var(--bg2)}
+.sec-t{font-family:'Rajdhani',sans-serif;font-size:7px;font-weight:700;letter-spacing:1.5px;
+  color:var(--lgray);margin-bottom:8px;text-transform:uppercase}
+label{font-family:'Rajdhani',sans-serif;font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--lgray);
+  display:block;margin-bottom:3px;margin-top:6px}
+label:first-child{margin-top:0}
+input[type=text],input[type=number],input[type=url],select,textarea{
+  width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);
+  border-radius:7px;padding:6px 9px;font-family:'Share Tech Mono',monospace;font-size:9px;
+  outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue)}
+input[type=color]{width:100%;height:32px;border:1px solid var(--border);border-radius:7px;
+  padding:2px;background:var(--card);cursor:pointer}
+input[type=range]{width:100%;accent-color:var(--blue)}
+
+/* ── HERRAMIENTAS ── */
+.tools-row{display:flex;gap:5px;flex-wrap:wrap}
+.tool-btn{border:1px solid var(--border);background:var(--card);color:var(--white);
+  border-radius:7px;padding:7px 10px;font-size:13px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.tool-btn.on{background:var(--blue);border-color:var(--blue)}
+.tool-btn:active{transform:scale(.93)}
+
+/* ── PLANTILLAS ── */
+.tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.tpl-btn{border:1px solid var(--border);background:var(--bg);border-radius:8px;padding:6px 4px;
+  font-size:11px;cursor:pointer;transition:all .15s;text-align:center}
+.tpl-btn:hover{border-color:var(--blue);background:rgba(26,127,212,.1)}
+.tpl-btn .tpl-name{font-family:'Rajdhani',sans-serif;font-size:6.5px;color:var(--lgray);margin-top:3px;display:block}
+
+/* ── HISTORIAL ── */
+.hist-row{display:flex;gap:5px;flex-wrap:wrap}
+.hist-item{width:36px;height:36px;border-radius:6px;border:1px solid var(--border);
+  cursor:pointer;overflow:hidden;flex-shrink:0}
+.hist-item img{width:100%;height:100%;object-fit:cover}
+.hist-item:hover{border-color:var(--blue)}
+
+/* ── TAMAÑOS ── */
+.size-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.size-btn{border:1px solid var(--border);background:var(--bg);border-radius:7px;padding:5px 4px;
+  text-align:center;cursor:pointer;transition:all .15s}
+.size-btn:hover,.size-btn.on{border-color:var(--blue);background:rgba(26,127,212,.1)}
+.size-btn .s-name{font-family:'Rajdhani',sans-serif;font-size:7.5px;font-weight:700;color:var(--white)}
+.size-btn .s-dim{font-family:'Share Tech Mono',monospace;font-size:6.5px;color:var(--lgray);margin-top:1px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">PP</div>
+  <div>
+    <div class="hdr-t">PROPART · ICON DESIGNER</div>
+    <div class="hdr-s">DISEÑADOR DE ÍCONOS Y SPLASH SCREENS PARA APP</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CANVAS -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">ÁREA DE DISEÑO</div>
+    <canvas id="main-canvas" width="512" height="512"></canvas>
+    <div class="export-row">
+      <button class="exp-btn" style="background:var(--blue)" onclick="exportPNG()">📥 PNG</button>
+      <button class="exp-btn" style="background:var(--card);border:1px solid var(--border)" onclick="exportSizes()">📦 PACK ÍCONOS</button>
+      <button class="exp-btn" style="background:rgba(0,196,140,.15);border:1px solid var(--green);color:var(--green)" onclick="exportSVG()">🔷 SVG</button>
+      <button class="exp-btn" style="background:rgba(255,61,78,.12);border:1px solid var(--red);color:var(--red)" onclick="limpiarCanvas()">🗑️ LIMPIAR</button>
+    </div>
+    <div id="size-info" style="font-family:'Share Tech Mono',monospace;font-size:7.5px;color:var(--lgray)">512 × 512 px</div>
+  </div>
+
+  <!-- PANEL -->
+  <div class="panel">
+
+    <!-- Tamaños rápidos -->
+    <div class="sec">
+      <div class="sec-t">📐 TAMAÑO</div>
+      <div class="size-grid">
+        <div class="size-btn on" onclick="setSize(512,512,this)"><div class="s-name">APP ICON</div><div class="s-dim">512×512</div></div>
+        <div class="size-btn" onclick="setSize(1024,1024,this)"><div class="s-name">STORE</div><div class="s-dim">1024×1024</div></div>
+        <div class="size-btn" onclick="setSize(1080,1920,this)"><div class="s-name">SPLASH</div><div class="s-dim">1080×1920</div></div>
+        <div class="size-btn" onclick="setSize(192,192,this)"><div class="s-name">PWA</div><div class="s-dim">192×192</div></div>
+        <div class="size-btn" onclick="setSize(800,400,this)"><div class="s-name">BANNER</div><div class="s-dim">800×400</div></div>
+        <div class="size-btn" onclick="setSize(512,512,this)"><div class="s-name">NOTIF.</div><div class="s-dim">96×96</div></div>
+      </div>
+    </div>
+
+    <!-- Herramientas -->
+    <div class="sec">
+      <div class="sec-t">🛠️ HERRAMIENTA</div>
+      <div class="tools-row">
+        <button class="tool-btn on" data-tool="select" onclick="setTool(this,'select')" title="Seleccionar">☝️</button>
+        <button class="tool-btn" data-tool="text" onclick="setTool(this,'text')" title="Texto">T</button>
+        <button class="tool-btn" data-tool="rect" onclick="setTool(this,'rect')" title="Rectángulo">⬜</button>
+        <button class="tool-btn" data-tool="circle" onclick="setTool(this,'circle')" title="Círculo">⭕</button>
+        <button class="tool-btn" data-tool="icon" onclick="setTool(this,'icon')" title="Ícono/Emoji">😀</button>
+        <button class="tool-btn" data-tool="image" onclick="triggerImageUpload()" title="Imagen">🖼️</button>
+      </div>
+      <input type="file" id="img-upload" accept="image/*" style="display:none" onchange="addImage(this)"/>
+    </div>
+
+    <!-- Fondo -->
+    <div class="sec">
+      <div class="sec-t">🎨 FONDO</div>
+      <div class="tools-row" style="margin-bottom:8px">
+        <button class="tool-btn on" id="bg-solid" onclick="setBGType('solid',this)">Color</button>
+        <button class="tool-btn" id="bg-gradient" onclick="setBGType('gradient',this)">Gradiente</button>
+        <button class="tool-btn" id="bg-transparent" onclick="setBGType('transparent',this)">Trans.</button>
+      </div>
+      <label>Color principal</label>
+      <input type="color" id="bg-color1" value="#030810" oninput="renderAll()"/>
+      <div id="bg-color2-wrap">
+        <label>Color secundario (gradiente)</label>
+        <input type="color" id="bg-color2" value="#1A7FD4" oninput="renderAll()"/>
+      </div>
+      <label>Radio esquinas</label>
+      <input type="range" id="bg-radius" min="0" max="256" value="64" oninput="renderAll()"/>
+    </div>
+
+    <!-- Texto -->
+    <div class="sec">
+      <div class="sec-t">🔤 TEXTO</div>
+      <label>Contenido</label>
+      <input type="text" id="txt-content" value="PP" maxlength="4" oninput="renderAll()"/>
+      <label>Fuente</label>
+      <select id="txt-font" onchange="renderAll()">
+        <option value="Rajdhani">Rajdhani (App)</option>
+        <option value="Share Tech Mono">Share Tech Mono</option>
+        <option value="Exo 2">Exo 2</option>
+        <option value="Arial Black">Arial Black</option>
+        <option value="Impact">Impact</option>
+      </select>
+      <label>Tamaño (%)</label>
+      <input type="range" id="txt-size" min="5" max="90" value="40" oninput="renderAll()"/>
+      <label>Color</label>
+      <input type="color" id="txt-color" value="#E8F4FF" oninput="renderAll()"/>
+      <label>Posición Y</label>
+      <input type="range" id="txt-y" min="0" max="100" value="50" oninput="renderAll()"/>
+      <label>Peso</label>
+      <select id="txt-weight" onchange="renderAll()">
+        <option value="700">Bold</option>
+        <option value="900">Black</option>
+        <option value="400">Regular</option>
+      </select>
+    </div>
+
+    <!-- Emoji / Ícono -->
+    <div class="sec">
+      <div class="sec-t">✨ ÍCONO / EMOJI</div>
+      <label>Emoji o símbolo</label>
+      <input type="text" id="ico-content" value="🔧" maxlength="2" oninput="renderAll()" style="font-size:20px"/>
+      <label>Tamaño (%)</label>
+      <input type="range" id="ico-size" min="5" max="80" value="40" oninput="renderAll()"/>
+      <label>Posición Y</label>
+      <input type="range" id="ico-y" min="0" max="100" value="30" oninput="renderAll()"/>
+    </div>
+
+    <!-- Efectos -->
+    <div class="sec">
+      <div class="sec-t">💫 EFECTOS</div>
+      <label><input type="checkbox" id="fx-glow" onchange="renderAll()"/> Glow azul</label>
+      <label><input type="checkbox" id="fx-grid" onchange="renderAll()"/> Cuadrícula tech</label>
+      <label><input type="checkbox" id="fx-circle" onchange="renderAll()"/> Círculo decorativo</label>
+      <label><input type="checkbox" id="fx-badge" onchange="renderAll()"/> Badge "PRO"</label>
+      <label><input type="checkbox" id="fx-shadow" onchange="renderAll()"/> Sombra texto</label>
+      <label>Opacidad efectos</label>
+      <input type="range" id="fx-opacity" min="0" max="100" value="60" oninput="renderAll()"/>
+    </div>
+
+    <!-- Plantillas rápidas -->
+    <div class="sec">
+      <div class="sec-t">⚡ PLANTILLAS</div>
+      <div class="tpl-grid">
+        <div class="tpl-btn" onclick="applyTemplate('propart')">🔧<span class="tpl-name">ProPart</span></div>
+        <div class="tpl-btn" onclick="applyTemplate('diagnostico')">📡<span class="tpl-name">Diagnóst.</span></div>
+        <div class="tpl-btn" onclick="applyTemplate('electrico')">⚡<span class="tpl-name">Eléctrico</span></div>
+        <div class="tpl-btn" onclick="applyTemplate('dark')">🌑<span class="tpl-name">Dark</span></div>
+        <div class="tpl-btn" onclick="applyTemplate('neon')">🟢<span class="tpl-name">Neon</span></div>
+        <div class="tpl-btn" onclick="applyTemplate('gold')">🏆<span class="tpl-name">Gold</span></div>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div class="sec">
+      <div class="sec-t">🕒 HISTORIAL</div>
+      <div class="hist-row" id="hist-row">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:8px;color:var(--lgray)">Los diseños guardados aparecerán aquí</div>
+      </div>
+      <button class="exp-btn" style="background:var(--card);border:1px solid var(--border);margin-top:7px;width:100%" onclick="saveToHistory()">💾 GUARDAR EN HISTORIAL</button>
+    </div>
+
+  </div><!-- /panel -->
+</div><!-- /main -->
+
+<script>
+const canvas = document.getElementById('main-canvas');
+const ctx = canvas.getContext('2d');
+let currentTool = 'select';
+let bgType = 'gradient';
+let history = JSON.parse(localStorage.getItem('pp_icon_hist')||'[]');
+
+// ── Render principal ──
+function renderAll(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const radius = parseInt(qi('bg-radius').value);
+
+  // Clip con radio
+  if(radius>0){
+    ctx.save();
+    roundClip(ctx,0,0,W,H,radius);
+    ctx.clip();
+  }
+
+  // Fondo
+  const c1 = qi('bg-color1').value;
+  const c2 = qi('bg-color2').value;
+  if(bgType==='solid'){
+    ctx.fillStyle=c1; ctx.fillRect(0,0,W,H);
+  } else if(bgType==='gradient'){
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,c1); g.addColorStop(1,c2);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  }
+  // transparent: nada
+
+  // Efecto cuadrícula tech
+  if(qi('fx-grid').checked){
+    const op = parseInt(qi('fx-opacity').value)/100*0.08;
+    ctx.strokeStyle=`rgba(0,212,232,${op})`;
+    ctx.lineWidth=1;
+    const step=W/16;
+    for(let x=0;x<=W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<=H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }
+
+  // Círculo decorativo
+  if(qi('fx-circle').checked){
+    const op=parseInt(qi('fx-opacity').value)/100*0.15;
+    ctx.strokeStyle=`rgba(26,127,212,${op})`;
+    ctx.lineWidth=W*0.04;
+    ctx.beginPath();
+    ctx.arc(W/2,H/2,W*0.38,0,Math.PI*2);
+    ctx.stroke();
+    ctx.strokeStyle=`rgba(0,212,232,${op*0.5})`;
+    ctx.lineWidth=W*0.01;
+    ctx.beginPath();
+    ctx.arc(W/2,H/2,W*0.44,0,Math.PI*2);
+    ctx.stroke();
+  }
+
+  // Glow
+  if(qi('fx-glow').checked){
+    const op=parseInt(qi('fx-opacity').value)/100;
+    const g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*0.5);
+    g.addColorStop(0,`rgba(26,127,212,${0.25*op})`);
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Emoji/ícono
+  const icoContent = qi('ico-content').value;
+  const icoSize = parseInt(qi('ico-size').value)/100*W*0.9;
+  const icoY = parseInt(qi('ico-y').value)/100*H;
+  if(icoContent){
+    ctx.font=`${icoSize}px serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(icoContent, W/2, icoY);
+  }
+
+  // Texto
+  const txtContent = qi('txt-content').value;
+  if(txtContent){
+    const sz = parseInt(qi('txt-size').value)/100*W*0.9;
+    const font = qi('txt-font').value;
+    const weight = qi('txt-weight').value;
+    ctx.font=`${weight} ${sz}px "${font}", sans-serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    const ty = parseInt(qi('txt-y').value)/100*H;
+
+    if(qi('fx-shadow').checked){
+      ctx.shadowColor='rgba(0,0,0,0.8)';
+      ctx.shadowBlur=sz*0.1;
+      ctx.shadowOffsetX=sz*0.02;
+      ctx.shadowOffsetY=sz*0.02;
+    }
+    ctx.fillStyle=qi('txt-color').value;
+    ctx.fillText(txtContent, W/2, ty);
+    ctx.shadowColor='transparent';
+    ctx.shadowBlur=0;
+  }
+
+  // Badge PRO
+  if(qi('fx-badge').checked){
+    const bsz=W*0.12;
+    const bx=W*0.72, by=W*0.12;
+    ctx.fillStyle='#F5A623';
+    ctx.beginPath();
+    ctx.arc(bx,by,bsz/2,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='#030810';
+    ctx.font=`bold ${bsz*0.5}px Rajdhani, sans-serif`;
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('PRO',bx,by);
+  }
+
+  if(radius>0) ctx.restore();
+}
+
+function roundClip(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function qi(id){return document.getElementById(id)}
+
+// ── Controles ──
+function setTool(el,tool){
+  document.querySelectorAll('[data-tool]').forEach(b=>b.classList.remove('on'));
+  if(el.dataset&&el.dataset.tool) el.classList.add('on');
+  currentTool=tool;
+}
+function setBGType(type,el){
+  bgType=type;
+  ['bg-solid','bg-gradient','bg-transparent'].forEach(id=>qi(id).classList.remove('on'));
+  el.classList.add('on');
+  qi('bg-color2-wrap').style.display=(type==='gradient')?'block':'none';
+  renderAll();
+}
+function setSize(w,h,el){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  canvas.width=w; canvas.height=h;
+  qi('size-info').textContent=w+' × '+h+' px';
+  renderAll();
+}
+
+// ── Imagen upload ──
+function triggerImageUpload(){ qi('img-upload').click(); }
+function addImage(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const W=canvas.width,H=canvas.height;
+      const ratio=Math.min(W/img.width,H/img.height)*0.8;
+      const iw=img.width*ratio,ih=img.height*ratio;
+      ctx.drawImage(img,(W-iw)/2,(H-ih)/2,iw,ih);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Plantillas ──
+const TEMPLATES={
+  propart:{bg1:'#030810',bg2:'#0A4A80',ico:'🔧',txt:'PP',txtColor:'#E8F4FF',glow:true,grid:true,circle:true},
+  diagnostico:{bg1:'#030810',bg2:'#004D40',ico:'📡',txt:'DX',txtColor:'#00C48C',glow:false,grid:true,circle:false},
+  electrico:{bg1:'#0A0A1A',bg2:'#1A237E',ico:'⚡',txt:'EC',txtColor:'#FFD600',glow:true,grid:false,circle:true},
+  dark:{bg1:'#080808',bg2:'#181818',ico:'🔩',txt:'PP',txtColor:'#BDBDBD',glow:false,grid:false,circle:false},
+  neon:{bg1:'#001111',bg2:'#003322',ico:'🟢',txt:'PRO',txtColor:'#00FF88',glow:true,grid:true,circle:true},
+  gold:{bg1:'#1A0A00',bg2:'#3E2000',ico:'🏆',txt:'V7',txtColor:'#F5A623',glow:false,grid:false,circle:true},
+};
+function applyTemplate(name){
+  const t=TEMPLATES[name]; if(!t) return;
+  qi('bg-color1').value=t.bg1;
+  qi('bg-color2').value=t.bg2;
+  qi('ico-content').value=t.ico;
+  qi('txt-content').value=t.txt;
+  qi('txt-color').value=t.txtColor;
+  qi('fx-glow').checked=t.glow;
+  qi('fx-grid').checked=t.grid;
+  qi('fx-circle').checked=t.circle;
+  setBGType('gradient',qi('bg-gradient'));
+  renderAll();
+}
+
+// ── Exportar ──
+function exportPNG(){
+  const a=document.createElement('a');
+  a.download=`ProPart_Icon_${canvas.width}x${canvas.height}.png`;
+  a.href=canvas.toDataURL('image/png');
+  a.click();
+}
+function exportSVG(){
+  const dataURL=canvas.toDataURL('image/png');
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+  <image href="${dataURL}" width="${canvas.width}" height="${canvas.height}"/>
+</svg>`;
+  const b=new Blob([svg],{type:'image/svg+xml'});
+  const a=document.createElement('a');
+  a.download='ProPart_Icon.svg';
+  a.href=URL.createObjectURL(b);
+  a.click();
+}
+function exportSizes(){
+  // Exportar múltiples tamaños para Android
+  const sizes=[48,72,96,144,192,512];
+  sizes.forEach((sz,i)=>{
+    setTimeout(()=>{
+      const tmp=document.createElement('canvas');
+      tmp.width=sz; tmp.height=sz;
+      const tc=tmp.getContext('2d');
+      tc.drawImage(canvas,0,0,sz,sz);
+      const a=document.createElement('a');
+      a.download=`ic_launcher_${sz}x${sz}.png`;
+      a.href=tmp.toDataURL('image/png');
+      a.click();
+    },i*300);
+  });
+}
+function limpiarCanvas(){
+  qi('txt-content').value='PP';
+  qi('ico-content').value='🔧';
+  qi('fx-glow').checked=false;
+  qi('fx-grid').checked=false;
+  qi('fx-circle').checked=false;
+  qi('fx-badge').checked=false;
+  applyTemplate('propart');
+}
+
+// ── Historial ──
+function saveToHistory(){
+  const img=canvas.toDataURL('image/png');
+  history.unshift({img,date:new Date().toLocaleTimeString('es-MX')});
+  if(history.length>12) history.pop();
+  try{localStorage.setItem('pp_icon_hist',JSON.stringify(history));}catch(e){}
+  renderHistory();
+}
+function renderHistory(){
+  const el=qi('hist-row');
+  if(!history.length){el.innerHTML='<div style="font-family:Rajdhani,sans-serif;font-size:8px;color:var(--lgray)">Sin historial</div>';return;}
+  el.innerHTML=history.map((h,i)=>`
+    <div class="hist-item" onclick="loadHistory(${i})" title="${h.date}">
+      <img src="${h.img}"/>
+    </div>`).join('');
+}
+function loadHistory(i){
+  const img=new Image();
+  img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height);
+  img.src=history[i].img;
+}
+
+// ── Init ──
+renderHistory();
+applyTemplate('propart');
+</script>
+</body>
+</html>

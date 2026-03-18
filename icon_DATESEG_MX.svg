@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020609"/>
+      <stop offset="100%" stop-color="#0F1C32"/>
+    </linearGradient>
+    <linearGradient id="gold3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D080"/>
+      <stop offset="100%" stop-color="#C47008"/>
+    </linearGradient>
+    <linearGradient id="hex-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A2840"/>
+      <stop offset="100%" stop-color="#0A1422"/>
+    </linearGradient>
+    <filter id="gold-glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- FONDO -->
+  <rect width="512" height="512" rx="96" fill="url(#bg3)"/>
+
+  <!-- HEXÁGONO EXTERNO (⬡) -->
+  <polygon points="256,60 380,130 380,270 256,340 132,270 132,130"
+    fill="none" stroke="url(#gold3)" stroke-width="4" opacity="0.9"/>
+
+  <!-- HEXÁGONO INTERNO -->
+  <polygon points="256,90 355,145 355,255 256,310 157,255 157,145"
+    fill="url(#hex-grad)" stroke="url(#gold3)" stroke-width="2" opacity="0.5"/>
+
+  <!-- D ESTILIZADA (inicial DATESEG) -->
+  <text x="256" y="250" text-anchor="middle"
+    font-family="'Arial Black',sans-serif"
+    font-size="110" font-weight="900"
+    fill="url(#gold3)" filter="url(#gold-glow)">D</text>
+
+  <!-- PUNTOS CIRCUITO EN EL HEXÁGONO -->
+  <circle cx="256" cy="60"  r="6" fill="#F5A623"/>
+  <circle cx="380" cy="130" r="6" fill="#F5A623"/>
+  <circle cx="380" cy="270" r="6" fill="#F5A623"/>
+  <circle cx="256" cy="340" r="6" fill="#F5A623"/>
+  <circle cx="132" cy="270" r="6" fill="#F5A623"/>
+  <circle cx="132" cy="130" r="6" fill="#F5A623"/>
+
+  <!-- LÍNEAS CIRCUITO -->
+  <g stroke="#F5A623" stroke-width="1.5" opacity="0.3">
+    <line x1="256" y1="340" x2="256" y2="380"/>
+    <line x1="380" y1="270" x2="420" y2="270"/>
+    <line x1="132" y1="270" x2="92"  y2="270"/>
+  </g>
+
+  <!-- NOMBRE DATESEG -->
+  <text x="256" y="395" text-anchor="middle"
+    font-family="'Arial Black',sans-serif"
+    font-size="44" font-weight="900" letter-spacing="5"
+    fill="url(#gold3)" filter="url(#gold-glow)">DATESEG</text>
+
+  <!-- SUBTÍTULO -->
+  <text x="256" y="425" text-anchor="middle"
+    font-family="'Courier New',monospace"
+    font-size="12" letter-spacing="4"
+    fill="#F5A623" opacity="0.7">TECNOLOGÍAS AUTOMOTRICES</text>
+
+  <!-- MX FLAG colors -->
+  <rect x="198" y="437" width="22" height="10" rx="2" fill="#006847"/>
+  <rect x="220" y="437" width="23" height="10" rx="2" fill="#FFFFFF"/>
+  <rect x="243" y="437" width="22" height="10" rx="2" fill="#CE1126"/>
+
+  <!-- PRODUCTOS (pequeño) -->
+  <text x="256" y="462" text-anchor="middle"
+    font-family="'Courier New',monospace"
+    font-size="10" letter-spacing="2"
+    fill="#F5A623" opacity="0.4">ProPart · OilMaster · dateseg.mx</text>
+
+  <!-- PUNTOS ESQUINA -->
+  <circle cx="80" cy="80"  r="3" fill="#F5A623" opacity="0.3"/>
+  <circle cx="432" cy="80" r="3" fill="#F5A623" opacity="0.3"/>
+  <circle cx="80" cy="432" r="3" fill="#F5A623" opacity="0.3"/>
+  <circle cx="432" cy="432" r="3" fill="#F5A623" opacity="0.3"/>
+</svg>

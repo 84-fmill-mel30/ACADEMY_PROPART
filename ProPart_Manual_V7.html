@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual ProPart V7</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#F5A623;--goldD:#C47008;--goldG:rgba(245,166,35,.08);--cyan:#00D4FF;--cyanG:rgba(0,212,255,.06);--green:#00E676;--red:#FF3D5A;--purple:#9C59F7;--orange:#FF8C00;--bg0:#020609;--bg1:#050A13;--bg2:#0A1422;--bg3:#0F1C32;--bdr:rgba(30,48,88,.8);--txt:#D0E4F5;--txtD:#7090B0;--txtM:#4A6480;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Exo 2',sans-serif;background:var(--bg1);color:var(--txt);font-size:13px;line-height:1.65;}
+@media print{body{background:white;color:#111;}.sidebar{display:none;}.content{margin-left:0!important;}.card{border:1px solid #ccc!important;background:white!important;}}
+.wrapper{display:flex;min-height:100vh;}
+.sidebar{width:210px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--bdr);position:sticky;top:0;height:100vh;overflow-y:auto;padding:20px 0;}
+.sidebar::-webkit-scrollbar{width:3px;}.sidebar::-webkit-scrollbar-thumb{background:var(--bdr);}
+.sb-logo{padding:0 16px 16px;border-bottom:1px solid var(--bdr);margin-bottom:12px;}
+.sb-pp{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--gold);}
+.sb-ver{font-size:9px;color:var(--txtM);letter-spacing:2px;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:6px 16px;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--txtD);transition:all .14s;border-left:2px solid transparent;}
+.sb-item:hover,.sb-item.act{color:var(--gold);background:var(--goldG);border-left-color:var(--gold);}
+.sb-sec{padding:10px 16px 4px;font-size:8px;letter-spacing:2px;color:var(--txtM);font-weight:700;}
+.content{flex:1;padding:28px 24px;max-width:880px;}
+.man-header{background:linear-gradient(135deg,#0A1422,#0F1C32);border:1px solid var(--bdr);border-radius:12px;padding:24px 28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+.mh-title{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--gold);letter-spacing:3px;}
+.mh-sub{font-size:11px;color:var(--txtD);letter-spacing:2px;margin-top:4px;}
+.mh-meta{font-size:10px;color:var(--txtM);margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;}
+.btn-print{padding:9px 18px;background:linear-gradient(135deg,var(--gold),var(--goldD));color:#000;border:none;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;}
+.section{margin-bottom:28px;scroll-margin-top:16px;}
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bdr);}
+.sec-num{width:30px;height:30px;border-radius:50%;background:var(--goldG);border:1px solid var(--goldD);display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.sec-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:var(--txt);letter-spacing:1px;}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:10px;}
+.card-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:8px;}
+table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:11px;}
+th{background:var(--bg3);padding:7px 10px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;border-bottom:1px solid var(--bdr);}
+td{padding:7px 10px;border-bottom:1px solid rgba(30,48,88,.4);font-size:11px;}
+tr:hover td{background:var(--goldG);}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:1px;}
+.tg{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.tr{background:rgba(255,61,90,.1);color:var(--red);border:1px solid rgba(255,61,90,.3);}
+.tc{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.3);}
+.steps{display:flex;flex-direction:column;gap:8px;}
+.step{display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--bg3);border-radius:8px;border:1px solid rgba(30,48,88,.5);}
+.step-n{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--gold),var(--goldD));color:#000;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;}
+.step-title{font-weight:600;color:var(--txt);margin-bottom:2px;font-size:12px;}
+.step-desc{font-size:11px;color:var(--txtD);}
+.callout{display:flex;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:10px;}
+.callout.warn{background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.25);}
+.callout.info{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);}
+.callout.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);}
+.callout.danger{background:rgba(255,61,90,.07);border:1px solid rgba(255,61,90,.25);}
+.callout-icon{font-size:16px;flex-shrink:0;}
+.callout-body{flex:1;font-size:11px;line-height:1.6;}
+pre{background:var(--bg3);border:1px solid var(--bdr);border-radius:7px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--cyan);overflow-x:auto;margin-bottom:10px;line-height:1.7;}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.feat-item{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:10px;}
+.fi-icon{font-size:20px;margin-bottom:4px;}
+.fi-name{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:3px;}
+.fi-desc{font-size:10px;color:var(--txtD);line-height:1.5;}
+.wsw{display:inline-flex;align-items:center;gap:5px;padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;background:var(--bg3);border:1px solid var(--bdr);}
+.wdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+p{margin-bottom:8px;color:var(--txtD);font-size:11px;}
+ul,ol{padding-left:18px;margin-bottom:8px;}
+li{font-size:11px;color:var(--txtD);padding:2px 0;}
+strong{color:var(--txt);}
+a{color:var(--cyan);}
+.toc{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:20px;columns:2;column-gap:20px;}
+.toc-item{font-size:11px;color:var(--txtD);padding:3px 0;cursor:pointer;display:flex;align-items:center;gap:5px;border-bottom:1px dotted rgba(30,48,88,.5);break-inside:avoid;}
+.toc-item:hover{color:var(--gold);}
+.toc-num{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);width:18px;flex-shrink:0;}
+.roadmap-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(30,48,88,.4);align-items:flex-start;}
+.rm-phase{width:55px;flex-shrink:0;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--txtM);text-align:center;line-height:1.3;padding-top:2px;}
+.rm-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.rm-title{font-weight:600;color:var(--txt);margin-bottom:2px;font-size:11px;}
+.rm-desc{font-size:10px;color:var(--txtD);}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<nav class="sidebar">
+  <div class="sb-logo"><div class="sb-pp">&#x2B21; PROPART</div><div class="sb-ver">MANUAL V7.0 &middot; 2025</div></div>
+  <div class="sb-sec">INICIO</div>
+  <div class="sb-item act" onclick="goTo('s0')">&#128203; Tabla de Contenidos</div>
+  <div class="sb-item" onclick="goTo('s1')">01 &middot; Presentaci&#243;n</div>
+  <div class="sb-item" onclick="goTo('s2')">02 &middot; Instalaci&#243;n Android</div>
+  <div class="sb-sec">M&#211;DULOS</div>
+  <div class="sb-item" onclick="goTo('s3')">03 &middot; Diagn&#243;stico BLE</div>
+  <div class="sb-item" onclick="goTo('s4')">04 &middot; Base de Datos</div>
+  <div class="sb-item" onclick="goTo('s5')">05 &middot; Diagramas / Pinouts</div>
+  <div class="sb-item" onclick="goTo('s6')">06 &middot; Diesel</div>
+  <div class="sb-item" onclick="goTo('s7')">07 &middot; Gr&#225;ficas en Vivo</div>
+  <div class="sb-item" onclick="goTo('s8')">08 &middot; Chal&#225;n IA</div>
+  <div class="sb-item" onclick="goTo('s9')">09 &middot; PULSAR + VIN</div>
+  <div class="sb-item" onclick="goTo('s10')">10 &middot; Reporte PDF</div>
+  <div class="sb-sec">SISTEMA</div>
+  <div class="sb-item" onclick="goTo('s11')">11 &middot; Licencias</div>
+  <div class="sb-item" onclick="goTo('s12')">12 &middot; Play Store</div>
+  <div class="sb-item" onclick="goTo('s13')">13 &middot; Visi&#243;n: O&#237;do Master</div>
+  <div class="sb-item" onclick="goTo('s14')">14 &middot; Colores OEM</div>
+  <div class="sb-item" onclick="goTo('s15')">15 &middot; FAQ</div>
+</nav>
+<main class="content">
+
+<div class="man-header">
+  <div>
+    <div class="mh-title">MANUAL DE USUARIO</div>
+    <div class="mh-sub">PROPART SYSTEM V7 &mdash; DIAGN&#211;STICO AUTOMOTRIZ PROFESIONAL</div>
+    <div class="mh-meta"><span>Versi&#243;n: 7.0.0</span><span>2025</span><span>&#127474;&#127485; Alpuyeca, Morelos</span><span>Fernando Mill&#225;n Melchor</span></div>
+    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+      <span class="tag tg">ANDROID 7.0+</span>
+      <span class="tag tc">BLE OBD2</span>
+      <span class="tag" style="background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.3)">DB 26 HOJAS</span>
+      <span class="tag" style="background:rgba(156,89,247,.1);color:var(--purple);border:1px solid rgba(156,89,247,.3)">IA CHAL&#193;N</span>
+      <span class="tag" style="background:rgba(255,140,0,.1);color:var(--orange);border:1px solid rgba(255,140,0,.3)">OFFLINE</span>
+    </div>
+  </div>
+  <button class="btn-print" onclick="window.print()">&#128424; Imprimir</button>
+</div>
+
+<!-- S0 TOC -->
+<div id="s0" class="section">
+  <div class="sec-header"><div class="sec-num">&#9776;</div><div class="sec-title">TABLA DE CONTENIDOS</div></div>
+  <div class="toc">
+    <div class="toc-item" onclick="goTo('s1')"><span class="toc-num">01</span>Presentaci&#243;n del producto</div>
+    <div class="toc-item" onclick="goTo('s2')"><span class="toc-num">02</span>Instalaci&#243;n Android Studio</div>
+    <div class="toc-item" onclick="goTo('s3')"><span class="toc-num">03</span>M&#243;dulo Diagn&#243;stico BLE</div>
+    <div class="toc-item" onclick="goTo('s4')"><span class="toc-num">04</span>Base de Datos T&#233;cnica (26 hojas)</div>
+    <div class="toc-item" onclick="goTo('s5')"><span class="toc-num">05</span>Diagramas de Cableado y Pinouts</div>
+    <div class="toc-item" onclick="goTo('s6')"><span class="toc-num">06</span>M&#243;dulo Diesel Completo</div>
+    <div class="toc-item" onclick="goTo('s7')"><span class="toc-num">07</span>Gr&#225;ficas en Vivo &mdash; 4 canales</div>
+    <div class="toc-item" onclick="goTo('s8')"><span class="toc-num">08</span>Chal&#225;n &mdash; Asistente IA de voz</div>
+    <div class="toc-item" onclick="goTo('s9')"><span class="toc-num">09</span>PULSAR Predictivo + Historial VIN</div>
+    <div class="toc-item" onclick="goTo('s10')"><span class="toc-num">10</span>Reporte PDF para cliente</div>
+    <div class="toc-item" onclick="goTo('s11')"><span class="toc-num">11</span>Planes y Licencias</div>
+    <div class="toc-item" onclick="goTo('s12')"><span class="toc-num">12</span>Publicar en Google Play Store</div>
+    <div class="toc-item" onclick="goTo('s13')"><span class="toc-num">13</span>Visi&#243;n: O&#237;do Master</div>
+    <div class="toc-item" onclick="goTo('s14')"><span class="toc-num">14</span>Referencia Colores OEM Verificados</div>
+    <div class="toc-item" onclick="goTo('s15')"><span class="toc-num">15</span>Preguntas Frecuentes (FAQ)</div>
+  </div>
+</div>
+
+<!-- S1 PRESENTACION -->
+<div id="s1" class="section">
+  <div class="sec-header"><div class="sec-num">01</div><div class="sec-title">PRESENTACI&#211;N DEL PRODUCTO</div></div>
+  <p><strong>ProPart System V7</strong> es una plataforma de diagn&#243;stico automotriz profesional desarrollada en Alpuyeca, Morelos, M&#233;xico, por Fernando Mill&#225;n Melchor. Combina una app Android nativa con una interfaz web completa, conectividad BLE a adaptadores OBD2, base de datos t&#233;cnica de 26 m&#243;dulos y el asistente de inteligencia artificial <strong>Chal&#225;n</strong>.</p>
+  <div class="feat-grid">
+    <div class="feat-item"><div class="fi-icon">&#128309;</div><div class="fi-name">CONEXI&#211;N BLE NATIVA</div><div class="fi-desc">V-Link ELM327 por Bluetooth Low Energy. Sin cables. Servicio FFF0 / FFF1 (notify) / FFF2 (write).</div></div>
+    <div class="feat-item"><div class="fi-icon">&#128451;</div><div class="fi-name">DB T&#201;CNICA 26 HOJAS</div><div class="fi-desc">Sensores, DTCs, pinouts ECU, torques, colores OEM verificados, diagramas CAN, transponders IMMO, diesel completo.</div></div>
+    <div class="feat-item"><div class="fi-icon">&#129302;</div><div class="fi-name">CHAL&#193;N &mdash; IA DE VOZ</div><div class="fi-desc">Asistente en espa&#241;ol mexicano. Responde por voz, activa la c&#225;mara trasera (Modo Visualizer) e identifica componentes.</div></div>
+    <div class="feat-item"><div class="fi-icon">&#128302;</div><div class="fi-name">PULSAR PREDICTIVO</div><div class="fi-desc">Analiza patrones de PIDs para detectar fallas antes de que ocurran. Conectado a Firebase PULSAR Cloud.</div></div>
+    <div class="feat-item"><div class="fi-icon">&#128200;</div><div class="fi-name">GR&#193;FICAS 4 CANALES</div><div class="fi-desc">Visualizaci&#243;n RPM, ECT, MAF, TPS, APP1/2, O2, Bater&#237;a. Detector de fallas intermitentes con grabaci&#243;n CSV.</div></div>
+    <div class="feat-item"><div class="fi-icon">&#128196;</div><div class="fi-name">REPORTE PDF</div><div class="fi-desc">Reporte profesional con datos del taller, antes/despu&#233;s, desglose de costos y firma de conformidad. Env&#237;o WhatsApp.</div></div>
+  </div>
+  <div class="callout info"><div class="callout-icon">&#8505;</div><div class="callout-body"><strong>100% funcional sin internet.</strong> DB t&#233;cnica, pinouts y diagramas funcionan offline. Solo Chal&#225;n IA avanzado, PULSAR Cloud e Historial VIN requieren internet.</div></div>
+</div>
+
+<!-- S2 INSTALACION -->
+<div id="s2" class="section">
+  <div class="sec-header"><div class="sec-num">02</div><div class="sec-title">INSTALACI&#211;N &mdash; ANDROID STUDIO</div></div>
+  <div class="callout warn"><div class="callout-icon">&#9888;</div><div class="callout-body"><strong>Requisitos:</strong> Android Studio Hedgehog 2023.1.1+ &bull; JDK 17+ &bull; Android SDK API 34 &bull; ~2 GB disco libre</div></div>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div><div class="step-title">Descomprimir ProPartV7_AndroidStudio.zip</div><div class="step-desc">Ruta sin espacios: C:\Proyectos\ProPartV7\</div></div></div>
+    <div class="step"><div class="step-n">2</div><div><div class="step-title">Abrir en Android Studio</div><div class="step-desc">File &#8594; Open &#8594; seleccionar carpeta ProPartV7. Esperar sincronizaci&#243;n Gradle (2-5 min primera vez)</div></div></div>
+    <div class="step"><div class="step-n">3</div><div><div class="step-title">Activar Modo Desarrollador en el celular</div><div class="step-desc">Ajustes &#8594; Acerca del tel&#233;fono &#8594; N&#250;mero de compilaci&#243;n (7 veces) &#8594; Activar Depuraci&#243;n USB</div></div></div>
+    <div class="step"><div class="step-n">4</div><div><div class="step-title">Conectar y compilar</div><div class="step-desc">USB conectado &#8594; el cel aparece en la barra superior &#8594; Presionar &#9654; Run (Shift+F10). Instala en ~30s</div></div></div>
+    <div class="step"><div class="step-n">5</div><div><div class="step-title">Permisos al primer arranque</div><div class="step-desc">Aceptar: <strong>Bluetooth</strong> (OBD2) &bull; <strong>Ubicaci&#243;n</strong> (requerida por Android para BLE scan) &bull; <strong>C&#225;mara</strong> (modo Visualizer)</div></div></div>
+    <div class="step"><div class="step-n">6</div><div><div class="step-title">Generar APK para distribuir (opcional)</div><div class="step-desc">Build &#8594; Build Bundle/APK &#8594; Build APK. Archivo en app/build/outputs/apk/debug/. Copiar al celular e instalar.</div></div></div>
+  </div>
+</div>
+
+<!-- S3 BLE -->
+<div id="s3" class="section">
+  <div class="sec-header"><div class="sec-num">03</div><div class="sec-title">M&#211;DULO DE DIAGN&#211;STICO BLE</div></div>
+  <div class="card">
+    <div class="card-title">&#128309; Constantes BLE del V-Link ELM327</div>
+    <table>
+      <tr><th>Constante</th><th>UUID</th><th>Funci&#243;n</th></tr>
+      <tr><td>SERVICE FFF0</td><td style="font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:10px">0000fff0-0000-1000-8000-00805f9b34fb</td><td>Servicio principal</td></tr>
+      <tr><td>WRITE FFF2</td><td style="font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:10px">0000fff2-0000-1000-8000-00805f9b34fb</td><td>Enviar comandos</td></tr>
+      <tr><td>NOTIFY FFF1</td><td style="font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:10px">0000fff1-0000-1000-8000-00805f9b34fb</td><td>Recibir respuestas</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-title">&#9889; Secuencia Init ELM327</div>
+    <pre>ATZ    &#8594; Reset (esperar 800ms)
+ATE0   &#8594; Desactivar echo
+ATL0   &#8594; Sin saltos de l&#237;nea
+ATH0   &#8594; Ocultar headers CAN
+ATSP0  &#8594; Autodetectar protocolo</pre>
+  </div>
+  <div class="card">
+    <div class="card-title">&#128202; PIDs OBD2 monitoreados</div>
+    <table>
+      <tr><th>PID</th><th>Dato</th><th>F&#243;rmula</th><th>Rango normal</th></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">010C</td><td>RPM</td><td>((A&times;256)+B)/4</td><td style="color:var(--green)">600-800 ralent&#237;</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">0105</td><td>Temp. Refrigerante</td><td>A - 40 &deg;C</td><td style="color:var(--green)">85-95&deg;C operaci&#243;n</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">ATRV</td><td>Voltaje bater&#237;a</td><td>Directo V</td><td style="color:var(--green)">13.5-14.5V motor andando</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">0111</td><td>TPS %</td><td>A&times;100/255</td><td style="color:var(--green)">5-10% ralent&#237;</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">0110</td><td>MAF g/s</td><td>((A&times;256)+B)/100</td><td style="color:var(--green)">1.5-3.0 ralent&#237;</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">03</td><td>Leer DTCs</td><td>Respuesta directa</td><td>&#8212;</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">04</td><td>Borrar DTCs</td><td>Sin resp = OK</td><td style="color:var(--red)">Resetea memoria adaptativa</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- S4 DB -->
+<div id="s4" class="section">
+  <div class="sec-header"><div class="sec-num">04</div><div class="sec-title">BASE DE DATOS T&#201;CNICA &mdash; 26 HOJAS</div></div>
+  <table>
+    <tr><th>Hojas</th><th>Contenido</th><th>Estado</th></tr>
+    <tr><td>1-6</td><td>Sensores: ECT, MAF, TPS, CKP, CMP, O2, MAP, APP</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>7-10</td><td>DTCs: Causa ra&#237;z, procedimiento, soluci&#243;n, PID de verificaci&#243;n</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>11-14</td><td>Pinouts ECU: Nissan GA16DE 76p, VW ME7.5.10, GM LS, Ford PCM</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>15-16</td><td>Torques: VW EA888, Ford Coyote 5.0L, Honda K20, Nissan QR25</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>17-18</td><td>Colores de cable OEM verificados contra FSM Nissan/VW/GM/Ford</td><td><span class="tag tg">VERIFICADO FSM</span></td></tr>
+    <tr><td>19-20</td><td>Reparaci&#243;n ECU: ME7.5.10, EDC16, Nissan ECM, GM LS, Ford 5.4L</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>21-22</td><td>IMMO y Transponders: ID46, ID60, ID63, PCF7936, HITAG2</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>23</td><td>Flash ECU y Seed-Key: Flujo PULSAR Cloud, pseudoc&#243;digo C++</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>24</td><td>Sistemas CAN/LIN/OBD2: Protocolos, velocidades, capas f&#237;sicas</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>25</td><td>Cat&#225;logo multimarca 1986-2025: 24 modelos + cross-reference</td><td><span class="tag tg">COMPLETO</span></td></tr>
+    <tr><td>26</td><td>API Dongle PULSAR: Endpoints Firebase, LIC_TOKEN en eFuse ESP32</td><td><span class="tag tg">COMPLETO</span></td></tr>
+  </table>
+</div>
+
+<!-- S5 DIAGRAMAS -->
+<div id="s5" class="section">
+  <div class="sec-header"><div class="sec-num">05</div><div class="sec-title">DIAGRAMAS DE CABLEADO Y PINOUTS</div></div>
+  <div class="callout ok"><div class="callout-icon">&#9989;</div><div class="callout-body"><strong>Colores verificados contra FSM oficial Nissan GA16DE (Secci&#243;n EF).</strong> Todos los cables coinciden con el manual de f&#225;brica. Ver Secci&#243;n 14 para tabla completa.</div></div>
+  <div class="card">
+    <div class="card-title">&#128268; Pines clave Nissan GA16DE</div>
+    <table>
+      <tr><th>Pin</th><th>Se&#241;al</th><th>Color OEM Real</th><th>Valor normal</th></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">1-4</td><td>Inyectores Low Side</td><td><span class="wsw"><span class="wdot" style="background:#333"></span>N/Bl N/R N/V N/Am</span></td><td>12V&#8594;0V pulso</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">18/44</td><td>Vref 5V (TPS, MAP)</td><td><span class="wsw"><span class="wdot" style="background:#BBAA55"></span>Bl/R</span></td><td>5.00V &plusmn;0.05V</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">24</td><td>CKP NE+ se&#241;al</td><td><span class="wsw"><span class="wdot" style="background:#BBAA00"></span>Am/V</span></td><td>AC 1-40Vpp sinusoidal</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">37</td><td>CMP se&#241;al G</td><td><span class="wsw"><span class="wdot" style="background:#117711"></span>V</span></td><td>0V/5V Hall 1 pulso/rev</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">40</td><td>MAF se&#241;al VG</td><td><span class="wsw"><span class="wdot" style="background:#228833"></span>V/Bl</span></td><td>0.8V ralent&#237; / 4.0V WOT</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">55</td><td>O2 lambda B1S1</td><td><span class="wsw"><span class="wdot" style="background:#2A2A00;border:1px solid #BBAA00"></span>N/Am</span></td><td>0.1-0.9V c&#237;clico</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace">58</td><td>IGT bobina encendido</td><td><span class="wsw"><span class="wdot" style="background:#551111"></span>N/R</span></td><td>5V&#8594;0V pulso dwell 2ms</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- S6 DIESEL -->
+<div id="s6" class="section">
+  <div class="sec-header"><div class="sec-num">06</div><div class="sec-title">M&#211;DULO DIESEL &mdash; 8 SISTEMAS</div></div>
+  <table>
+    <tr><th>Sistema</th><th>Par&#225;metros clave</th><th>DTCs comunes</th></tr>
+    <tr><td>&#9851; EGR</td><td>Posici&#243;n 0-5% ralent&#237;, diferencial 0.1-0.8 bar</td><td style="color:var(--gold)">P0400/P0402</td></tr>
+    <tr><td>&#128137; Inyectores CR</td><td>250-350 bar ralent&#237;, 1,200-1,800 bar carga, retorno &lt;5ml/30s</td><td style="color:var(--gold)">P0087/P0190</td></tr>
+    <tr><td>&#11035; DPF/FAP</td><td>Presión diferencial &lt;1.2 kPa, temp 150-450&deg;C, carga &lt;70%</td><td style="color:var(--gold)">P2452/P2463</td></tr>
+    <tr><td>&#127744; Turbo VGT</td><td>80-100% cerrado ralent&#237;, presi&#243;n 0.8-2.2 bar</td><td style="color:var(--gold)">P0234/P0299</td></tr>
+    <tr><td>&#128161; Precalentamiento</td><td>Resistencia buj&#237;a 0.5-2.5&#937;, corriente 8-15A por buj&#237;a</td><td style="color:var(--gold)">P0380-P0384</td></tr>
+    <tr><td>&#128167; Urea/AdBlue</td><td>Nivel &gt;15%, calidad 32.5% NH3, presi&#243;n 5-9 bar</td><td style="color:var(--gold)">P207F/P203D</td></tr>
+  </table>
+</div>
+
+<!-- S7 GRAFICAS -->
+<div id="s7" class="section">
+  <div class="sec-header"><div class="sec-num">07</div><div class="sec-title">GR&#193;FICAS EN VIVO &mdash; 4 CANALES</div></div>
+  <p>Visualizar hasta <strong>4 PIDs simult&#225;neos</strong> en tiempo real. Ideal para detectar fallas intermitentes que no dejan DTC permanente.</p>
+  <div class="callout info"><div class="callout-icon">&#128161;</div><div class="callout-body"><strong>Truco fallas intermitentes:</strong> Activar <strong>Grabar</strong> y reproducir la condici&#243;n de falla (acelerar bruscamente, girar direcci&#243;n, pasar tope). El detector autom&#225;tico resalta variaciones &gt;25% del rango en 5 muestras. Exportar CSV para an&#225;lisis en Excel.</div></div>
+</div>
+
+<!-- S8 CHALAN -->
+<div id="s8" class="section">
+  <div class="sec-header"><div class="sec-num">08</div><div class="sec-title">CHAL&#193;N &mdash; ASISTENTE IA DE VOZ</div></div>
+  <p>Habla en espa&#241;ol mexicano de taller. Bot&#243;n flotante &#129302; siempre visible. Responde por voz o texto.</p>
+  <div class="card">
+    <div class="card-title">&#129302; Comandos clave</div>
+    <table>
+      <tr><th>Lo que dices</th><th>Respuesta de Chal&#225;n</th></tr>
+      <tr><td>"Chal&#225;n, activa la c&#225;mara"</td><td>Activa c&#225;mara trasera &mdash; modo Visualizer</td></tr>
+      <tr><td>"&#191;Qu&#233; cable es el del MAF?"</td><td>Color exacto seg&#250;n DB OEM del veh&#237;culo activo</td></tr>
+      <tr><td>"No hay chispa, ay&#250;dame"</td><td>Diagn&#243;stico paso a paso del sistema de encendido</td></tr>
+      <tr><td>"Lee los DTCs"</td><td>Resume los c&#243;digos activos del veh&#237;culo</td></tr>
+    </table>
+  </div>
+  <div class="callout warn"><div class="callout-icon">&#9888;</div><div class="callout-body">Chal&#225;n con IA avanzada requiere internet. Respuestas b&#225;sicas de DB y reconocimiento de voz funcionan offline.</div></div>
+</div>
+
+<!-- S9 PULSAR -->
+<div id="s9" class="section">
+  <div class="sec-header"><div class="sec-num">09</div><div class="sec-title">PULSAR PREDICTIVO + HISTORIAL VIN</div></div>
+  <div class="callout info"><div class="callout-icon">&#8505;</div><div class="callout-body"><strong>&#191;C&#243;mo funciona el Historial VIN?</strong><br>ProPart <strong>comienza a registrar desde el primer diagn&#243;stico</strong> que haces con la herramienta. No lee el historial previo del fabricante. Con el tiempo construye un historial valioso: fecha, DTCs, kil&#243;metros, t&#233;cnico &mdash; todo vinculado al VIN en PULSAR Cloud.</div></div>
+  <div class="card">
+    <div class="card-title">&#9728; API PULSAR Cloud</div>
+    <table>
+      <tr><th>Endpoint</th><th>Funci&#243;n</th></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace;color:var(--cyan)">calculateSeedKey</td><td>Seed&#8594;Key en la nube. Algoritmo NUNCA en firmware del dongle.</td></tr>
+      <tr><td style="font-family:'Share Tech Mono',monospace;color:var(--cyan)">logDTCReport</td><td>Guardar reporte de diagn&#243;stico vinculado al VIN en Firestore.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- S10 REPORTE -->
+<div id="s10" class="section">
+  <div class="sec-header"><div class="sec-num">10</div><div class="sec-title">REPORTE PDF PARA CLIENTE</div></div>
+  <ul>
+    <li>Encabezado con datos del taller (nombre, direcci&#243;n, tel, correo)</li>
+    <li>Datos del veh&#237;culo: propietario, modelo, VIN, kil&#243;metros</li>
+    <li>Condici&#243;n ANTES: fallas encontradas (DTCs + descripci&#243;n)</li>
+    <li>Condici&#243;n DESPU&#201;S: trabajo realizado y partes reemplazadas</li>
+    <li>Desglose de costos con total autom&#225;tico en MXN</li>
+    <li>Espacio para firma de conformidad del cliente</li>
+    <li>N&#250;mero de folio autom&#225;tico y fecha</li>
+    <li>Bot&#243;n WhatsApp: env&#237;a resumen directo al cliente</li>
+    <li>Bot&#243;n Correo electr&#243;nico</li>
+  </ul>
+</div>
+
+<!-- S11 LICENCIAS -->
+<div id="s11" class="section">
+  <div class="sec-header"><div class="sec-num">11</div><div class="sec-title">PLANES Y LICENCIAS</div></div>
+  <table>
+    <tr><th>Plan</th><th>Precio</th><th>Incluye</th></tr>
+    <tr><td><strong>B&#225;sico</strong></td><td style="color:var(--green)">GRATIS</td><td>Diagn&#243;stico BLE, DB offline, 5 reportes/mes, 1 dispositivo</td></tr>
+    <tr><td><strong>Pro</strong></td><td style="color:var(--gold)">$599 MXN/mes</td><td>+ Chal&#225;n IA, PULSAR Cloud, reportes ilimitados, Historial VIN, 2 dispositivos</td></tr>
+    <tr><td><strong>Master</strong></td><td style="color:var(--purple)">$1,199 MXN/mes</td><td>+ Flash ECU, Seed-Key, API dongle, soporte prioritario, 5 dispositivos</td></tr>
+    <tr><td><strong>Taller</strong></td><td style="color:var(--gold)">Cotizaci&#243;n</td><td>Sin l&#237;mite dispositivos, servidor propio, integraci&#243;n refaccionaria, marca blanca</td></tr>
+  </table>
+  <div class="callout info"><div class="callout-icon">&#128242;</div><div class="callout-body">Contacto: <strong>WhatsApp 777-683-8196 · 221-956-7392</strong> &bull; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="72343f424b4741404b32151f131b1e5c111d1f">[email&#160;protected]</a> &bull; ProPart System V12, Alpuyeca, Morelos</div></div>
+</div>
+
+<!-- S12 PLAY STORE -->
+<div id="s12" class="section">
+  <div class="sec-header"><div class="sec-num">12</div><div class="sec-title">PUBLICAR EN GOOGLE PLAY STORE</div></div>
+  <div class="callout info"><div class="callout-icon">&#8505;</div><div class="callout-body"><strong>Costo:</strong> Cuenta de desarrollador Google Play: <strong>$25 USD</strong> (pago &#250;nico). URL: play.google.com/console</div></div>
+  <div class="steps">
+    <div class="step"><div class="step-n">1</div><div><div class="step-title">Crear cuenta Google Play Console</div><div class="step-desc">play.google.com/console &#8594; Pagar $25 USD &#8594; Aceptar acuerdo de desarrollador</div></div></div>
+    <div class="step"><div class="step-n">2</div><div><div class="step-title">Generar Keystore &mdash; &#161;GUARDAR BIEN!</div><div class="step-desc">Build &#8594; Generate Signed Bundle/APK &#8594; Create new keystore. Archivo .jks: si se pierde NO se puede actualizar la app.</div></div></div>
+    <div class="step"><div class="step-n">3</div><div><div class="step-title">Generar AAB firmado</div><div class="step-desc">Build &#8594; Generate Signed Bundle &#8594; Android App Bundle &#8594; Release. Archivo .aab en app/release/</div></div></div>
+    <div class="step"><div class="step-n">4</div><div><div class="step-title">Assets requeridos</div><div class="step-desc">&#205;cono 512&#215;512 PNG &bull; 2+ capturas de pantalla &bull; Descripci&#243;n corta (80 car) &bull; Descripci&#243;n larga (4,000 car)</div></div></div>
+    <div class="step"><div class="step-n">5</div><div><div class="step-title">Crear app en Play Console</div><div class="step-desc">Create app &#8594; ProPart System V7 &#8594; Spanish (Mexico) &#8594; Automotive &#8594; Subir AAB en Production</div></div></div>
+    <div class="step"><div class="step-n">6</div><div><div class="step-title">Justificar permisos BLE + C&#225;mara</div><div class="step-desc">BLUETOOTH_SCAN: "Conectarse al adaptador OBD2 V-Link ELM327" &bull; CAMERA: "Modo Visualizer del asistente IA Chal&#225;n"</div></div></div>
+    <div class="step"><div class="step-n">7</div><div><div class="step-title">Pol&#237;tica de Privacidad (obligatoria)</div><div class="step-desc">Publicar en GitHub Pages o cualquier URL p&#250;blica. Incluir: qu&#233; datos recopila, c&#243;mo se usan, Firebase, derecho de eliminaci&#243;n.</div></div></div>
+  </div>
+  <div class="callout warn"><div class="callout-icon">&#9888;</div><div class="callout-body">Google revisa la app en 3-7 d&#237;as. Categor&#237;a: <strong>Herramientas</strong> o <strong>Automoci&#243;n</strong>. El m&#243;dulo Flash ECU debe estar detrás de PIN &mdash; ya implementado.</div></div>
+</div>
+
+<!-- S13 OIDO MASTER -->
+<div id="s13" class="section">
+  <div class="sec-header"><div class="sec-num">13</div><div class="sec-title">VISI&#211;N: O&#205;DO MASTER &mdash; ASISTENCIA EN CARRETERA</div></div>
+  <div class="callout ok"><div class="callout-icon">&#128640;</div><div class="callout-body"><strong>Estado: En desarrollo conceptual.</strong> Este m&#243;dulo es la visi&#243;n a futuro de ProPart como plataforma de seguridad vial. Concepto original de Fernando Mill&#225;n Melchor.</div></div>
+  <p>El objetivo es ayudar a personas varadas en carretera &mdash; sin mec&#225;nico, sin se&#241;al, sin saber qu&#233; tiene el carro &mdash; a tomar decisiones seguras y recibir auxilio.</p>
+
+  <div class="card"><div class="card-title">&#127897; Diagn&#243;stico por Audio</div>
+    <ul>
+      <li>El usuario graba el ruido del motor (5-15 segundos)</li>
+      <li>La IA analiza: golpeteo bielas, chirrido balatas, zumbido rodamientos, fuga vac&#237;o, raspado banda</li>
+      <li>El usuario agrega detalles: "el ruido es m&#225;s fuerte al frenar", "s&#243;lo en fr&#237;o"</li>
+      <li>La IA devuelve: posibles causas, nivel de peligro (&#127774;&#127773;&#127772;) y recomendaci&#243;n de acci&#243;n</li>
+    </ul>
+  </div>
+
+  <div class="card"><div class="card-title">&#128651; Red de Auxilio &mdash; Gr&#250;as y T&#233;cnicos</div>
+    <ul>
+      <li><strong>Alerta de ubicaci&#243;n:</strong> Env&#237;a coordenadas GPS a gr&#250;as cercanas aunque no haya se&#241;al completa (SMS fallback)</li>
+      <li><strong>Directorio de gr&#250;as:</strong> Negocios de gr&#250;a pagan por aparecer en la red y recibir alertas en su zona</li>
+      <li><strong>Coordinaci&#243;n con tr&#225;nsito:</strong> La gr&#250;a contacta a tr&#225;nsito federal/estatal para escolta si es necesario</li>
+      <li><strong>Refaccionaria integrada:</strong> Cuando la IA identifica la pieza da&#241;ada, el usuario puede ordenarla de la refaccionaria Mill&#225;n</li>
+      <li><strong>T&#233;cnico a domicilio:</strong> Para fallas menores, el t&#233;cnico ProPart va al lugar</li>
+    </ul>
+  </div>
+
+  <div class="card"><div class="card-title">&#128181; Modelo de Negocio</div>
+    <table>
+      <tr><th>Fuente</th><th>Descripci&#243;n</th><th>Tarifa</th></tr>
+      <tr><td>Membres&#237;a gr&#250;as</td><td>Gr&#250;as pagan por recibir alertas en su zona</td><td style="color:var(--gold)">$500-1,500/mes</td></tr>
+      <tr><td>Comisi&#243;n servicio</td><td>% del costo de cada gr&#250;a coordinada</td><td style="color:var(--gold)">5-10%</td></tr>
+      <tr><td>Directorio talleres</td><td>Talleres pagan por aparecer como opci&#243;n</td><td style="color:var(--gold)">$300-800/mes</td></tr>
+      <tr><td>Refaccionaria integrada</td><td>Venta de piezas desde la app al cliente varado</td><td style="color:var(--gold)">Margen de venta</td></tr>
+      <tr><td>T&#233;cnico a domicilio</td><td>Cobro por visita de diagn&#243;stico/reparaci&#243;n</td><td style="color:var(--gold)">$400-800/visita</td></tr>
+    </table>
+  </div>
+
+  <div class="card"><div class="card-title">&#128506; Roadmap de Desarrollo</div>
+    <div class="roadmap-item">
+      <div class="rm-phase">FASE 1<br>Q3 2025</div>
+      <div class="rm-dot" style="color:var(--green);background:var(--green)"></div>
+      <div><div class="rm-title">Chal&#225;n Audio (ya en ProPart V7)</div><div class="rm-desc">Diagn&#243;stico por descripci&#243;n de s&#237;ntomas + voz. Base para an&#225;lisis de audio futuro.</div></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="rm-phase">FASE 2<br>Q4 2025</div>
+      <div class="rm-dot" style="color:var(--gold);background:var(--gold)"></div>
+      <div><div class="rm-title">O&#237;do Master &mdash; An&#225;lisis de Audio</div><div class="rm-desc">Grabaci&#243;n de ruido + clasificaci&#243;n IA (balatas, bielas, banda). Sem&#225;foro de seguridad.</div></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="rm-phase">FASE 3<br>Q1 2026</div>
+      <div class="rm-dot" style="color:var(--orange);background:var(--orange)"></div>
+      <div><div class="rm-title">Red de Auxilio &mdash; Primeras 3 gr&#250;as</div><div class="rm-desc">Piloto en corredor Alpuyeca-Cuernavaca-Puente de Ixtla.</div></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="rm-phase">FASE 4<br>Q2 2026</div>
+      <div class="rm-dot" style="color:var(--cyan);background:var(--cyan)"></div>
+      <div><div class="rm-title">Refaccionaria Integrada</div><div class="rm-desc">Cuando la IA identifica la pieza, el cliente la ordena directo de la refaccionaria Mill&#225;n.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S14 COLORES OEM -->
+<div id="s14" class="section">
+  <div class="sec-header"><div class="sec-num">14</div><div class="sec-title">COLORES OEM VERIFICADOS &mdash; NISSAN GA16DE</div></div>
+  <div class="callout ok"><div class="callout-icon">&#9989;</div><div class="callout-body">Todos verificados contra <strong>Nissan FSM Tsuru B13/Sentra B13 GA16DE &mdash; Secci&#243;n EF</strong>. Corregidos en ProPart V7.</div></div>
+  <p>Notaci&#243;n: N=Negro &bull; Bl=Blanco &bull; R=Rojo &bull; V=Verde &bull; Am=Amarillo &bull; Az=Azul &bull; Gr=Gris &bull; Br=Caf&#233;</p>
+  <table>
+    <tr><th>Pin</th><th>Se&#241;al</th><th>Color correcto OEM</th><th>Error anterior en app</th></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">1</td><td>Inyector #1 Low Side</td><td style="color:var(--green)">N/Bl (Negro/Blanco)</td><td style="color:var(--red)">Az/N (Azul/Negro) &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">2</td><td>Inyector #2 Low Side</td><td style="color:var(--green)">N/R (Negro/Rojo)</td><td style="color:var(--red)">Az/Bl &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">3</td><td>Inyector #3 Low Side</td><td style="color:var(--green)">N/V (Negro/Verde)</td><td style="color:var(--red)">Az s&#243;lido &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">4</td><td>Inyector #4 Low Side</td><td style="color:var(--green)">N/Am (Negro/Amarillo)</td><td style="color:var(--red)">Az/Am &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">18/44</td><td>Vref 5V</td><td style="color:var(--green)">Bl/R (Blanco/Rojo)</td><td style="color:var(--red)">Gr/R / Gris &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">24</td><td>CKP NE+ se&#241;al</td><td style="color:var(--green)">Am/V (Amarillo/Verde)</td><td style="color:var(--green)">&#10003; Ya estaba correcto</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">37</td><td>CMP se&#241;al G</td><td style="color:var(--green)">V (Verde s&#243;lido)</td><td style="color:var(--red)">Az oscuro &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">40</td><td>MAF se&#241;al VG</td><td style="color:var(--green)">V/Bl (Verde/Blanco)</td><td style="color:var(--red)">V s&#243;lido &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">42</td><td>MAF +12V IGN</td><td style="color:var(--green)">R/N (Rojo/Negro)</td><td style="color:var(--red)">R/Az &mdash; INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">55</td><td>O2 se&#241;al lambda</td><td style="color:var(--green)">N/Am (Negro/Amarillo)</td><td style="color:var(--red)">Na (Naranja) &mdash; MUY INCORRECTO</td></tr>
+    <tr><td style="font-family:'Share Tech Mono',monospace">58</td><td>IGT bobina encendido</td><td style="color:var(--green)">N/R (Negro/Rojo)</td><td style="color:var(--red)">Violeta &mdash; MUY INCORRECTO</td></tr>
+  </table>
+</div>
+
+<!-- S15 FAQ -->
+<div id="s15" class="section">
+  <div class="sec-header"><div class="sec-num">15</div><div class="sec-title">PREGUNTAS FRECUENTES (FAQ)</div></div>
+  <div class="card"><div class="card-title">&#10067; El adaptador V-Link no conecta</div>
+    <ol><li>Verificar GPS/Ubicaci&#243;n ACTIVADO en el celular (obligatorio para BLE scan Android &lt;12)</li><li>Adaptador bien insertado en OBD2 (LED verde parpadeando = activo)</li><li>Desconectar y reconectar. Esperar 5 segundos.</li><li>Verificar que el veh&#237;culo est&#225; en protocolo compatible (probar ATSP0 para autodetectar)</li></ol>
+  </div>
+  <div class="card"><div class="card-title">&#10067; El Chal&#225;n no escucha mi voz</div>
+    <p>El reconocimiento de voz requiere Chrome o Edge en web. En la app Android nativa funciona nativamente. Verificar que se otorg&#243; permiso de micr&#243;fono.</p>
+  </div>
+  <div class="card"><div class="card-title">&#10067; &#191;Los colores de cable son iguales para todos los a&#241;os del Tsuru?</div>
+    <p>Los colores del ECU Nissan GA16DE son consistentes del 1991 al 2017. Peque&#241;as variaciones pueden existir en arneses de habitáculo vs. motor. Siempre confirmar con el FSM del a&#241;o espec&#237;fico.</p>
+  </div>
+  <div class="card"><div class="card-title">&#10067; &#191;El Historial VIN lee fallas que tuvo el carro antes de usar ProPart?</div>
+    <p><strong>No.</strong> ProPart construye el historial desde el primer diagn&#243;stico. No tiene acceso a bases de datos del fabricante. Con el tiempo se construye un historial propio muy valioso para el taller.</p>
+  </div>
+  <div class="card"><div class="card-title">&#10067; &#191;Puedo usar un ELM327 gen&#233;rico de Amazon?</div>
+    <p>S&#237;, si usa el perfil BLE FFF0/FFF1/FFF2. Los ELM327 con WiFi usan WebSocket en su red local (ws://192.168.10.1:3000 para VCX Nano).</p>
+  </div>
+  <div style="margin-top:20px;text-align:center;padding:18px;background:var(--bg2);border-radius:10px;border:1px solid var(--bdr)">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px">&#x2B21; PROPART SYSTEM V7</div>
+    <div style="font-size:11px;color:var(--txtD)">Desarrollado con orgullo en Alpuyeca, Xochitepec, Morelos, M&#233;xico &#127474;&#127485;</div>
+    <div style="font-size:11px;color:var(--txtM);margin-top:3px">Fernando Mill&#225;n Melchor &middot; 777-683-8196 · 221-956-7392 &middot; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f8beb5c8c1cdcbcac1b89f95999194d69b9795">[email&#160;protected]</a></div>
+    <div style="font-size:10px;color:var(--txtM);margin-top:6px;letter-spacing:1px">Manual V7.0 &middot; ProPart System V12 &middot; Todos los derechos reservados</div>
+  </div>
+</div>
+
+</main>
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function goTo(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('act'));const ids=['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14','s15'];const pos=ids.indexOf(id);if(pos>=0)document.querySelectorAll('.sb-item')[pos]?.classList.add('act');}
+const sects=document.querySelectorAll('.section');window

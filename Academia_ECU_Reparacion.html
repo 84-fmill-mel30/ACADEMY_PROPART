@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Academia ECU — Reparación y Programación</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--g:#F5A623;--gd:#C47008;--cy:#00D4FF;--gr:#00E676;--re:#FF3D5A;--pu:#9C59F7;--bg0:#020609;--bg1:#050A13;--bg2:#0A1422;--bg3:#0F1C32;--bdr:rgba(30,48,88,.8);--tx:#D0E4F5;--txd:#7090B0;--txm:#4A6480;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Exo 2',sans-serif;background:var(--bg1);color:var(--tx);min-height:100vh;}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+
+/* LAYOUT */
+.wrap{display:flex;min-height:100vh;}
+.sidebar{width:260px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--bdr);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+.main{flex:1;padding:0;overflow-y:auto;}
+
+/* SIDEBAR */
+.sb-logo{padding:18px 16px;border-bottom:1px solid var(--bdr);}
+.sb-pp{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--g);letter-spacing:2px;}
+.sb-sub{font-size:9px;color:var(--txm);letter-spacing:2px;margin-top:2px;}
+.sb-prog{margin:12px 16px;background:var(--bg3);border-radius:20px;height:6px;overflow:hidden;}
+.sb-prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--cy));border-radius:20px;transition:width .5s ease;}
+.sb-prog-txt{font-size:9px;color:var(--txm);text-align:right;margin-top:4px;padding:0 16px;}
+.sb-sec{font-size:8px;font-weight:700;color:var(--txm);letter-spacing:2px;padding:10px 16px 4px;text-transform:uppercase;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;font-size:11px;font-weight:600;color:var(--txd);transition:all .14s;border-left:3px solid transparent;position:relative;}
+.sb-item:hover{color:var(--tx);background:rgba(245,166,35,.05);border-left-color:rgba(245,166,35,.3);}
+.sb-item.act{color:var(--g);background:rgba(245,166,35,.08);border-left-color:var(--g);}
+.sb-item.done::after{content:'✓';position:absolute;right:14px;font-size:10px;color:var(--gr);}
+.sb-ico{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-lock{position:absolute;right:14px;font-size:10px;color:var(--txm);}
+
+/* HEADER */
+.pg-hdr{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--bdr);padding:24px 32px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.pg-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--g);letter-spacing:2px;}
+.pg-sub{font-size:13px;color:var(--txd);margin-top:4px;}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1px;border:1px solid;}
+.badge-g{color:var(--gr);border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.06);}
+.badge-o{color:#FF8C00;border-color:rgba(255,140,0,.3);background:rgba(255,140,0,.06);}
+.badge-r{color:var(--re);border-color:rgba(255,61,90,.3);background:rgba(255,61,90,.06);}
+.badge-c{color:var(--cy);border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.06);}
+
+/* PAGE */
+.page{display:none;padding:28px 32px;}
+.page.act{display:block;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:16px;}
+.card-t{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--g);letter-spacing:1px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}.sidebar{width:220px;}.pg-hdr,.page{padding:16px;}}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:10px;}
+.step{display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--bg3);border-radius:10px;border:1px solid rgba(30,48,88,.5);}
+.step-n{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--g),var(--gd));color:#000;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;}
+.step-t{font-weight:600;color:var(--tx);margin-bottom:4px;font-size:13px;}
+.step-d{font-size:12px;color:var(--txd);line-height:1.6;}
+.step-warn{background:rgba(255,61,90,.08);border:1px solid rgba(255,61,90,.25);}
+.step-ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);}
+
+/* CALLOUTS */
+.callout{display:flex;gap:12px;padding:12px 14px;border-radius:9px;margin-bottom:12px;}
+.callout.warn{background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.3);}
+.callout.info{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);}
+.callout.danger{background:rgba(255,61,90,.07);border:1px solid rgba(255,61,90,.3);}
+.callout.ok{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);}
+.callout-ico{font-size:18px;flex-shrink:0;}
+.callout-body{font-size:12px;line-height:1.65;color:var(--txd);}
+.callout-body strong{color:var(--tx);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:12px;}
+th{background:var(--bg3);padding:8px 10px;text-align:left;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--g);text-transform:uppercase;border-bottom:1px solid var(--bdr);}
+td{padding:8px 10px;border-bottom:1px solid rgba(30,48,88,.4);vertical-align:top;}
+tr:hover td{background:rgba(245,166,35,.04);}
+.mono{font-family:'Share Tech Mono',monospace;color:var(--cy);font-size:11px;}
+
+/* COMPONENT VISUAL */
+.comp-visual{background:var(--bg3);border:1px solid var(--bdr);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;}
+.comp-visual:hover{border-color:var(--g);background:rgba(245,166,35,.06);}
+.comp-visual svg{max-width:100%;height:auto;}
+.comp-lbl{font-size:11px;font-weight:700;color:var(--g);letter-spacing:1px;margin-top:8px;}
+.comp-desc{font-size:10px;color:var(--txd);margin-top:3px;line-height:1.5;}
+
+/* FALLA INDICATOR */
+.falla-item{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:8px;margin-bottom:8px;border:1px solid;}
+.falla-item.critica{background:rgba(255,61,90,.06);border-color:rgba(255,61,90,.25);}
+.falla-item.media{background:rgba(255,140,0,.06);border-color:rgba(255,140,0,.25);}
+.falla-item.leve{background:rgba(245,166,35,.06);border-color:rgba(245,166,35,.2);}
+.falla-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.falla-item.critica .falla-dot{background:var(--re);box-shadow:0 0 6px var(--re);}
+.falla-item.media .falla-dot{background:#FF8C00;box-shadow:0 0 6px #FF8C00;}
+.falla-item.leve .falla-dot{background:var(--g);box-shadow:0 0 6px var(--g);}
+.falla-txt{flex:1;}
+.falla-titulo{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;}
+.falla-desc{font-size:11px;color:var(--txd);line-height:1.5;}
+
+/* TOOL CARD */
+.tool-card{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg3);border-radius:9px;border:1px solid var(--bdr);}
+.tool-ico{font-size:26px;flex-shrink:0;}
+.tool-name{font-size:13px;font-weight:700;color:var(--g);margin-bottom:3px;}
+.tool-desc{font-size:11px;color:var(--txd);line-height:1.5;}
+.tool-price{font-size:10px;color:var(--cy);margin-top:4px;font-family:'Share Tech Mono',monospace;}
+
+/* QUIZ */
+.quiz-q{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:12px;}
+.quiz-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid var(--bdr);margin-bottom:8px;cursor:pointer;transition:all .15s;font-size:12px;color:var(--txd);}
+.quiz-opt:hover{border-color:var(--g);color:var(--tx);}
+.quiz-opt.correct{border-color:var(--gr);background:rgba(0,230,118,.08);color:var(--gr);}
+.quiz-opt.wrong{border-color:var(--re);background:rgba(255,61,90,.08);color:var(--re);}
+.quiz-result{padding:12px;border-radius:8px;font-size:12px;margin-top:10px;display:none;}
+
+/* PROGRESS NAV */
+.pg-nav{display:flex;justify-content:space-between;align-items:center;padding:20px 32px;border-top:1px solid var(--bdr);margin-top:24px;}
+.btn{padding:10px 22px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;border:none;transition:all .15s;}
+.btn-g{background:linear-gradient(135deg,var(--g),var(--gd));color:#000;}
+.btn-g:hover{filter:brightness(1.1);}
+.btn-o{background:var(--bg3);color:var(--tx);border:1px solid var(--bdr);}
+.btn-o:hover{border-color:var(--g);color:var(--g);}
+
+
+.brand-btn{padding:8px 12px;border-radius:10px;border:1px solid var(--bdr);background:var(--bg3);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.brand-btn:hover,.brand-btn.act{border-color:var(--g);background:rgba(245,166,35,.08);}
+
+p{color:var(--txd);font-size:12px;line-height:1.65;margin-bottom:10px;}
+strong{color:var(--tx);}
+h3{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--tx);margin-bottom:8px;margin-top:16px;}
+ul,ol{padding-left:18px;margin-bottom:10px;}
+li{font-size:12px;color:var(--txd);padding:2px 0;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-pp">⬡ ACADEMIA ECU</div>
+    <div class="sb-sub">REPARACIÓN · PROGRAMACIÓN</div>
+    <div class="sb-prog"><div class="sb-prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="sb-prog-txt" id="progTxt">0 / 8 módulos</div>
+  </div>
+
+  <div class="sb-sec">FUNDAMENTOS</div>
+  <div class="sb-item act" onclick="go(0)" id="nav0"><span class="sb-ico">🔌</span>¿Qué es una ECU/PCM?</div>
+  <div class="sb-item" onclick="go(1)" id="nav1"><span class="sb-ico">🔬</span>Componentes internos</div>
+  <div class="sb-item" onclick="go(2)" id="nav2"><span class="sb-ico">🔍</span>Diagnóstico sin abrir</div>
+
+  <div class="sb-sec">BANCO DE TRABAJO</div>
+  <div class="sb-item" onclick="go(3)" id="nav3"><span class="sb-ico">🛠️</span>Herramientas necesarias</div>
+  <div class="sb-item" onclick="go(4)" id="nav4"><span class="sb-ico">⚡</span>Pruebas en banco</div>
+
+  <div class="sb-sec">REPARACIÓN</div>
+  <div class="sb-item" onclick="go(5)" id="nav5"><span class="sb-ico">🔧</span>Reparación física</div>
+
+  <div class="sb-sec">PROGRAMACIÓN</div>
+  <div class="sb-item" onclick="go(6)" id="nav6"><span class="sb-ico">🔑</span>Llaves e IMMO</div>
+  <div class="sb-item" onclick="go(7)" id="nav7"><span class="sb-ico">💾</span>Flash y reprogramación</div>
+
+  <div class="sb-sec">MARCAS ESPECÍFICAS</div>
+  <div class="sb-item" onclick="go(8)" id="nav8"><span class="sb-ico">🚗</span>ECUs por Marca</div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══════════════ PAGE 0: QUÉ ES UNA ECU ══════════════ -->
+<div class="page act" id="pg0">
+  <div class="pg-hdr">
+    <div>
+      <div class="pg-title">¿QUÉ ES UNA ECU / PCM?</div>
+      <div class="pg-sub">La computadora del carro — el cerebro del motor</div>
+    </div>
+    <span class="badge badge-g">MÓDULO 1 DE 8</span>
+  </div>
+  <div class="page" id="pg0-inner" style="display:block">
+
+  <div class="callout info"><div class="callout-ico">💡</div><div class="callout-body"><strong>¿Qué vas a aprender aquí?</strong> Qué es exactamente una computadora automotriz, para qué sirve, cuántos tipos hay, cómo se llaman en cada marca, y por qué es tan importante saber repararlas.</div></div>
+
+  <div class="card">
+    <div class="card-t">🧠 Definición simple</div>
+    <p>Una <strong>ECU (Engine Control Unit)</strong> o <strong>PCM (Powertrain Control Module)</strong> es una computadora especializada que controla el motor del vehículo. Su trabajo es recibir información de los sensores, procesarla y dar órdenes a los actuadores.</p>
+    <p>Si el carro fuera una persona: los sensores serían los sentidos (vista, oído, tacto), la ECU sería el cerebro, y los actuadores serían los músculos (inyectores, bobinas, etc.).</p>
+    <div style="display:flex;justify-content:center;margin:16px 0">
+      <svg viewBox="0 0 500 160" width="100%" style="max-width:500px">
+        <!-- SENSORES -->
+        <rect x="5" y="40" width="110" height="80" rx="8" fill="#0A1422" stroke="#1E3058" stroke-width="1.5"/>
+        <text x="60" y="62" text-anchor="middle" font-family="Rajdhani" font-size="11" fill="#6880A0" font-weight="700">SENSORES</text>
+        <text x="60" y="80" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">CKP, MAF, TPS</text>
+        <text x="60" y="93" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">ECT, O2, IAT</text>
+        <text x="60" y="106" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">MAP, APP...</text>
+        <!-- FLECHA ENTRADA -->
+        <line x1="115" y1="80" x2="155" y2="80" stroke="#F5A623" stroke-width="2"/>
+        <polygon points="155,75 165,80 155,85" fill="#F5A623"/>
+        <text x="138" y="73" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#6880A0">señales</text>
+        <!-- ECU -->
+        <rect x="165" y="20" width="170" height="120" rx="12" fill="#0F1C32" stroke="#F5A623" stroke-width="2"/>
+        <text x="250" y="50" text-anchor="middle" font-family="Rajdhani" font-size="15" fill="#F5A623" font-weight="700">ECU / PCM</text>
+        <text x="250" y="68" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">Recibe · Procesa · Ordena</text>
+        <rect x="185" y="76" width="40" height="22" rx="4" fill="#1E3058"/>
+        <text x="205" y="91" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#00D4FF">CPU</text>
+        <rect x="235" y="76" width="40" height="22" rx="4" fill="#1E3058"/>
+        <text x="255" y="91" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#00D4FF">ROM</text>
+        <rect x="285" y="76" width="40" height="22" rx="4" fill="#1E3058"/>
+        <text x="305" y="91" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#00D4FF">RAM</text>
+        <text x="250" y="118" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#4A6480">Microcontrolador + Memoria</text>
+        <!-- FLECHA SALIDA -->
+        <line x1="335" y1="80" x2="370" y2="80" stroke="#00E676" stroke-width="2"/>
+        <polygon points="370,75 380,80 370,85" fill="#00E676"/>
+        <text x="357" y="73" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#6880A0">pulsos</text>
+        <!-- ACTUADORES -->
+        <rect x="380" y="40" width="115" height="80" rx="8" fill="#0A1422" stroke="#1E3058" stroke-width="1.5"/>
+        <text x="437" y="62" text-anchor="middle" font-family="Rajdhani" font-size="11" fill="#6880A0" font-weight="700">ACTUADORES</text>
+        <text x="437" y="80" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">Inyectores</text>
+        <text x="437" y="93" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">Bobinas</text>
+        <text x="437" y="106" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#7090B0">Válvulas, IAC...</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📋 Tipos de computadoras automotrices</div>
+    <table>
+      <tr><th>Nombre</th><th>Significado</th><th>Controla</th><th>Marcas comunes</th></tr>
+      <tr><td><strong>ECU</strong></td><td>Engine Control Unit</td><td>Motor (combustible + encendido)</td><td>Nissan, Honda, Toyota</td></tr>
+      <tr><td><strong>PCM</strong></td><td>Powertrain Control Module</td><td>Motor + Transmisión juntos</td><td>Ford, Chevrolet/GM</td></tr>
+      <tr><td><strong>ECM</strong></td><td>Engine Control Module</td><td>Motor principalmente</td><td>GM, Dodge</td></tr>
+      <tr><td><strong>DME</strong></td><td>Digital Motor Electronics</td><td>Motor</td><td>BMW, Mini</td></tr>
+      <tr><td><strong>EDC</strong></td><td>Electronic Diesel Control</td><td>Motor diésel</td><td>VW, Bosch</td></tr>
+      <tr><td><strong>TCU/TCM</strong></td><td>Transmission Control Unit</td><td>Solo transmisión automática</td><td>Todas las marcas</td></tr>
+      <tr><td><strong>BCM</strong></td><td>Body Control Module</td><td>Carrocería (luces, ventanas, etc.)</td><td>Todas las marcas</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-t">💰 ¿Por qué aprender a repararlas?</div>
+    <div class="grid2">
+      <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid rgba(0,230,118,.2)">
+        <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:6px">✅ Reparar</div>
+        <ul>
+          <li>Costo: $200 – $800 MXN en piezas</li>
+          <li>Tiempo: 1-4 horas con práctica</li>
+          <li>Cobro al cliente: $800 – $3,000 MXN</li>
+          <li>Margen de ganancia: 300-500%</li>
+        </ul>
+      </div>
+      <div style="padding:14px;background:var(--bg3);border-radius:8px;border:1px solid rgba(255,61,90,.2)">
+        <div style="font-size:13px;font-weight:700;color:var(--re);margin-bottom:6px">❌ Cambiar por nueva</div>
+        <ul>
+          <li>Costo: $3,000 – $15,000 MXN</li>
+          <li>Hay que programarla igual</li>
+          <li>No siempre hay en existencia</li>
+          <li>El cliente se va con otro taller</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ok"><div class="callout-ico">🇲🇽</div><div class="callout-body"><strong>Mercado en México:</strong> La mayoría de los talleres <em>no</em> reparan ECUs — las mandan a cambiar o mandan al cliente a un "especialista". Si tú puedes hacerlo, tienes una ventaja enorme y un servicio que pocos ofrecen.</div></div>
+
+  <div class="pg-nav">
+    <div></div>
+    <button class="btn btn-g" onclick="go(1)">Siguiente: Componentes internos →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 1: COMPONENTES ══════════════ -->
+<div class="page" id="pg1">
+  <div class="pg-hdr">
+    <div><div class="pg-title">COMPONENTES INTERNOS</div><div class="pg-sub">Lo que hay dentro de la caja negra</div></div>
+    <span class="badge badge-o">MÓDULO 2 DE 8</span>
+  </div>
+  <div class="page" id="pg1-inner" style="display:block">
+
+  <div class="callout info"><div class="callout-ico">🔬</div><div class="callout-body"><strong>Antes de abrir cualquier ECU</strong>, descarga el manual de servicio (FSM) del vehículo. Muchos componentes son marca específica. Esta sección cubre los componentes <em>comunes</em> que encontrarás en casi todas las computadoras.</div></div>
+
+  <!-- DIAGRAMA PCB -->
+  <div class="card">
+    <div class="card-t">🖥️ Diagrama de la placa (PCB)</div>
+    <div style="display:flex;justify-content:center;margin:8px 0">
+      <svg viewBox="0 0 560 300" width="100%" style="max-width:560px">
+        <rect x="0" y="0" width="560" height="300" rx="8" fill="#061018"/>
+        <!-- PCB base -->
+        <rect x="20" y="20" width="520" height="260" rx="6" fill="#0D2010" stroke="#1A4020" stroke-width="1.5"/>
+        <!-- Pistas -->
+        <line x1="80" y1="80" x2="200" y2="80" stroke="#1A6030" stroke-width="1.5" opacity=".5"/>
+        <line x1="80" y1="140" x2="340" y2="140" stroke="#1A6030" stroke-width="1.5" opacity=".5"/>
+        <line x1="200" y1="80" x2="200" y2="200" stroke="#1A6030" stroke-width="1.5" opacity=".5"/>
+        <line x1="340" y1="140" x2="340" y2="220" stroke="#1A6030" stroke-width="1.5" opacity=".4"/>
+        <line x1="400" y1="80" x2="480" y2="80" stroke="#1A6030" stroke-width="1.5" opacity=".4"/>
+
+        <!-- CONECTOR (izquierda) -->
+        <rect x="28" y="60" width="30" height="180" rx="4" fill="#1A2830" stroke="#3A4850" stroke-width="1.5"/>
+        <text x="43" y="155" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0" transform="rotate(-90,43,155)">CONECTOR 76 PINES</text>
+        <g fill="#3A6080">
+          {' '.join([f'<rect x="32" y="{66+i*8}" width="5" height="5" rx="1"/>' for i in range(20)])}
+        </g>
+
+        <!-- MICRO CPU (centro) -->
+        <rect x="200" y="90" width="80" height="80" rx="4" fill="#1E3050" stroke="#F5A623" stroke-width="2"/>
+        <text x="240" y="124" text-anchor="middle" font-family="Rajdhani" font-size="11" fill="#F5A623" font-weight="700">CPU</text>
+        <text x="240" y="138" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#6880A0">Motorola</text>
+        <text x="240" y="150" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#6880A0">HC12/HC16</text>
+        <!-- pines del CPU -->
+        <g fill="#F5A623" opacity=".4">
+          <rect x="195" y="95" width="4" height="4"/><rect x="195" y="105" width="4" height="4"/>
+          <rect x="195" y="115" width="4" height="4"/><rect x="195" y="125" width="4" height="4"/>
+          <rect x="195" y="135" width="4" height="4"/>
+          <rect x="281" y="95" width="4" height="4"/><rect x="281" y="105" width="4" height="4"/>
+          <rect x="281" y="115" width="4" height="4"/><rect x="281" y="125" width="4" height="4"/>
+          <rect x="205" y="86" width="4" height="4"/><rect x="220" y="86" width="4" height="4"/>
+          <rect x="235" y="86" width="4" height="4"/>
+        </g>
+
+        <!-- EEPROM -->
+        <rect x="330" y="60" width="55" height="30" rx="3" fill="#1E2840" stroke="#00D4FF" stroke-width="1.5"/>
+        <text x="357" y="74" text-anchor="middle" font-family="Rajdhani" font-size="10" fill="#00D4FF" font-weight="700">EEPROM</text>
+        <text x="357" y="84" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#4A6480">93C56/93C86</text>
+
+        <!-- FLASH -->
+        <rect x="330" y="100" width="55" height="30" rx="3" fill="#1E2840" stroke="#9C59F7" stroke-width="1.5"/>
+        <text x="357" y="114" text-anchor="middle" font-family="Rajdhani" font-size="10" fill="#9C59F7" font-weight="700">FLASH ROM</text>
+        <text x="357" y="124" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#4A6480">Programa ECU</text>
+
+        <!-- REGULADOR TENSION -->
+        <rect x="80" y="190" width="60" height="40" rx="3" fill="#1E2810" stroke="#00E676" stroke-width="1.5"/>
+        <text x="110" y="207" text-anchor="middle" font-family="Rajdhani" font-size="9" fill="#00E676" font-weight="700">REGULADOR</text>
+        <text x="110" y="220" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#4A6480">5V / Vref</text>
+
+        <!-- CONDENSADORES -->
+        <g>
+          <ellipse cx="155" cy="210" rx="8" ry="12" fill="#1A3030" stroke="#4A8080" stroke-width="1.5"/>
+          <ellipse cx="175" cy="210" rx="8" ry="12" fill="#1A3030" stroke="#4A8080" stroke-width="1.5"/>
+          <ellipse cx="195" cy="210" rx="8" ry="12" fill="#1A3030" stroke="#4A8080" stroke-width="1.5"/>
+          <text x="175" y="232" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">CONDENSADORES</text>
+        </g>
+
+        <!-- TRANSISTORES DRIVERS -->
+        <rect x="400" y="140" width="100" height="90" rx="4" fill="#1E1030" stroke="#FF3D5A" stroke-width="1.5"/>
+        <text x="450" y="162" text-anchor="middle" font-family="Rajdhani" font-size="9" fill="#FF3D5A" font-weight="700">DRIVERS</text>
+        <text x="450" y="174" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">Inyectores / Bobinas</text>
+        <g fill="#FF3D5A" opacity=".5">
+          <rect x="410" y="182" width="18" height="22" rx="2"/>
+          <rect x="435" y="182" width="18" height="22" rx="2"/>
+          <rect x="460" y="182" width="18" height="22" rx="2"/>
+          <rect x="485" y="182" width="8" height="22" rx="2"/>
+        </g>
+
+        <!-- CRISTAL OSCILADOR -->
+        <rect x="300" y="180" width="40" height="20" rx="3" fill="#1A2030" stroke="#FFAA00" stroke-width="1.5"/>
+        <text x="320" y="194" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#FFAA00">XTAL 8MHz</text>
+
+        <!-- LEYENDA -->
+        <rect x="30" y="248" width="500" height="28" rx="4" fill="rgba(0,0,0,.4)"/>
+        <rect x="38" y="254" width="10" height="10" rx="1" fill="#F5A623"/>
+        <text x="52" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">CPU</text>
+        <rect x="80" y="254" width="10" height="10" rx="1" fill="#00D4FF"/>
+        <text x="94" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">EEPROM</text>
+        <rect x="140" y="254" width="10" height="10" rx="1" fill="#9C59F7"/>
+        <text x="154" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">FLASH</text>
+        <rect x="195" y="254" width="10" height="10" rx="1" fill="#00E676"/>
+        <text x="209" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">REGULADOR</text>
+        <rect x="270" y="254" width="10" height="10" rx="1" fill="#4A8080"/>
+        <text x="284" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">CONDENSADORES</text>
+        <rect x="375" y="254" width="10" height="10" rx="1" fill="#FF3D5A"/>
+        <text x="389" y="263" font-family="Exo 2" font-size="8" fill="#7090B0">DRIVERS POTENCIA</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- COMPONENTES DETALLE -->
+  <h3>Componentes principales — ¿Qué hace cada uno?</h3>
+  <div class="grid2">
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <rect x="15" y="10" width="70" height="60" rx="4" fill="#1E3050" stroke="#F5A623" stroke-width="2"/>
+        <text x="50" y="36" text-anchor="middle" font-family="Rajdhani" font-size="12" fill="#F5A623" font-weight="700">CPU</text>
+        <text x="50" y="50" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">Microcontrolador</text>
+        <g fill="#F5A623" opacity=".5"><rect x="8" y="20" width="6" height="4" rx="1"/><rect x="8" y="30" width="6" height="4" rx="1"/><rect x="8" y="40" width="6" height="4" rx="1"/><rect x="8" y="50" width="6" height="4" rx="1"/><rect x="86" y="20" width="6" height="4" rx="1"/><rect x="86" y="30" width="6" height="4" rx="1"/><rect x="86" y="40" width="6" height="4" rx="1"/><rect x="86" y="50" width="6" height="4" rx="1"/></g>
+      </svg>
+      <div class="comp-lbl">MICROPROCESADOR (CPU)</div>
+      <div class="comp-desc">El cerebro de la ECU. Lee los sensores, ejecuta el programa y calcula los tiempos de inyección y encendido. Marcas: Motorola HC12, Renesas, NEC.</div>
+    </div>
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <rect x="20" y="15" width="60" height="50" rx="3" fill="#1E2840" stroke="#00D4FF" stroke-width="2"/>
+        <text x="50" y="36" text-anchor="middle" font-family="Rajdhani" font-size="10" fill="#00D4FF" font-weight="700">EEPROM</text>
+        <text x="50" y="50" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">8 pines DIP/SOIC</text>
+        <g fill="#00D4FF" opacity=".4"><rect x="12" y="22" width="7" height="5" rx="1"/><rect x="12" y="32" width="7" height="5" rx="1"/><rect x="12" y="42" width="7" height="5" rx="1"/><rect x="12" y="52" width="7" height="5" rx="1"/><rect x="81" y="22" width="7" height="5" rx="1"/><rect x="81" y="32" width="7" height="5" rx="1"/><rect x="81" y="42" width="7" height="5" rx="1"/><rect x="81" y="52" width="7" height="5" rx="1"/></g>
+      </svg>
+      <div class="comp-lbl">EEPROM (93Cxx)</div>
+      <div class="comp-desc">Memoria que guarda: llaves programadas, VIN, adaptaciones del motor, código IMMO. <strong>Se puede leer y escribir sin quitar de la placa.</strong> Es el componente más importante para reprogramar llaves.</div>
+    </div>
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <rect x="10" y="10" width="80" height="60" rx="4" fill="#1E2840" stroke="#9C59F7" stroke-width="2"/>
+        <text x="50" y="36" text-anchor="middle" font-family="Rajdhani" font-size="10" fill="#9C59F7" font-weight="700">FLASH ROM</text>
+        <text x="50" y="50" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">Programa principal</text>
+        <g fill="#9C59F7" opacity=".3"><rect x="2" y="20" width="7" height="4" rx="1"/><rect x="2" y="28" width="7" height="4" rx="1"/><rect x="2" y="36" width="7" height="4" rx="1"/><rect x="2" y="44" width="7" height="4" rx="1"/><rect x="2" y="52" width="7" height="4" rx="1"/><rect x="91" y="20" width="7" height="4" rx="1"/><rect x="91" y="28" width="7" height="4" rx="1"/><rect x="91" y="36" width="7" height="4" rx="1"/><rect x="91" y="44" width="7" height="4" rx="1"/><rect x="91" y="52" width="7" height="4" rx="1"/></g>
+      </svg>
+      <div class="comp-lbl">MEMORIA FLASH</div>
+      <div class="comp-desc">Contiene el programa de la ECU: mapas de combustible, encendido, límites de RPM. Se puede reescribir (flashear) para modificar la programación o corregir fallas de software.</div>
+    </div>
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <rect x="20" y="20" width="60" height="40" rx="3" fill="#1E2010" stroke="#00E676" stroke-width="2"/>
+        <text x="50" y="36" text-anchor="middle" font-family="Rajdhani" font-size="9" fill="#00E676" font-weight="700">REGULADOR</text>
+        <text x="50" y="48" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">LM431 / 7805</text>
+        <line x1="20" y1="30" x2="8" y2="30" stroke="#00E676" stroke-width="2"/>
+        <line x1="20" y1="40" x2="8" y2="40" stroke="#00E676" stroke-width="2"/>
+        <line x1="80" y1="40" x2="92" y2="40" stroke="#00E676" stroke-width="2"/>
+      </svg>
+      <div class="comp-lbl">REGULADOR DE VOLTAJE</div>
+      <div class="comp-desc">Convierte 12V del carro a 5V estables para el circuito. Si este falla, <strong>todos los sensores dan lecturas erróneas</strong>. Síntoma típico: múltiples DTCs sin causa aparente. Medir Vref en el TPS.</div>
+    </div>
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <ellipse cx="30" cy="40" rx="12" ry="22" fill="#1A3030" stroke="#4A9090" stroke-width="2"/>
+        <ellipse cx="50" cy="40" rx="12" ry="22" fill="#1A3030" stroke="#4A9090" stroke-width="2"/>
+        <ellipse cx="70" cy="40" rx="12" ry="22" fill="#1A3030" stroke="#4A9090" stroke-width="2"/>
+        <text x="50" y="72" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">100µF 25V</text>
+      </svg>
+      <div class="comp-lbl">CONDENSADORES ELECTROLÍTICOS</div>
+      <div class="comp-desc">Filtran el voltaje y almacenan carga. Cuando se secan o <strong>abomban</strong> (tapa hinchada), la ECU falla intermitentemente. Fáciles de identificar visualmente. Se reemplazan por el mismo valor o superior.</div>
+    </div>
+    <div class="comp-visual">
+      <svg viewBox="0 0 100 80" width="80" height="64">
+        <rect x="15" y="20" width="70" height="40" rx="3" fill="#1E1030" stroke="#FF3D5A" stroke-width="2"/>
+        <text x="50" y="36" text-anchor="middle" font-family="Rajdhani" font-size="9" fill="#FF3D5A" font-weight="700">TRANSISTOR</text>
+        <text x="50" y="48" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#6880A0">BIP373 / IGBT</text>
+        <circle cx="50" cy="10" r="8" fill="#1E1030" stroke="#FF3D5A" stroke-width="1.5"/>
+        <line x1="50" y1="18" x2="50" y2="20" stroke="#FF3D5A" stroke-width="1.5"/>
+      </svg>
+      <div class="comp-lbl">TRANSISTORES DE POTENCIA</div>
+      <div class="comp-desc">Controlan los inyectores y las bobinas de encendido (IGT). El más común es el BIP373. Se quema cuando una bobina tiene cortocircuito. <strong>Antes de reemplazarlo, medir la resistencia de la bobina</strong> (debe ser 0.5-1.5Ω).</div>
+    </div>
+  </div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(0)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(2)">Siguiente: Diagnóstico sin abrir →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 2: DIAGNÓSTICO SIN ABRIR ══════════════ -->
+<div class="page" id="pg2">
+  <div class="pg-hdr">
+    <div><div class="pg-title">DIAGNÓSTICO SIN ABRIR</div><div class="pg-sub">Confirmar que la ECU es el problema — antes de tocarla</div></div>
+    <span class="badge badge-r">MÓDULO 3 DE 8</span>
+  </div>
+  <div class="page" id="pg2-inner" style="display:block">
+
+  <div class="callout danger"><div class="callout-ico">⚠️</div><div class="callout-body"><strong>Regla de oro:</strong> El 60% de las veces que le echan la culpa a la ECU, el problema es externo — sensores dañados, cableado roto, voltajes incorrectos. <strong>Diagnostica primero, abre después.</strong></div></div>
+
+  <div class="card">
+    <div class="card-t">📋 Checklist — Antes de culpar a la ECU</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><div class="step-t">Verificar alimentación de la ECU</div>
+        <div class="step-d">Con llave en ON: medir voltaje en pines de alimentación (+12V KL30 y KL15) y tierra (GND). Debe haber mínimo 11.5V. Sin esto la ECU no arranca aunque esté perfecta.<br><strong>Multímetro en pin KL15 del conector → debe leer 12V con llave.</strong></div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><div class="step-t">Verificar tierra de potencia</div>
+        <div class="step-d">Medir caída de voltaje entre el pin GND del conector ECU y el negativo de batería. Debe ser menor a 100mV (0.1V). Si es mayor: el cableado de tierra está mal — NO la ECU.<br><strong>Causa el 30% de "ECUs dañadas" que realmente no tienen nada.</strong></div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><div class="step-t">Leer DTCs con escáner</div>
+        <div class="step-d">Antes de abrir cualquier cosa, leer todos los códigos de falla. Un P0601 (checksum ECU), P0605 (ROM error) o P0606 (CPU error) indica falla interna real. Códigos de sensores (P0101, P0335) generalmente NO son falla de la ECU.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <div><div class="step-t">Verificar el Vref (voltaje de referencia 5V)</div>
+        <div class="step-d">Con llave ON, medir el pin Vref en el conector del TPS o MAP. <strong>Debe ser exactamente 5.00V ±0.05V.</strong> Si es menor: o hay un sensor en corto jalando el bus, o el regulador interno de la ECU está dañado.<br>Para distinguir: desconectar sensores uno por uno — si al desconectar uno el Vref regresa a 5V, ese sensor tiene corto.</div></div>
+      </div>
+      <div class="step step-warn">
+        <div class="step-n">⚠️</div>
+        <div><div class="step-t">Verificar señal CKP (cigüeñal)</div>
+        <div class="step-d">Sin señal del CKP la ECU no inyecta ni enciende — parece que la ECU está muerta pero no lo está. Con osciloscopio o multímetro en modo AC: debe haber señal AC al cranear. Si no hay: revisar sensor CKP primero (Am/V en Nissan GA16DE).</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">5</div>
+        <div><div class="step-t">Verificar señal de comunicación OBD2</div>
+        <div class="step-d">Si el escáner no comunica: medir pin 6 (CAN-H) y 14 (CAN-L) del conector OBD2. Resistencia entre ambos debe ser 60Ω (dos terminaciones de 120Ω en paralelo). Si es infinito: bus CAN cortado o ECU sin comunicación.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🔍 Síntomas y su causa más probable</div>
+    <table>
+      <tr><th>Síntoma</th><th>Primera sospecha</th><th>Segunda sospecha</th><th>ECU como causa</th></tr>
+      <tr><td>No arranca, no hay chispa ni inyección</td><td>Relay principal / fusible</td><td>CKP dañado</td><td>Rara — solo si 1 y 2 están bien</td></tr>
+      <tr><td>Múltiples DTCs de golpe (P0100-P0600)</td><td>Tierra sucia o rota</td><td>Vref bajo</td><td>Probable — regulador interno</td></tr>
+      <tr><td>Carro arranca pero muere</td><td>MAF / TPS sucios</td><td>Fuga de vacío</td><td>Muy rara</td></tr>
+      <tr><td>Escáner no comunica (no link)</td><td>Fusible comunicación</td><td>Cable OBD2</td><td>Posible — chip de comunicación</td></tr>
+      <tr><td>P0601 / P0605 / P0606</td><td colspan="2">—</td><td><strong>Sí — falla interna confirmada</strong></td></tr>
+      <tr><td>Aprendizaje IMMO fallido</td><td>Proceso incorrecto</td><td>Transponder dañado</td><td>Posible — EEPROM dañada</td></tr>
+      <tr><td>Inyectores no abren</td><td>Relay inyectores</td><td>Transistor driver</td><td>Probable — driver quemado</td></tr>
+    </table>
+  </div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(1)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(3)">Siguiente: Herramientas →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 3: HERRAMIENTAS ══════════════ -->
+<div class="page" id="pg3">
+  <div class="pg-hdr">
+    <div><div class="pg-title">HERRAMIENTAS NECESARIAS</div><div class="pg-sub">Lo que necesitas para armar tu banco de trabajo</div></div>
+    <span class="badge badge-c">MÓDULO 4 DE 8</span>
+  </div>
+  <div class="page" id="pg3-inner" style="display:block">
+
+  <h3>🛠️ Herramientas básicas (para empezar)</h3>
+  <div class="grid2">
+    <div class="tool-card"><div class="tool-ico">🔌</div><div><div class="tool-name">Multímetro digital</div><div class="tool-desc">Para medir voltajes, resistencias y continuidad en el conector ECU y en la placa. Función de frecuencia para verificar señales de sensores.</div><div class="tool-price">Precio: $300 – $800 MXN · Marca: UNI-T, Fluke</div></div></div>
+    <div class="tool-card"><div class="tool-ico">🔬</div><div><div class="tool-name">Osciloscopio (2 canales)</div><div class="tool-desc">Fundamental para ver señales de CKP, CMP, inyectores. Sin osciloscopio solo puedes hacer diagnóstico básico. Un DSO básico de 2 canales es suficiente para empezar.</div><div class="tool-price">Precio: $1,500 – $4,000 MXN · Marca: Hantek 6022BE</div></div></div>
+    <div class="tool-card"><div class="tool-ico">🔧</div><div><div class="tool-name">Estación de soldadura</div><div class="tool-desc">Para reemplazar componentes SMD (chips). Temperatura controlada 250-380°C. La temperatura correcta es clave para no dañar la placa.</div><div class="tool-price">Precio: $800 – $2,500 MXN · Marca: Hakko, YIHUA</div></div></div>
+    <div class="tool-card"><div class="tool-ico">💡</div><div><div class="tool-name">Lupa con luz (3.5x – 10x)</div><div class="tool-desc">Para inspeccionar componentes SMD y detectar pistas cortadas, soldaduras frías o condensadores abombados. Imprescindible — los componentes son muy pequeños.</div><div class="tool-price">Precio: $200 – $600 MXN · En ferreterías</div></div></div>
+    <div class="tool-card"><div class="tool-ico">📡</div><div><div class="tool-name">Programador EEPROM</div><div class="tool-desc">Para leer y escribir la EEPROM sin quitar el chip (In-Circuit). Necesario para programación de llaves. Modelos: VVDI Prog, Orange5, MiniProg.</div><div class="tool-price">Precio: $2,500 – $8,000 MXN · Marca: Xhorse VVDI</div></div></div>
+    <div class="tool-card"><div class="tool-ico">🔋</div><div><div class="tool-name">Fuente de poder variable</div><div class="tool-desc">Para alimentar la ECU en el banco de trabajo sin tener el carro. Ajustable 0-15V, mínimo 5A. Con esto pruebas la ECU en tu mesa antes de instalarla.</div><div class="tool-price">Precio: $600 – $2,000 MXN · En tiendas electrónica</div></div></div>
+  </div>
+
+  <h3>🚀 Herramientas avanzadas (cuando ya practicas)</h3>
+  <div class="grid2">
+    <div class="tool-card"><div class="tool-ico">💾</div><div><div class="tool-name">Interfaz de flasheo (J2534)</div><div class="tool-desc">Para reflashear la memoria principal de la ECU. Se conecta por OBD2. Modelos: VCX Nano J2534, Mongoose, Tactrix Openport. Necesitas el software del fabricante también.</div><div class="tool-price">Precio: $800 – $3,000 MXN</div></div></div>
+    <div class="tool-card"><div class="tool-ico">🔑</div><div><div class="tool-name">VVDI Key Tool Max Pro</div><div class="tool-desc">Programador de llaves y transponders profesional. Hace programación directa, generación de llaves, bypass IMMO. El equipo más versátil del mercado.</div><div class="tool-price">Precio: $5,000 – $9,000 MXN</div></div></div>
+    <div class="tool-card"><div class="tool-ico">🌡️</div><div><div class="tool-name">Pistola de calor (Hot Air)</div><div class="tool-desc">Para reemplazar chips BGA y componentes SMD de montaje superficial sin dañar la placa. Temperatura: 250-380°C con flujo de aire controlado.</div><div class="tool-price">Precio: $1,200 – $3,500 MXN</div></div></div>
+    <div class="tool-card"><div class="tool-ico">📊</div><div><div class="tool-name">Scanner profesional (LAUNCH, SNAP-ON)</div><div class="tool-desc">Para leer DTCs avanzados, hacer actuaciones bidireccionales y programaciones básicas. ProPart V7 con adaptador BLE es una alternativa económica.</div><div class="tool-price">Precio: $3,000 – $30,000 MXN</div></div></div>
+  </div>
+
+  <div class="callout ok"><div class="callout-ico">💡</div><div class="callout-body"><strong>Recomendación para empezar:</strong> Multímetro + Estación de soldadura + Lupa + Programador EEPROM básico. Con eso puedes reparar el 70% de las fallas más comunes. El osciloscopio viene después cuando ya reparas bien.</div></div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(2)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(4)">Siguiente: Pruebas en banco →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 4: BANCO ══════════════ -->
+<div class="page" id="pg4">
+  <div class="pg-hdr">
+    <div><div class="pg-title">PRUEBAS EN BANCO</div><div class="pg-sub">Probar la ECU sobre tu mesa sin el carro</div></div>
+    <span class="badge badge-g">MÓDULO 5 DE 8</span>
+  </div>
+  <div class="page" id="pg4-inner" style="display:block">
+
+  <div class="callout info"><div class="callout-ico">🔋</div><div class="callout-body"><strong>¿Qué es "banquear" una ECU?</strong> Es probar su funcionamiento conectándola a una fuente de poder y un escáner en tu banco de trabajo, sin tener el carro presente. Sirve para confirmar si la ECU enciende, comunica y responde correctamente.</div></div>
+
+  <div class="card">
+    <div class="card-t">⚡ Conexión mínima para banquear — Nissan ECU GA16DE</div>
+    <div style="display:flex;justify-content:center;margin:10px 0 16px">
+      <svg viewBox="0 0 520 200" width="100%" style="max-width:520px">
+        <!-- FUENTE -->
+        <rect x="10" y="60" width="90" height="80" rx="8" fill="#0A1422" stroke="#00E676" stroke-width="2"/>
+        <text x="55" y="90" text-anchor="middle" font-family="Rajdhani" font-size="11" fill="#00E676" font-weight="700">FUENTE</text>
+        <text x="55" y="105" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#6880A0">12V / 5A</text>
+        <text x="55" y="120" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#6880A0">Ajustable</text>
+        <!-- cables fuente -->
+        <line x1="100" y1="80" x2="140" y2="80" stroke="#CC0000" stroke-width="2.5"/>
+        <line x1="100" y1="120" x2="140" y2="120" stroke="#111" stroke-width="2.5"/>
+        <!-- ECU BOX -->
+        <rect x="140" y="40" width="160" height="120" rx="8" fill="#0F1C32" stroke="#F5A623" stroke-width="2"/>
+        <text x="220" y="76" text-anchor="middle" font-family="Rajdhani" font-size="13" fill="#F5A623" font-weight="700">ECU / PCM</text>
+        <!-- pines ECU -->
+        <text x="145" y="90" font-family="Exo 2" font-size="7" fill="#7090B0">KL30 (B+)</text>
+        <rect x="140" y="93" width="5" height="4" fill="#CC0000"/>
+        <text x="145" y="103" font-family="Exo 2" font-size="7" fill="#7090B0">KL15 (IGN)</text>
+        <rect x="140" y="106" width="5" height="4" fill="#BB2200"/>
+        <text x="145" y="116" font-family="Exo 2" font-size="7" fill="#7090B0">GND potencia</text>
+        <rect x="140" y="119" width="5" height="4" fill="#111111"/>
+        <text x="145" y="130" font-family="Exo 2" font-size="7" fill="#7090B0">GND señal</text>
+        <rect x="140" y="133" width="5" height="4" fill="#222222"/>
+        <!-- OBD2 LADO DERECHO -->
+        <line x1="300" y1="100" x2="360" y2="100" stroke="#00D4FF" stroke-width="2"/>
+        <rect x="360" y="70" width="90" height="60" rx="6" fill="#0A1422" stroke="#00D4FF" stroke-width="1.5"/>
+        <text x="405" y="94" text-anchor="middle" font-family="Rajdhani" font-size="10" fill="#00D4FF" font-weight="700">OBD2</text>
+        <text x="405" y="108" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#6880A0">Escáner</text>
+        <text x="405" y="120" text-anchor="middle" font-family="Exo 2" font-size="9" fill="#6880A0">ProPart</text>
+        <!-- RESISTENCIA terminacion -->
+        <rect x="450" y="88" width="50" height="12" rx="3" fill="#1E2830" stroke="#888" stroke-width="1"/>
+        <text x="475" y="98" text-anchor="middle" font-family="Exo 2" font-size="7" fill="#888">120Ω</text>
+        <!-- labels -->
+        <text x="118" y="76" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#CC0000">+12V</text>
+        <text x="118" y="116" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#888">GND</text>
+        <text x="330" y="94" text-anchor="middle" font-family="Exo 2" font-size="8" fill="#00D4FF">CAN/OBD</text>
+      </svg>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><div class="step-t">Conectar +12V a KL30 (batería constante)</div>
+        <div class="step-d">Cable rojo de la fuente al pin de batería constante de la ECU. En Nissan es el pin 31 (cable Rojo). En GM es el pin 20 o 57 del conector azul.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><div class="step-t">Conectar +12V a KL15 (llave encendida)</div>
+        <div class="step-d">Segundo cable positivo al pin de "llave". Simula que tienes la llave en ON. En Nissan es el pin 33 (cable R/N). Aquí la ECU "despierta".</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><div class="step-t">Conectar GND de potencia y señal</div>
+        <div class="step-d">Cable negro de la fuente a los pines de tierra. Nissan tiene dos masas: tierra de potencia (pin 62, N/Br) y tierra de señal de sensores (pin 22, N/Bl). Conectar ambas.</div></div>
+      </div>
+      <div class="step step-ok">
+        <div class="step-n">✓</div>
+        <div><div class="step-t">Verificar que la ECU "encendió"</div>
+        <div class="step-d">Al conectar KL15, la ECU hace un auto-test de 2-3 segundos. Deberías ver que el consumo de corriente sube brevemente (0.5-1.5A). Conectar el escáner al OBD2 del arnés de banco y verificar comunicación.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📊 Lecturas normales con ECU en banco (sin motor)</div>
+    <table>
+      <tr><th>Medición</th><th>Punto</th><th>Valor normal</th><th>Si falla</th></tr>
+      <tr><td>Consumo en reposo</td><td>Amperímetro fuente</td><td class="mono">50-200 mA</td><td>Si &gt;1A: cortocircuito interno</td></tr>
+      <tr><td>Vref 5V</td><td>Pin TPS / MAP</td><td class="mono">4.95 – 5.05V</td><td>Regulador dañado o sensor en corto</td></tr>
+      <tr><td>Voltaje KL30</td><td>Pin batería ECU</td><td class="mono">12.0 – 14.5V</td><td>No enciende si &lt;10V</td></tr>
+      <tr><td>Respuesta al escáner</td><td>OBD2 pin 6/14</td><td class="mono">Comunicación OK</td><td>Chip CAN o fusible comunicación</td></tr>
+      <tr><td>Salida inyectores</td><td>Pin INJ#1 (sin motor)</td><td class="mono">12V (reposo)</td><td>Si 0V: driver quemado</td></tr>
+    </table>
+  </div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(3)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(5)">Siguiente: Reparación física →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 5: REPARACIÓN ══════════════ -->
+<div class="page" id="pg5">
+  <div class="pg-hdr">
+    <div><div class="pg-title">REPARACIÓN FÍSICA</div><div class="pg-sub">Cómo arreglar los componentes dañados</div></div>
+    <span class="badge badge-o">MÓDULO 6 DE 8</span>
+  </div>
+  <div class="page" id="pg5-inner" style="display:block">
+
+  <div class="callout warn"><div class="callout-ico">⚠️</div><div class="callout-body"><strong>Temperatura de soldadura:</strong> Siempre entre 280-350°C con estaño de plomería. Nunca superar 380°C — dañas la placa o el componente. Tiempo máximo de calor en un mismo punto: 3-4 segundos.</div></div>
+
+  <h3>🔴 Fallas más comunes y cómo repararlas</h3>
+
+  <div class="falla-item critica">
+    <div class="falla-dot"></div>
+    <div class="falla-txt">
+      <div class="falla-titulo">Condensadores abombados o con electrolito derramado</div>
+      <div class="falla-desc"><strong>Síntoma:</strong> ECU falla intermitente, DTCs cambian solos, falla cuando el motor está caliente.<br>
+      <strong>Diagnóstico visual:</strong> Con la lupa, buscar la tapa superior del condensador — si está hinchada (bombeada) o tiene líquido marrón/negro alrededor, ya falló.<br>
+      <strong>Reparación:</strong> 1) Desoldarlo con estaño fresco. 2) Limpiar los pads con trenza desoldadora. 3) Soldar el nuevo del mismo valor (ej: 100µF 16V). OJO: la franja blanca del cuerpo indica el cátodo (-). Nunca invertir la polaridad.<br>
+      <strong>Consejo:</strong> Si uno falló, cambiar todos los del mismo valor en esa zona (prevención).</div>
+    </div>
+  </div>
+
+  <div class="falla-item critica">
+    <div class="falla-dot"></div>
+    <div class="falla-txt">
+      <div class="falla-titulo">Transistor de ignición quemado (BIP373)</div>
+      <div class="falla-desc"><strong>Síntoma:</strong> No hay chispa, DTC P0351/P0352. O chispa en algunos cilindros.<br>
+      <strong>Diagnóstico ANTES de abrir:</strong> Medir resistencia de cada bobina en el conector. El primario debe ser 0.5-1.5Ω. Si alguna mide menos de 0.3Ω = está en corto y quemó el transistor.<br>
+      <strong>Reparación:</strong> 1) Localizar el IC BIP373 (puede haber varios). 2) Desoldar a 320°C con punta fina. 3) Limpiar con trenza. 4) Soldar el nuevo verificando Pin 1 (Gate) por el punto en el chip. 5) <strong>Primero repara la bobina causante</strong> o el nuevo transistor volverá a quemarse.<br>
+      <strong>Costo del componente:</strong> $15-40 MXN en tienda de electrónica.</div>
+    </div>
+  </div>
+
+  <div class="falla-item critica">
+    <div class="falla-dot"></div>
+    <div class="falla-txt">
+      <div class="falla-titulo">Regulador de voltaje interno dañado (Vref bajo)</div>
+      <div class="falla-desc"><strong>Síntoma:</strong> Múltiples DTCs de sensores al mismo tiempo. Vref mide 3-4V en lugar de 5V.<br>
+      <strong>Diagnóstico:</strong> Desconectar todos los sensores del conector ECU (TPS, MAP, IAT). Medir Vref de nuevo. Si regresa a 5V = un sensor tiene corto. Si sigue bajo = regulador interno dañado.<br>
+      <strong>Reparación:</strong> Localizar el regulador LDO (LM431, LM7805 o similar). Medir voltaje en sus terminales de salida. Si la entrada es correcta pero la salida no llega a 5V = cambiar el regulador.<br>
+      <strong>Costo:</strong> $8-25 MXN.</div>
+    </div>
+  </div>
+
+  <div class="falla-item media">
+    <div class="falla-dot"></div>
+    <div class="falla-txt">
+      <div class="falla-titulo">Pines corroídos del conector ECU</div>
+      <div class="falla-desc"><strong>Síntoma:</strong> Fallas intermitentes, DTCs que cambian al mover el arnés. Frecuente en Nissan (conector en el cowl) y GM.<br>
+      <strong>Diagnóstico:</strong> Desconectar el conector, inspeccionar con lupa. Pines verdes/blancos = oxidación. Pines doblados o aplastados = mal contacto.<br>
+      <strong>Reparación:</strong> 1) Limpiar con limpiador de contactos CRC 2-26. 2) Para pin muy dañado: usar herramienta extrae-pines (punta 1.5mm). 3) Reemplazar el terminal individual (terminales AMP 1.5mm en refaccionarías eléctricas).<br>
+      <strong>Si el cable tiene corrosión:</strong> Cortar 15cm y poner terminal nuevo. La corrosión dentro del cable causa caída de voltaje.</div>
+    </div>
+  </div>
+
+  <div class="falla-item leve">
+    <div class="falla-dot"></div>
+    <div class="falla-txt">
+      <div class="falla-titulo">Soldaduras frías (cold solder)</div>
+      <div class="falla-desc"><strong>Síntoma:</strong> ECU funciona a veces, falla con vibración o cambios de temperatura.<br>
+      <strong>Diagnóstico:</strong> Con la lupa buscar uniones de soldadura que se ven opacas, grises o con forma de "escudo" en lugar de redondas y brillantes.<br>
+      <strong>Reparación:</strong> Añadir una gota de flux líquido y re-calentar la soldadura 2-3 segundos con la punta del soldador. La soldadura se vuelve brillante y refluye correctamente.<br>
+      <strong>Muy común en:</strong> VW ME7.5.10 (pines del procesador) y Ford PCM 5.4L (zona de drivers).</div>
+    </div>
+  </div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(4)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(6)">Siguiente: Llaves e IMMO →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 6: LLAVES IMMO ══════════════ -->
+<div class="page" id="pg6">
+  <div class="pg-hdr">
+    <div><div class="pg-title">LLAVES E IMMO</div><div class="pg-sub">Programación de llaves y transponders</div></div>
+    <span class="badge badge-r">MÓDULO 7 DE 8</span>
+  </div>
+  <div class="page" id="pg6-inner" style="display:block">
+
+  <div class="callout info"><div class="callout-ico">🔑</div><div class="callout-body"><strong>¿Qué es el IMMO?</strong> El Inmovilizador es un sistema anti-robo que requiere que la llave tenga un transponder con el código correcto. Si el código no coincide con lo que la ECU tiene guardado en la EEPROM, el motor no arranca aunque tengas la llave física.</div></div>
+
+  <div class="card">
+    <div class="card-t">🧬 Tipos de transponders más comunes en México</div>
+    <table>
+      <tr><th>Tipo</th><th>Marca típica</th><th>Años</th><th>Frecuencia</th><th>Cómo se programa</th></tr>
+      <tr><td class="mono">ID46 (PCF7936)</td><td>Nissan, VW, Chevy</td><td>2000-2015</td><td>125 kHz</td><td>VVDI / OBD o pin-code</td></tr>
+      <tr><td class="mono">ID63 (7938)</td><td>Ford, Mazda</td><td>2005-2018</td><td>125 kHz</td><td>VVDI / método 8C</td></tr>
+      <tr><td class="mono">ID60 (Megamos48)</td><td>VW, Audi, Skoda</td><td>1995-2010</td><td>125 kHz</td><td>Por EEPROM directa</td></tr>
+      <tr><td class="mono">HITAG2 (46)</td><td>VW plataforma MQB</td><td>2013+</td><td>125 kHz</td><td>Calculadora + EEPROM</td></tr>
+      <tr><td class="mono">Texas DST80</td><td>Toyota, Lexus, Ford</td><td>2013+</td><td>125 kHz</td><td>Smartkey / OBD tool</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📋 Proceso general de programación de llave nueva</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><div class="step-t">Identificar el tipo de transponder</div>
+        <div class="step-desc">Usar el lector de transponders del VVDI Key Tool o similar para leer el chip de la llave existente. Esto te dice exactamente qué tipo de transponder necesitas para la llave nueva.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><div class="step-t">Verificar que la ECU acepta nuevas llaves</div>
+        <div class="step-desc">Algunos vehículos tienen un "límite de aprendizaje" — si ya se llenó el espacio de llaves en la EEPROM, hay que borrar y reprogramar todo desde cero. Consultar el procedimiento específico del fabricante.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><div class="step-t">Método 1: Programación por OBD2 (más fácil)</div>
+        <div class="step-desc">Con el VVDI conectado al OBD2, seleccionar la marca y modelo. El equipo lee la ECU, genera el código correcto para el transponder nuevo y lo escribe. Requiere tener 1-2 llaves programadas funcionando.</div></div>
+      </div>
+      <div class="step step-warn">
+        <div class="step-n">4</div>
+        <div><div class="step-t">Método 2: Por EEPROM directa (cuando no hay llaves o bloqueo IMMO)</div>
+        <div class="step-desc"><strong>Cuando se usan:</strong> No quedan llaves, IMMO bloqueado, o el módulo no se puede contactar por OBD.<br>
+        Proceso: 1) Abrir la ECU. 2) Localizar la EEPROM (chip de 8 pines, modelo 93C56/93C86). 3) Conectar el programador VVDI Prog en modo In-Circuit (sin quitar el chip). 4) Leer el dump de la EEPROM. 5) El software calcula los passwords a partir del dump. 6) Programar el transponder con los datos calculados. 7) Reescribir la EEPROM si es necesario.</div></div>
+      </div>
+      <div class="step step-ok">
+        <div class="step-n">✓</div>
+        <div><div class="step-t">Verificar el aprendizaje</div>
+        <div class="step-desc">Conectar el escáner y verificar que el módulo IMMO reconoce la llave nueva. La luz de seguridad del tablero no debe parpadear al arrancar. Si parpadea y el motor no arranca: el transponder no fue aprendido correctamente.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn"><div class="callout-ico">⚠️</div><div class="callout-body"><strong>Nissan Tsuru / Sentra B13 GA16DE sin IMMO:</strong> Estos modelos (1991-2017 en México) generalmente NO tienen inmovilizador electrónico — la llave es solo mecánica. No se necesita programar transponder. Basta con copiar la llave físicamente.</div></div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(5)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(7)">Siguiente: Flash y Reprogramación →</button>
+  </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 7: FLASH ══════════════ -->
+<div class="page" id="pg7">
+  <div class="pg-hdr">
+    <div><div class="pg-title">FLASH Y REPROGRAMACIÓN</div><div class="pg-sub">Reescribir el programa de la ECU</div></div>
+    <span class="badge badge-c">MÓDULO 8 DE 8</span>
+  </div>
+  <div class="page" id="pg7-inner" style="display:block">
+
+  <div class="callout danger"><div class="callout-ico">⚠️</div><div class="callout-body"><strong>¡NUNCA interrumpas un proceso de flash!</strong> Si se va la corriente o se desconecta el equipo a la mitad, la ECU queda "brickeada" (sin programa) y necesita reprogramación por hardware. Siempre conecta una fuente de carga al carro durante el flasheo.</div></div>
+
+  <div class="card">
+    <div class="card-t">💾 ¿Qué es flashear una ECU?</div>
+    <p>Flashear significa <strong>reescribir el programa principal</strong> de la ECU en su memoria Flash. Esto se hace para corregir fallas de software, actualizar la calibración del fabricante, o adaptarla a otro motor.</p>
+    <p>Es diferente a programar una llave (que modifica la EEPROM). El flasheo modifica la memoria de programa principal (ROM Flash), que es mucho más grande.</p>
+    <div class="grid2">
+      <div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid rgba(0,212,255,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--cy);margin-bottom:6px">📡 Por OBD2 (más común)</div>
+        <ul>
+          <li>Se conecta la interfaz J2534 al OBD2</li>
+          <li>Software del fabricante envía el nuevo archivo</li>
+          <li>ECU se reprograma a sí misma</li>
+          <li>Tiempo: 10-45 minutos según la ECU</li>
+          <li>Requiere: interfaz J2534 + software + VIN</li>
+        </ul>
+      </div>
+      <div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid rgba(156,89,247,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--pu);margin-bottom:6px">🔌 Por BDM/JTAG (hardware)</div>
+        <ul>
+          <li>Se conecta directo a los pines del procesador</li>
+          <li>Se usa cuando el método OBD no funciona</li>
+          <li>Requiere abrir la ECU</li>
+          <li>Más rápido pero más técnico</li>
+          <li>Necesitas el conector BDM del chip</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📋 Proceso de flasheo por OBD2 — Paso a paso</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <div><div class="step-t">Verificar el voltaje de batería</div>
+        <div class="step-desc">La batería debe estar mínimo en 12.4V. Conectar un cargador de mantenimiento (trickle charger) durante todo el proceso. Una caída de voltaje durante el flash = ECU brickeada.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div><div class="step-t">Conseguir el archivo correcto (.bin o .hex)</div>
+        <div class="step-desc">El archivo debe ser exactamente para ese año, motor y región del vehículo. Un archivo equivocado puede dejar la ECU sin programa. Fuentes: ALLDATA, Mitchell, o los portales de los fabricantes para talleres autorizados.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div><div class="step-t">Conectar la interfaz J2534 y el software</div>
+        <div class="step-desc">Conectar el VCX Nano o Mongoose al OBD2. Abrir el software de flasheo (IDS para Ford, GDS2 para GM, CONSULT para Nissan, VCDS para VW). El software verifica la compatibilidad antes de empezar.</div></div>
+      </div>
+      <div class="step step-warn">
+        <div class="step-n">⚠️</div>
+        <div><div class="step-t">Durante el proceso — NO tocar nada</div>
+        <div class="step-desc">No mover el conector OBD2, no tocar el carro, no activar consumidores eléctricos. El proceso puede durar desde 8 minutos hasta 45 minutos. El software muestra una barra de progreso y el porcentaje.</div></div>
+      </div>
+      <div class="step step-ok">
+        <div class="step-n">✓</div>
+        <div><div class="step-t">Verificación post-flash</div>
+        <div class="step-desc">Al terminar: 1) Leer la versión de software con el escáner (debe coincidir con el archivo). 2) Borrar DTCs (el proceso genera algunos por defecto). 3) Hacer un ciclo de llave OFF-ON. 4) Arrancar el motor y verificar que no hay DTCs activos. 5) En algunos vehículos hay que hacer reaprendizaje de ángulo de cigüeñal o TPS.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">🔮 Seed & Key — Acceso a funciones bloqueadas</div>
+    <p>Algunas ECUs tienen funciones protegidas con un algoritmo de <strong>Seed & Key</strong> (semilla y clave). La ECU manda un número aleatorio (seed), y el equipo debe calcular la respuesta correcta (key) usando un algoritmo específico.</p>
+    <p>Para flash o calibraciones especiales: el software manda una solicitud, la ECU responde con un número de 4 bytes (seed), y el equipo calcula la llave correcta. Si el cálculo falla, la ECU bloquea el acceso por 30-60 minutos.</p>
+    <div class="callout info"><div class="callout-ico">☁️</div><div class="callout-body"><strong>PULSAR Cloud en ProPart V7:</strong> El módulo PULSAR calcula el Seed→Key en la nube para varias marcas y modelos. El algoritmo nunca viaja al dispositivo por seguridad — solo el resultado.</div></div>
+  </div>
+
+  <div style="text-align:center;padding:24px;background:linear-gradient(135deg,var(--bg2),var(--bg3));border-radius:12px;border:1px solid var(--bdr);margin-top:16px">
+    <div style="font-size:40px;margin-bottom:12px">🎓</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--g);margin-bottom:8px">¡MÓDULO COMPLETADO!</div>
+    <div style="font-size:13px;color:var(--txd);margin-bottom:16px">Has cubierto los 8 módulos de la Academia ECU. Ahora tienes la base para diagnosticar, reparar y reprogramar computadoras automotrices.</div>
+    <div style="font-size:12px;color:var(--txm)">Desarrollado por Fernando Millán · Refaccionaria de Partes Eléctricas Millán · Alpuyeca, Morelos 🇲🇽</div>
+  </div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(6)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(8)">Siguiente: ECUs por Marca →</button>
+  </div>
+  </div>
+</div>
+
+
+<!-- ══════════════ PAGE 8: ECUs POR MARCA ══════════════ -->
+<div class="page" id="pg8">
+  <div class="pg-hdr">
+    <div><div class="pg-title">ECUs POR MARCA</div><div class="pg-sub">Características, pinouts y procedimientos específicos de cada fabricante</div></div>
+    <span class="badge badge-g">MÓDULO 9 DE 9</span>
+  </div>
+  <div class="page" id="pg8-inner" style="display:block">
+
+  <!-- SELECTOR DE MARCA -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;padding:0 0 16px;border-bottom:1px solid var(--bdr)">
+    <button class="brand-btn act" id="bb-nissan" onclick="showBrand('nissan')">
+      <svg viewBox="0 0 60 30" width="44" height="22"><ellipse cx="30" cy="15" rx="27" ry="10" fill="none" stroke="#C3002F" stroke-width="2"/><rect x="3" y="12" width="54" height="6" fill="#C3002F"/><text x="30" y="17" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="6" fill="white" letter-spacing="1">NISSAN</text></svg>
+    </button>
+    <button class="brand-btn" id="bb-vw" onclick="showBrand('vw')">
+      <svg viewBox="0 0 40 40" width="36" height="36"><circle cx="20" cy="20" r="18" fill="#001E62"/><circle cx="20" cy="20" r="14" fill="none" stroke="white" stroke-width="1.5"/><text x="20" y="17" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="9" fill="white">V</text><text x="20" y="28" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="9" fill="white">W</text></svg>
+    </button>
+    <button class="brand-btn" id="bb-gm" onclick="showBrand('gm')">
+      <svg viewBox="0 0 60 30" width="50" height="25"><rect x="2" y="2" width="56" height="26" rx="4" fill="#003366" stroke="#CCAA00" stroke-width="1.5"/><text x="30" y="19" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="12" fill="#CCAA00">GM</text></svg>
+    </button>
+    <button class="brand-btn" id="bb-ford" onclick="showBrand('ford')">
+      <svg viewBox="0 0 60 30" width="50" height="25"><ellipse cx="30" cy="15" rx="27" ry="13" fill="#003476"/><text x="30" y="20" text-anchor="middle" font-family="Times New Roman" font-style="italic" font-weight="bold" font-size="14" fill="white">Ford</text></svg>
+    </button>
+    <button class="brand-btn" id="bb-toyota" onclick="showBrand('toyota')">
+      <svg viewBox="0 0 60 32" width="50" height="27"><ellipse cx="30" cy="16" rx="13" ry="8" fill="none" stroke="#EB0A1E" stroke-width="2.5"/><ellipse cx="30" cy="16" rx="21" ry="6" fill="none" stroke="#EB0A1E" stroke-width="2.5"/><line x1="30" y1="2" x2="30" y2="30" stroke="#EB0A1E" stroke-width="1.5"/></svg>
+    </button>
+    <button class="brand-btn" id="bb-honda" onclick="showBrand('honda')">
+      <svg viewBox="0 0 44 34" width="38" height="30"><path d="M4,4 L4,30 L12,30 L12,20 L32,20 L32,30 L40,30 L40,4 L32,4 L32,16 L12,16 L12,4 Z" fill="#CC0000"/></svg>
+    </button>
+    <button class="brand-btn" id="bb-bosch" onclick="showBrand('bosch')">
+      <svg viewBox="0 0 60 30" width="50" height="25"><rect x="2" y="2" width="56" height="26" rx="13" fill="#CC0000" stroke="#AA0000" stroke-width="1"/><text x="30" y="19" text-anchor="middle" font-family="Arial Black" font-weight="900" font-size="10" fill="white">BOSCH</text></svg>
+    </button>
+  </div>
+
+  <!-- CONTENIDO POR MARCA -->
+  <div id="brand-content"></div>
+
+  <div class="pg-nav">
+    <button class="btn btn-o" onclick="go(7)">← Anterior</button>
+    <button class="btn btn-g" onclick="go(0)">↩ Comenzar desde el inicio</button>
+  </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+var current = 0;
+var done = [];
+
+function go(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('act'));
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('act'));
+  document.getElementById('pg' + n).classList.add('act');
+  document.getElementById('nav' + n).classList.add('act');
+  if (!done.includes(current)) done.push(current);
+  if (!done.includes(n)) done.push(n);
+  done.forEach(function(d) {
+    var el = document.getElementById('nav' + d);
+    if (el && d !== n) el.classList.add('done');
+  });
+  current = n;
+  var pct = Math.round(done.length / 9 * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progTxt').textContent = done.length + ' / 9 módulos';
+  window.scrollTo(0, 0);
+  document.querySelector('.main').scrollTo(0, 0);
+}
+
+
+// ═══════════════════════════════════
+// BASE DE DATOS ECUs POR MARCA
+// ═══════════════════════════════════
+var BRANDS = {
+
+nissan: {
+  name: 'Nissan',
+  color: '#C3002F',
+  modelos: [
+    {nombre:'ECM GA16DE (Tsuru/Sentra B13)',  ecu:'Hitachi/NEC', conector:'76 pines', immo:'NO', flash:'Por OBD2 o BDM', chip:'NEC V850'},
+    {nombre:'ECM SR20DE (Sentra B14/B15)',     ecu:'Hitachi',     conector:'76 pines', immo:'SÍ ID46', flash:'Por OBD2',   chip:'NEC V850'},
+    {nombre:'ECM QR25DE (Altima/Sentra B16)',  ecu:'Hitachi',     conector:'121 pines',immo:'SÍ ID46', flash:'Por OBD2',   chip:'Renesas M32R'},
+    {nombre:'PCM Pathfinder VQ40DE',           ecu:'Hitachi',     conector:'168 pines',immo:'SÍ ID46', flash:'Por J2534',  chip:'Renesas SH7058'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Conector 76 pines corroído (GA16DE)', desc:'El conector está en el cowl y acumula agua. Pines 1-4 (inyectores) y pin 55 (O2) son los más afectados. Limpiar con CRC 2-26. Si el pin está aplastado: extrae-pines AMP 1.5mm y reemplazar terminal.'},
+    {sev:'critica', titulo:'No arranca sin DTC — CKP dañado', desc:'El GA16DE sin señal CKP no inyecta ni enciende. Parece ECU muerta. Medir señal AC en pins Am/V (24/23) al cranear antes de culpar a la ECU. Resistencia del CKP: 770-970Ω.'},
+    {sev:'media',   titulo:'Condensadores secos (ECM caliente)', desc:'Las ECM Hitachi usan condensadores de 100µF que se secan con el calor. Falla cuando el motor llega a temperatura. Fácil de detectar: tapa abombada o electrolito seco alrededor.'},
+    {sev:'leve',    titulo:'EEPROM 93C56 — pérdida de adaptaciones', desc:'Cuando se cambia la batería o la ECU pierde tierra, puede borrar las adaptaciones guardadas. El motor jalará mal por 50-100km hasta que la ECU re-aprende. Normal — no es falla.'},
+  ],
+  flash: {
+    metodo: 'OBD2 con CONSULT III Plus o J2534 genérico',
+    protocolo: 'ISO 14229 (UDS) — CAN a 500kbps',
+    pasos: [
+      'Conectar CONSULT o J2534 al OBD2 pin 6/14',
+      'Abrir software → ECU Reprogramming → seleccionar VIN',
+      'Verificar que la batería esté arriba de 12.4V (conectar cargador)',
+      'Seleccionar el archivo correcto para año/motor/región',
+      'Iniciar flash — NO desconectar durante el proceso (8-15 min)',
+      'Post-flash: borrar DTCs y hacer reaprendizaje de encendido'
+    ],
+    advertencia: 'Los Tsuru y Sentra B13 (GA16DE) NO tienen sistema de flasheo estándar OBD2. El programa se graba por BDM directamente en el chip NEC V850.'
+  },
+  pinout: [
+    {pin:'1',  fn:'INJ #1 Low Side',   color:'N/Bl',  val:'12V→0V pulso'},
+    {pin:'2',  fn:'INJ #2 Low Side',   color:'N/R',   val:'12V→0V pulso'},
+    {pin:'3',  fn:'INJ #3 Low Side',   color:'N/V',   val:'12V→0V pulso'},
+    {pin:'4',  fn:'INJ #4 Low Side',   color:'N/Am',  val:'12V→0V pulso'},
+    {pin:'18', fn:'Vref 5V',           color:'Bl/R',  val:'5.00V ±0.05V'},
+    {pin:'22', fn:'GND señal (E2)',    color:'N/Bl',  val:'0V máx 0.1V'},
+    {pin:'24', fn:'CKP NE+ señal',    color:'Am/V',  val:'AC 1-40Vpp'},
+    {pin:'31', fn:'+12V batería KL30', color:'R',     val:'12-14.5V'},
+    {pin:'37', fn:'CMP señal G',       color:'V',     val:'0V/5V Hall'},
+    {pin:'40', fn:'MAF señal VG',      color:'V/Bl',  val:'0.8-4.0V'},
+    {pin:'44', fn:'TPS señal',         color:'R/V',   val:'0.5-4.5V'},
+    {pin:'55', fn:'O2 señal B1S1',     color:'N/Am',  val:'0.1-0.9V'},
+    {pin:'58', fn:'IGT bobina',        color:'N/R',   val:'5V→0V pulso'},
+    {pin:'62', fn:'GND potencia',      color:'N/Br',  val:'0V máx 50mV'},
+  ]
+},
+
+vw: {
+  name: 'Volkswagen',
+  color: '#001E62',
+  modelos: [
+    {nombre:'ME7.5.10 (Golf A4 / Jetta 2.0L)', ecu:'Bosch',   conector:'121 pines', immo:'SÍ ID60', flash:'Por OBD2 VCDS', chip:'Motorola MPC555'},
+    {nombre:'EDC16C34 (TDI 1.9L Golf/Jetta)',   ecu:'Bosch',   conector:'121 pines', immo:'SÍ ID60', flash:'Por OBD2',     chip:'Motorola MPC563'},
+    {nombre:'MED9.1 (2.0T FSI)',                 ecu:'Bosch',   conector:'121 pines', immo:'SÍ ID46', flash:'Por J2534',    chip:'Infineon TC1766'},
+    {nombre:'Simos 7.1 (2.5L Jetta A6)',         ecu:'Siemens', conector:'94 pines',  immo:'SÍ ID46', flash:'Por OBD2',     chip:'ST10'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Transistor de ignición quemado (BIP373) — ME7.5.10', desc:'La falla MÁS COMÚN en Golf A4. El transistor se quema cuando una bobina tiene cortocircuito (primario < 0.3Ω). SIEMPRE medir bobinas antes de reemplazar el transistor o el nuevo se quemará igual. Localizar el BIP373 en la zona de ignición de la PCB.'},
+    {sev:'critica', titulo:'Cortocircuito en driver inyectores (EDC16 diésel)', desc:'Los inyectores piezoeléctricos del TDI manejan 100-200V DC. Si un inyector falla, puede quemar el driver IC. PELIGRO ALTA TENSIÓN. Medir voltaje del capacitor de carga piezo antes de tocar la placa. Requiere estación BGA para el reemplazo del IC.'},
+    {sev:'media',   titulo:'EEPROM 95320 — pérdida de codificación IMMO', desc:'Cuando se reemplaza la ECU por otra usada, la EEPROM contiene el código IMMO del carro original. Hay que leer la EEPROM del original y escribirla en la nueva (adaptación). Con VVDI Prog en modo In-Circuit.'},
+    {sev:'leve',    titulo:'Soldaduras frías en pines del procesador (ME7.5.10)', desc:'Muy común en ECUs con muchos años. Bajo la lupa se ven uniones opacas en los pines del MPC555. Solución: flux + re-soldadura. La ECU empieza a funcionar y falla de nuevo con vibración.'},
+  ],
+  flash: {
+    metodo: 'VCDS (VAG-COM) o J2534 con software IDS/ODIS',
+    protocolo: 'KWP2000 (Golf A4 antes 2006) — CAN ISO 15765 (desde 2006)',
+    pasos: [
+      'Conectar VCDS o interfaz J2534 al OBD2',
+      'En VCDS: Select Control Module → Engine → Coding / Flash',
+      'Para Golf A4 con KWP2000: velocidad 10.4kbps en KWP2000-5baud',
+      'Verificar batería > 12.4V y conectar cargador',
+      'El proceso dura 10-25 minutos para ME7.5.10',
+      'Post-flash OBLIGATORIO: Basic Settings → adaptación de mariposa (TPS)',
+    ],
+    advertencia: 'Las ECUs VW requieren codificación (coding) específica según los equipos instalados. Un número de coding incorrecto puede deshabilitar funciones. Verificar el código original antes de flashear.'
+  },
+  pinout: [
+    {pin:'T121/1',  fn:'Masa señal sensores', color:'Marrón',  val:'0V'},
+    {pin:'T121/2',  fn:'Vref 5V sensores',    color:'Bl/R',    val:'5.00V'},
+    {pin:'T121/26', fn:'CKP señal +',         color:'Azul/Bl', val:'AC sinusoidal'},
+    {pin:'T121/27', fn:'CKP señal −',         color:'Marrón',  val:'Referencia'},
+    {pin:'T121/44', fn:'IGT cilindro 1',      color:'V/Azul',  val:'5V→0V pulso'},
+    {pin:'T121/53', fn:'TPS señal',           color:'V/Bl',    val:'0.5-4.5V'},
+    {pin:'T121/75', fn:'+12V KL30',           color:'Rojo',    val:'12-14.5V'},
+    {pin:'T121/87', fn:'+12V KL15 (IGN)',     color:'R/N',     val:'12V con llave'},
+    {pin:'T121/97', fn:'MAF señal',           color:'V',       val:'0-5V'},
+    {pin:'T121/99', fn:'O2 Upstream señal',   color:'Blanco',  val:'0.1-0.9V'},
+  ]
+},
+
+gm: {
+  name: 'General Motors (Chevrolet / GMC)',
+  color: '#003366',
+  modelos: [
+    {nombre:'PCM LS V8 (Silverado/Suburban/Trailblazer)', ecu:'Delphi',  conector:'2x32 Azul+Verde', immo:'SÍ PASSLOCK', flash:'Por J2534 Tech2',  chip:'PowerPC MPC5xx'},
+    {nombre:'ECM 1.8L (Chevy Aveo / Sonic)',              ecu:'Delphi',  conector:'80 pines',        immo:'SÍ ID46',     flash:'Por OBD2',          chip:'ST10'},
+    {nombre:'ECM 2.4L (Malibu / Equinox)',                ecu:'Delphi',  conector:'80 pines',        immo:'SÍ ID46',     flash:'Por OBD2',          chip:'MPC5554'},
+    {nombre:'PCM Optra/Lacetti 1.8L (Korea)',             ecu:'Delphi MT35', conector:'55 pines',    immo:'SÍ',          flash:'Por OBD2',          chip:'ST10F269'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Pines corroídos conector azul/verde (LS V8)', desc:'El conector azul tiene 32 pines de alimentación y comunicación. El verde tiene 32 pines de actuadores. Los pines 1 y 40 del azul = tierra de potencia (negro) — verificar continuidad. Pin 20/57 = batería constante naranja (12V).'},
+    {sev:'critica', titulo:'Capacitores zona IGBT quemados (PCM 5.4L similar Ford)', desc:'Los capacitores 100µF/16V cerca de los drivers de bobinas se abomban cuando una bobina tiene corto. Cambiar TODOS los de esa zona preventivamente. Verificar continuidad en drivers después.'},
+    {sev:'media',   titulo:'PASSLOCK — Inmovilizador por resistencia de llave', desc:'Sistema IMMO por resistencia en el cilindro de llave (10 valores posibles). Si falla: el motor arranca y se muere a los 3 segundos. Solución: reaprendizaje por OBD2 o bypass de la resistencia midiendo el valor del cilindro original y colocando resistencia fija.'},
+    {sev:'leve',    titulo:'Reaprendizaje de TPS (Aveo/Sonic post-flash)', desc:'Después de flashear la ECM del Aveo, el TPS pierde el aprendizaje. El motor jala mal en ralentí. Proceso: llave ON sin cranear → esperar 10s → OFF → ON → esperar 10s → arrancar. Si no funciona: usar escáner para hacer el reaprendizaje.'},
+  ],
+  flash: {
+    metodo: 'Tech2 (oficial GM) o J2534 con GDS2 / SPS (Service Programming System)',
+    protocolo: 'CAN ISO 15765-4 — 500kbps. Módulos viejos: UART 8192 baud',
+    pasos: [
+      'Acceder a GM SPS (Service Programming System) online con VIN',
+      'Seleccionar el módulo a reprogramar (ECM, PCM, TCM)',
+      'Conectar interfaz J2534 certificada al OBD2',
+      'SPS descarga el calibrado correcto del servidor GM',
+      'Proceso automatizado — no intervenir (15-40 min)',
+      'Post-flash: reaprendizaje de PASSLOCK o PATS según aplique',
+    ],
+    advertencia: 'GDS2 requiere cuenta de taller GM. Alternativa económica: HPTuners o EFILive para vehículos compatibles, aunque son más para tuning que para reparación.'
+  },
+  pinout: [
+    {pin:'Azul/1',  fn:'GND potencia',    color:'Negro',   val:'0V máx 100mV'},
+    {pin:'Azul/20', fn:'+12V KL30',       color:'Naranja', val:'12-14.5V'},
+    {pin:'Azul/19', fn:'+12V KL15 (IGN)', color:'Rosa',    val:'12V con llave'},
+    {pin:'Azul/5',  fn:'CAN-H bus',       color:'Naranja/Bl', val:'2.5-3.5V'},
+    {pin:'Azul/6',  fn:'CAN-L bus',       color:'Bl/Bl',   val:'1.5-2.5V'},
+    {pin:'Verde/1', fn:'INJ #1 control',  color:'V/Bl',    val:'12V→0V'},
+    {pin:'Verde/3', fn:'INJ #3 control',  color:'V/Na',    val:'12V→0V'},
+    {pin:'Verde/14',fn:'MAF señal',       color:'Amarillo/N',val:'0-5V'},
+    {pin:'Verde/22',fn:'TPS señal',       color:'Gr',      val:'0.5-4.5V'},
+    {pin:'Verde/28',fn:'ECT señal',       color:'Amarillo',val:'4.5-0.3V'},
+  ]
+},
+
+ford: {
+  name: 'Ford / Lincoln / Mercury',
+  color: '#003476',
+  modelos: [
+    {nombre:'EEC-V PCM (F-150/Mustang 4.6/5.4L)',    ecu:'Ford/Motorcraft', conector:'104 pines', immo:'SÍ PATS ID63', flash:'Por J2534 IDS', chip:'Motorola MPC5xx'},
+    {nombre:'PCM EcoBoost 2.0T (Focus/Escape)',       ecu:'Delphi/Bosch',   conector:'80 pines',  immo:'SÍ PATS',     flash:'Por J2534 IDS', chip:'MPC5xx'},
+    {nombre:'PCM Ranger 2.3L (2001-2011)',            ecu:'Motorcraft',     conector:'104 pines', immo:'SÍ PATS',     flash:'Por IDS',       chip:'MPC555'},
+    {nombre:'PCM Explorer 4.0L (2002-2010)',          ecu:'Motorcraft',     conector:'104 pines', immo:'SÍ PATS',     flash:'Por IDS',       chip:'MPC5xx'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Capacitores en zona IGBT quemados (5.4L / 4.6L)', desc:'Falla MÁS COMÚN en PCMs Ford V8 3 válvulas. Capacitores 100µF/16V abombados cerca de los drivers de bobinas COP. Primero identificar la bobina en corto (medir resistencia primario < 0.5Ω). Cambiar los capacitores de toda la zona. El reemplazo es muy fácil — son de tamaño mediano.'},
+    {sev:'critica', titulo:'PATS — inmovilizador sin llave programada', desc:'PATS (Passive Anti-Theft System) usa transponders ID63 en la llave. Si se pierde la única llave: método PCM Swap (poner PCM original en otro carro para extraer el código PATS) o reprogramar con VVDI / Autel. Requiere calculadora Seed-Key para acceso avanzado.'},
+    {sev:'media',   titulo:'Sin comunicación por OBD2 (DLC no responde)', desc:'Los PCMs Ford tienen un fusible dedicado para comunicación (generalmente en la caja del motor, consultar el diagrama). Si el fusible está bien y no hay comunicación, el chip de CAN/ISO puede estar dañado. Primero medir resistencia entre pin 6 y 14 del OBD2: debe ser 60Ω.'},
+    {sev:'leve',    titulo:'Reaprendizaje de TPS post-flash (EEC-V)', desc:'Después de flashear un PCM Ford EEC-V: llave ON sin cranear 30 segundos, acelerador completamente cerrado → completamente abierto → completamente cerrado. Repetir 3 veces. Luego arrancar y verificar ralentí.'},
+  ],
+  flash: {
+    metodo: 'Ford IDS (Integrated Diagnostic System) con J2534 VCM II o compatible',
+    protocolo: 'CAN ISO 15765 — ISO 14229 (UDS) para módulos modernos',
+    pasos: [
+      'Abrir IDS → As-Built → buscar el VIN del vehículo',
+      'Verificar que el calibrado disponible sea para ese motor y año',
+      'Conectar cargador de batería — la batería NO debe caer de 11V',
+      'Module Programming → PCM → As-Built data',
+      'IDS descarga el calibrado de los servidores Ford automáticamente',
+      'Post-flash OBLIGATORIO: PATS initialization y reaprendizaje de TPS',
+    ],
+    advertencia: 'Los PCMs Ford EEC-V NO son intercambiables entre vehículos sin reprogramación PATS + VIN. Un PCM de otro carro no arrancará tu vehículo aunque sea del mismo modelo y año.'
+  },
+  pinout: [
+    {pin:'1',   fn:'GND señal',       color:'Negro/Bl',  val:'0V'},
+    {pin:'2',   fn:'GND potencia',    color:'Negro',     val:'0V'},
+    {pin:'37',  fn:'+12V KL30',       color:'Rojo',      val:'12-14.5V'},
+    {pin:'57',  fn:'+12V KL30 (2)',   color:'Rojo',      val:'12-14.5V'},
+    {pin:'71',  fn:'+12V KL15 (IGN)', color:'Rojo/Azul', val:'12V con llave'},
+    {pin:'7',   fn:'CKP señal +',     color:'Amarillo/V',val:'AC sinusoidal'},
+    {pin:'24',  fn:'MAF señal',       color:'V/Bl',      val:'0.5-4.5V'},
+    {pin:'46',  fn:'TPS señal',       color:'Gr/Bl',     val:'0.5-4.5V'},
+    {pin:'89',  fn:'O2 B1S1 señal',   color:'Gr',        val:'0.1-0.9V'},
+    {pin:'58',  fn:'INJ #1 control',  color:'Rojo/Amarillo',val:'12V→0V'},
+  ]
+},
+
+toyota: {
+  name: 'Toyota / Lexus',
+  color: '#EB0A1E',
+  modelos: [
+    {nombre:'ECM 2NZ/1NZ-FE (Corolla/Echo 2000-2008)', ecu:'Denso',  conector:'88 pines',  immo:'SÍ ID4D', flash:'Por OBD2 Techstream', chip:'Renesas M32C'},
+    {nombre:'ECM 2AZ-FE (Camry/RAV4 2003-2012)',       ecu:'Denso',  conector:'88 pines',  immo:'SÍ ID4D', flash:'Por Techstream',     chip:'Renesas SH7xx'},
+    {nombre:'ECM 1GR-FE (Tundra/4Runner V6 2002+)',    ecu:'Denso',  conector:'120 pines', immo:'SÍ ID4D', flash:'Por J2534',           chip:'Renesas SH7058'},
+    {nombre:'ECM GR86/BRZ (FA20)',                     ecu:'Denso',  conector:'105 pines', immo:'SÍ DST80',flash:'Por OBD2',            chip:'Renesas RH850'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Condensadores secos — ECM caliente (1NZ/2NZ)', desc:'Las ECMs Denso del Corolla y Yaris fallan cuando están calientes. Causa: condensadores pequeños SMD en la zona del regulador de 5V. Difícil de ver sin microscopio. Síntoma: el carro para cuando el motor está caliente y arranca de nuevo cuando enfría.'},
+    {sev:'critica', titulo:'Regulador 5V dañado — múltiples DTCs Toyota', desc:'Toyota usa un regulador 78L05 (5V 100mA) para el Vref. Si falla, todos los sensores analógicos dan lecturas erróneas simultáneamente. Reemplazar el 78L05 (costo $5 MXN) resuelve todos los DTCs de un golpe.'},
+    {sev:'media',   titulo:'IMMO ID4D — sin llave programada', desc:'El Toyota usa transponder ID4D glass (en la llave de cabeza de goma). Para programar llave adicional se necesita 2 llaves maestras o acceso al pin de seguridad por OBD2 con Techstream. Sin pin: reprogramación por EEPROM directa en la ECM.'},
+    {sev:'leve',    titulo:'Reaprendizaje de ralentí post-reemplazo ECM', desc:'Al cambiar la ECM Toyota, el motor necesita 30 minutos de rodaje a temperatura normal para aprender el ralentí. No ajustar nada en ese tiempo. Si el ralentí sigue mal: hacer Initialize del actuador IAC con Techstream.'},
+  ],
+  flash: {
+    metodo: 'Toyota Techstream con interfaz J2534 (Cable IT3 o genérico)',
+    protocolo: 'ISO 15765-4 CAN 500kbps (modelos desde 2005). Anteriores: ISO 9141 K-Line 10.4kbps',
+    pasos: [
+      'Abrir Techstream → conectar VIM (Vehicle Interface Module) al OBD2',
+      'Techstream detecta el vehículo automáticamente por VIN',
+      'ECU → Reprogramming → verificar que hay actualización disponible',
+      'Conectar fuente de carga (batería > 12.5V durante todo el proceso)',
+      'Iniciar → el proceso dura 5-20 minutos',
+      'Post-flash: realizar inicialización de sistemas (Techstream → Utility → Initialize)',
+    ],
+    advertencia: 'Techstream oficial requiere suscripción mensual (~$55 USD/mes). Mini-VCI cables genéricos con Techstream hacen lo mismo a menor costo. Muchas ECMs Toyota antiguas NO tienen update disponible — en ese caso el flasheo solo aplica para reparar ECM dañada.'
+  },
+  pinout: [
+    {pin:'E1',    fn:'GND señal sensores', color:'Marrón',  val:'0V'},
+    {pin:'E2',    fn:'GND señal (2)',      color:'Marrón',  val:'0V'},
+    {pin:'+B',    fn:'+12V KL30',         color:'Rojo',    val:'12-14.5V'},
+    {pin:'IGSW',  fn:'+12V KL15 (IGN)',   color:'R/N',     val:'12V con llave'},
+    {pin:'NE+',   fn:'CKP señal +',       color:'V/R',     val:'AC 0.5-4V'},
+    {pin:'NE-',   fn:'CKP señal −',       color:'V/Bl',    val:'Referencia'},
+    {pin:'G+',    fn:'CMP señal +',       color:'Azul',    val:'AC sinusoidal'},
+    {pin:'VG',    fn:'MAF señal',         color:'V/Bl',    val:'0-5V Karman'},
+    {pin:'VTA',   fn:'TPS señal',         color:'V',       val:'0.5-4.5V'},
+    {pin:'OX1',   fn:'O2 señal B1S1',     color:'Bl/Bl',   val:'0.1-0.9V'},
+  ]
+},
+
+honda: {
+  name: 'Honda / Acura',
+  color: '#CC0000',
+  modelos: [
+    {nombre:'ECM D15/D16 (Civic 1996-2000)',        ecu:'Honda/Keihin', conector:'26+22+22 pines', immo:'NO (USDM)',   flash:'Por OBD1 socket', chip:'Motorola 68HC11'},
+    {nombre:'ECM D17 (Civic EP3 2001-2005)',         ecu:'Keihin',       conector:'64 pines',       immo:'SÍ ID13',    flash:'Por OBD2 HDS',    chip:'Hitachi H8'},
+    {nombre:'ECM K20/K24 (Accord/CRV 2003-2012)',   ecu:'Keihin',       conector:'87 pines',       immo:'SÍ ID46',    flash:'Por HDS J2534',   chip:'Renesas'},
+    {nombre:'ECM i-VTEC 1.5T (Civic X 2016+)',      ecu:'Keihin/Denso', conector:'108 pines',      immo:'SÍ ID47',    flash:'Por J2534 HDS',   chip:'Renesas RH850'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'EEPROM 93C46 — pérdida de inmovilizador (Civic 2001+)', desc:'El Civic EP3 y CRV usa EEPROM 93C46 de 8 pines para guardar el código IMMO. Cuando se reemplaza la ECM, hay que transferir la EEPROM del original O leer el dump y escribirlo en la nueva. Con VVDI Prog en modo clip/socket.'},
+    {sev:'critica', titulo:'ICM (Ignition Control Module) integrado quemado', desc:'En las ECMs Honda de los 90s, el módulo de ignición está integrado en la PCB. Si una bobina tiene corto, quema este módulo. Síntoma: no hay chispa en ningún cilindro. La reparación requiere reemplazar el IC específico de Honda (más difícil que en otras marcas).'},
+    {sev:'media',   titulo:'Falla en regulador 5V (Civic D-series)', desc:'Las ECMs Honda D-series son sensibles a voltajes altos del alternador. Si el voltaje supera 14.8V por mucho tiempo, el regulador interno puede dañarse. Verificar el alternador antes de reemplazar la ECM.'},
+    {sev:'leve',    titulo:'Error 22 / DTC P1359 — TDC sensor (D15/D16)', desc:'Falla frecuente en el Civic 96-00. El sensor TDC/CYP está integrado en el distribuidor. Si falla: el carro arranca pero jala mal o no arranca. Resistencia del sensor: 350-700Ω. Reemplazar el distribuidor completo es la solución más práctica.'},
+  ],
+  flash: {
+    metodo: 'Honda HDS (Honda Diagnostic System) con interfaz J2534 Honda o genérica',
+    protocolo: 'CAN ISO 15765 (2006+). Anteriores: ISO 9141 K-Line 10.4kbps por OBD2 pin 7',
+    pasos: [
+      'Abrir Honda HDS → conectar con VCI (interfaz J2534)',
+      'HDS detecta el vehículo automáticamente',
+      'ECM/PCM → Update → verificar versión actual vs disponible',
+      'Descargar el archivo de calibración del servidor Honda',
+      'Proceso automatizado — batería > 12.4V con cargador conectado',
+      'Post-flash: Idle Learn Procedure (warm-up a 3000 RPM por 10 min)',
+    ],
+    advertencia: 'Los Civic y Accord más antiguos (OBD1 y primeros OBD2) se flashean con un socket físico en la placa de la ECM. Se necesita el chip de flash extractor y el archivo específico para esa ROM. Más técnico pero muy común en el ambiente del tuning Honda.'
+  },
+  pinout: [
+    {pin:'A1',  fn:'INJ #1 control',    color:'V/Amarillo',val:'12V→0V'},
+    {pin:'A2',  fn:'INJ #2 control',    color:'Azul/Amarillo',val:'12V→0V'},
+    {pin:'A10', fn:'IGT cilindros 1-4', color:'Azul',     val:'5V→0V'},
+    {pin:'B1',  fn:'+12V KL30',         color:'Rojo',     val:'12-14.5V'},
+    {pin:'B2',  fn:'+12V KL15 (IGN)',   color:'Amarillo', val:'12V con llave'},
+    {pin:'D2',  fn:'Vref 5V',           color:'Amarillo/V',val:'5.00V'},
+    {pin:'D11', fn:'TPS señal',         color:'Rojo/Bl',  val:'0.5-4.5V'},
+    {pin:'D13', fn:'ECT señal',         color:'Bl/V',     val:'4.5-0.3V'},
+    {pin:'D14', fn:'O2 señal',          color:'Blanco',   val:'0.1-0.9V'},
+    {pin:'D17', fn:'MAF/MAP señal',     color:'Amarillo', val:'0-5V'},
+  ]
+},
+
+bosch: {
+  name: 'Bosch (Multi-marca)',
+  color: '#CC0000',
+  modelos: [
+    {nombre:'Motronic ME7.x (VW/Audi/BMW)',   ecu:'Bosch', conector:'121 pines', immo:'SÍ',    flash:'Por OBD2 específico',  chip:'MPC555/MPC563'},
+    {nombre:'EDC17 (Diésel múltiples marcas)', ecu:'Bosch', conector:'121+ pines',immo:'SÍ',    flash:'Por OBD2',             chip:'Infineon TC17xx'},
+    {nombre:'ME17.9.x (Chevy/Ford/VW Brasil)', ecu:'Bosch', conector:'94+ pines', immo:'SÍ ID46',flash:'Por OBD2',            chip:'Infineon TC17xx'},
+    {nombre:'EDC16 C34/U31 (TDI/HDi/CDTi)',   ecu:'Bosch', conector:'121 pines', immo:'SÍ ID46',flash:'Por OBD2',            chip:'MPC563'},
+  ],
+  fallas: [
+    {sev:'critica', titulo:'Driver inyectores piezoeléctricos (EDC17 diésel)', desc:'PELIGRO: Los inyectores piezo manejan 150-250V DC dentro de la ECU. Nunca tocar la placa sin descargar primero el capacitor. El capacitor de alta tensión se identifica por ser el más grande de la placa (generalmente 4.7µF/350V). El driver IC reemplazado requiere estación BGA.'},
+    {sev:'critica', titulo:'Cortocircuito en Vref 5V (ME7.x)', desc:'El regulador LM317 o equivalente en ME7.x puede fallar bajo carga. Los síntomas son Vref que oscila entre 3-5V. Al desconectar sensores uno por uno, si el Vref no regresa a 5V el regulador está dañado. Reemplazo sencillo — componente THT de 3 terminales.'},
+    {sev:'media',   titulo:'Código EIS/IMMO VW/Audi (ID60/Crypto)', desc:'Las ECUs VW desde ~1999 usan protocolo IMMO Crypto con la llave y el cluster. Para cambiar ECU: adaptar la EEPROM original. Para bypass en caso de pérdida total: VVDI o calculadora IMMO3 Tool. Proceso delicado — documentar el dump antes de modificar.'},
+    {sev:'leve',    titulo:'Actualización de calibración EDC17 (emisiones)', desc:'Muchos EDC17 tienen actualizaciones del fabricante para mejorar consumo y emisiones. En algunos casos la actualización soluciona DTCs crónicos de EGR o DPF que no tienen solución mecánica. Verificar TSBs del fabricante antes de cambiar mecánicamente.'},
+  ],
+  flash: {
+    metodo: 'Depende del fabricante del vehículo — el hardware es Bosch pero el software es de la marca',
+    protocolo: 'CAN ISO 15765 — UDS ISO 14229 (todos los Bosch modernos)',
+    pasos: [
+      'ME7.x/EDC16: VCDS para VW-Audi, WDS/IDS para Ford con Bosch, TIS para Toyota',
+      'EDC17: puede usar WinOLS con interfaz BDM para trabajo profesional de calibración',
+      'Para reparación pura (no modificación): siempre usar el software OEM del fabricante',
+      'Bosch tiene su propio portal ESI[tronic] para talleres autorizados',
+      'Batería > 12.4V, cargador conectado durante todo el proceso',
+      'EDC17 diésel: deshabilitar inyectores durante el flash (desconectar relé)',
+    ],
+    advertencia: 'Bosch vende el hardware pero el software de calibración es propiedad de cada marca (VW, Ford, BMW, etc.). El mismo EDC17 en un Golf TDI y un Focus TDI tienen programas completamente diferentes y NO son intercambiables.'
+  },
+  pinout: [
+    {pin:'—', fn:'Variable según marca/modelo', color:'—', val:'Consultar FSM específico'},
+    {pin:'Pin Vref', fn:'Referencia 5V sensores', color:'Varía',   val:'5.00V ±0.05V'},
+    {pin:'Pin GND',  fn:'Masa señal',             color:'Marrón',  val:'0V'},
+    {pin:'Pin KL30', fn:'+12V batería',           color:'Rojo',    val:'12-14.5V'},
+    {pin:'Pin KL15', fn:'+12V con llave',         color:'R/N',     val:'12V'},
+    {pin:'CAN-H',    fn:'Bus CAN alta',           color:'Naranja', val:'2.5-3.5V'},
+    {pin:'CAN-L',    fn:'Bus CAN baja',           color:'Verde',   val:'1.5-2.5V'},
+  ]
+}
+
+};
+
+function showBrand(id) {
+  // Actualizar botones
+  document.querySelectorAll('.brand-btn').forEach(b=>b.classList.remove('act'));
+  document.getElementById('bb-'+id).classList.add('act');
+  
+  var b = BRANDS[id];
+  var sev = {critica:'critica',media:'media',leve:'leve'};
+  
+  // Tabla de modelos
+  var modHtml = '<div class="card"><div class="card-t" style="color:'+b.color+'">🚗 Modelos y ECUs — '+b.name+'</div>';
+  modHtml += '<table><tr><th>Modelo / Motor</th><th>ECU Fabricante</th><th>Conector</th><th>IMMO</th><th>Método Flash</th><th>Chip</th></tr>';
+  b.modelos.forEach(function(m){
+    modHtml += '<tr><td><strong>'+m.nombre+'</strong></td><td>'+m.ecu+'</td><td class="mono">'+m.conector+'</td><td>'+m.immo+'</td><td>'+m.flash+'</td><td class="mono">'+m.chip+'</td></tr>';
+  });
+  modHtml += '</table></div>';
+
+  // Fallas comunes
+  var fallaHtml = '<div class="card"><div class="card-t">⚠️ Fallas más comunes — '+b.name+'</div>';
+  b.fallas.forEach(function(f){
+    fallaHtml += '<div class="falla-item '+f.sev+'"><div class="falla-dot"></div><div class="falla-txt"><div class="falla-titulo">'+f.titulo+'</div><div class="falla-desc">'+f.desc+'</div></div></div>';
+  });
+  fallaHtml += '</div>';
+
+  // Flash
+  var flashHtml = '<div class="card"><div class="card-t">💾 Procedimiento de Flasheo — '+b.name+'</div>';
+  flashHtml += '<p><strong>Herramienta:</strong> '+b.flash.metodo+'</p>';
+  flashHtml += '<p><strong>Protocolo:</strong> '+b.flash.protocolo+'</p>';
+  flashHtml += '<div class="steps">';
+  b.flash.pasos.forEach(function(p,i){
+    flashHtml += '<div class="step"><div class="step-n">'+(i+1)+'</div><div class="step-d">'+p+'</div></div>';
+  });
+  flashHtml += '</div>';
+  flashHtml += '<div class="callout warn" style="margin-top:12px"><div class="callout-ico">⚠️</div><div class="callout-body">'+b.flash.advertencia+'</div></div>';
+  flashHtml += '</div>';
+
+  // Pinout
+  var pinHtml = '<div class="card"><div class="card-t">🔌 Pinout principal — '+b.name+'</div>';
+  pinHtml += '<table><tr><th>Pin</th><th>Función</th><th>Color cable</th><th>Valor normal</th></tr>';
+  b.pinout.forEach(function(p){
+    pinHtml += '<tr><td class="mono">'+p.pin+'</td><td>'+p.fn+'</td><td><span style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:4px;padding:2px 7px;font-family:Share Tech Mono,monospace;font-size:10px;color:#F5A623">'+p.color+'</span></td><td class="mono">'+p.val+'</td></tr>';
+  });
+  pinHtml += '</table></div>';
+
+  document.getElementById('brand-content').innerHTML = modHtml + fallaHtml + flashHtml + pinHtml;
+}
+
+// Mostrar Nissan por defecto al cargar la página de marcas
+var origGo = go;
+go = function(n) {
+  origGo(n);
+  if(n===8) { setTimeout(function(){ showBrand('nissan'); }, 50); }
+};
+
+</script>
+</body>
+</html>
